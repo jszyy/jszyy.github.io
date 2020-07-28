@@ -87,6 +87,22 @@
       </tags>
   </entry>
   <entry>
+    <title>一个人走得快，一群人走得远</title>
+    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
+<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Writings</category>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>React.createRef()用法详解</title>
     <url>/2020/07/25/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p> 在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
@@ -356,22 +372,6 @@
       <tags>
         <tag>前端</tag>
         <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一个人走得快，一群人走得远</title>
-    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
-<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Writings</category>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
       </tags>
   </entry>
   <entry>
