@@ -1,6 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>React.createRef()用法详解</title>
+    <url>/2020/07/25/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p> 在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
+<h2 id="什么时候使用Refs"><a href="#什么时候使用Refs" class="headerlink" title="什么时候使用Refs"></a>什么时候使用Refs</h2><ul>
+<li>管理焦点、文本选择、媒体回放;</li>
+<li>触发必要动画；</li>
+<li>整合第三方DOM库;</li>
+</ul>
+<p>避免对任何可以声明式解决的问题使用 <code>Refs</code> ；（比如相对于暴露一个对话框组件的 <code>open()、close()</code> 方法，请使用 <code>isOpen prop</code>！）</p>
+<h2 id="不要过度使用Refs"><a href="#不要过度使用Refs" class="headerlink" title="不要过度使用Refs"></a>不要过度使用Refs</h2><p>你的第一个倾向可能是使用 <code>Refs</code> 去实现一些APP中的东西。在这种情况下，请停下来，仔细想想 <code>state</code> 应该存在的组件层次。经常地，我们都知道应该由更高的层次去拥有 <code>state</code> 。</p>
+<h2 id="创建Refs"><a href="#创建Refs" class="headerlink" title="创建Refs"></a>创建Refs</h2><p>可以通过 <code>React.createRef()</code> 创建 <code>Refs</code> 并通过 <code>ref</code> 属性联系到 <code>React</code> 组件。 <code>Refs</code> 通常当组件被创建时被分配给实例变量，这样它们就能在组件中被引用。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">        <span class="keyword">super</span>(props);</span><br><span class="line">        <span class="keyword">this</span>.myRef = React.createRef();</span><br><span class="line">    &#125;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ref</span>=<span class="string">&#123;this.myRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="访问Refs"><a href="#访问Refs" class="headerlink" title="访问Refs"></a>访问Refs</h2><p>当一个 <code>ref</code> 通过 <code>render</code> 放入一个元素中，一个对节点的引用可以通过 <code>ref</code> 的 <code>current</code> 属性得到；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> node = <span class="keyword">this</span>.myRef.current;</span><br></pre></td></tr></table></figure>
+
+<p><code>ref</code> 的值根据节点类型的不同而不同：</p>
+<ul>
+<li>当 <code>ref</code> 属性用于HTML元素，在构造器中通过 <code>React.createRef()</code> 函数创建的ref接收底层DOM元素作为它的current属性；</li>
+<li>当 <code>ref</code> 属性用于传统的类组件，ref对象接收挂载好的组件实例作为它的current；</li>
+</ul>
+<p>下面是对应于不同ref的例子</p>
+<h3 id="DOM元素"><a href="#DOM元素" class="headerlink" title="DOM元素"></a>DOM元素</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="comment">// 创建一个ref去储存textInput DOM元素</span></span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="keyword">this</span>.focusTextInput.bind(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  focusTextInput() &#123;</span><br><span class="line">    <span class="comment">// 很明显的，让text input获得焦点使用了原生的DOM API</span></span><br><span class="line">    <span class="comment">// 注意：我们通过current去获得DOM节点</span></span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 告诉React我们想要将&lt;input&gt;的ref和构造器中创建的textInput联系起来</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>React将会将会在组件挂载时将DOM元素分配给current属性，并且在组件被卸载时，将current属性重置为null。ref将会在<code>componentDidMount</code>和<code>componentDidUpdate</code>生命周期钩子前被更新</p>
+<h3 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h3><p>如果我们想要包装上面的<code>CustomTextInput</code>，模仿挂载后被点击。我们可以通过ref得到自定义的Input组件，手动调用它的focusTextInput函数。（注意！只有当<code>CustomTextInput</code>被声明为类的时候才有用！）</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AutoFocusTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;CustomTextInput ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数式组件（没有用的）"><a href="#函数式组件（没有用的）" class="headerlink" title="函数式组件（没有用的）"></a>函数式组件（没有用的）</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyFunctionalComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">input</span> /&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 这样没用！函数式组件根本就没有实例！</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;MyFunctionalComponent ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，你可以在函数式组件中使用ref属性，就像你引用DOM元素和类组件一样。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// textInput 必须被声明在这里——ref才能适用于它</span></span><br><span class="line">  <span class="keyword">let</span> textInput = React.createRef();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">handleClick</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"text"</span></span><br><span class="line">            ref=&#123;textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"button"</span></span><br><span class="line">            value=<span class="string">"Focus the text input"</span></span><br><span class="line">            onClick=&#123;handleClick&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="向父组件暴露DOM引用（Refs）"><a href="#向父组件暴露DOM引用（Refs）" class="headerlink" title="向父组件暴露DOM引用（Refs）"></a>向父组件暴露DOM引用（Refs）</h2><p>在很罕见的情况下，你也许想要从父组件访问到子元素的DOM节点。通常来说我们不建议这样做，因为这样破坏了组件的封装性，但是在某些情况下对于类似：触发聚焦、改变子元素DOM节点的大小、位置等情况非常有用。</p>
+<p>你可以向子组件增加ref（就像上面说的），但是这并不是一个完美的解决方案——你只会获得一个组件实例而不是DOM节点。更糟糕的是，它对函数式组件没用！</p>
+<p>如果你使用React 16.3或者更高的版本，我们建议你在这些情况下使用<code>ref forwarding，Ref fprwarding</code>让组件可以选择去暴露子组件的ref作为他们自己的。你可以在ref forwarding文档中找到更全面的例子——怎样暴露子元素的DOM节点给父元素。</p>
+<p>如果你使用React 16.2或者更低的版本，或者你需要比<code>ref forwarding</code>所能提供的更多的灵活性。你可以使用替代方法，并且显式的传入一个ref当做一个不同命名的prop。</p>
+<p>如果可能，我们不建议暴露DOM节点，但是在一些情况下还是非常有用的。注意，这种方法需要你去在子组件中增加一些代码，如果你完全没有对于子组件实现的控制，你最后的选择是使用<code>findDOMNode()</code>方法，当然，也只能这样了。</p>
+<h2 id="回调Refs"><a href="#回调Refs" class="headerlink" title="回调Refs"></a>回调Refs</h2><p>React同样支持另一种名为“回调refs”的方法去设置refs——它可以给我们对refs创建和销毁更细粒度的控制。</p>
+<p>放入一个函数，而不是一个由<code>createRef()</code>创建的ref属性。这个函数接受React组件实例、或者HTML DOM元素作为参数——可以被储存并且在其他地方被访问。</p>
+<p>下面的例子实现了一个通常的模式：使用ref回调储存一个DOM节点的应用在实例变量中：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.textInput = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.setTextInputRef = <span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.textInput = element;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 通过原生DOM API聚焦文本</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.textInput) <span class="keyword">this</span>.textInput.focus();</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="comment">// 在挂载时自动聚焦</span></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 使用'ref'回调去在一个实例域中储存文本输入DOM元素的引用(比如, this.textInput).</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.setTextInputRef&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>React将会在组件挂载时使用DOM元素调用ref回调，在组件卸载时使用null调用ref回调。ref回调都会在<code>componentDidMount</code>或者<code>componentDidUpdate</code>生命周期钩子之前被调用。<br>你可以在组件之间传递回调refs，就像你可以对通过<code>React.createRef()</code>创建的对象refs一样：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;input ref=&#123;props.inputRef&#125; /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">class Parent extends React.Component &#123;</span></span><br><span class="line"><span class="regexp">  render() &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;CustomTextInput</span></span><br><span class="line"><span class="regexp">        inputRef=&#123;el =&gt; this.inputElement = el&#125;</span></span><br><span class="line"><span class="regexp">      /</span>&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，Parent组件将他的ref回调作为inputRef这个属性（props）传入<code>CustomTextInput</code>组件，接着<code>CustomTextInput</code>组件将同样的函数作为一个特殊的<code>ref</code>属性<code>（attribute）</code>传给<code>&lt;input&gt;</code>。从结果来看，<code>Parent</code>组件中的<code>this.inputElement</code>将会被放在与在<code>CustomTextInput</code>组件的<code>&lt;input&gt;</code>元素相关的DOM节点中。</p>
+<h2 id="关于回调refs的警告"><a href="#关于回调refs的警告" class="headerlink" title="关于回调refs的警告"></a>关于回调refs的警告</h2><p>如果ref回调被定义为一个行内函数，当组件更新时会被调用两次——第一次被null调用、而后被DOM元素调用。这是因为函数的新实例会在每次渲染的时候创建，所以React需要清除老的ref然后生成一个新的。你可以通过在class中定义一个绑定的ref回调方法避免这个问题，但是注意，这种问题在大多数情况下都没什么影响~</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ES6基础语法</title>
     <url>/2020/07/16/ES6%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>ES6 是下一代 JavaScript 语法标准，比起 ES5 有很大的变化。<br>React 大量使用 ES6 语法，本文介绍其中一些最重要的语法点。完整的 ES6 介绍请参考 <a href="http://es6.ruanyifeng.com/" target="_blank" rel="noopener">http://es6.ruanyifeng.com/</a> 。</p>
@@ -87,127 +146,19 @@
       </tags>
   </entry>
   <entry>
-    <title>一个人走得快，一群人走得远</title>
-    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
-<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Writings</category>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>React.createRef()用法详解</title>
-    <url>/2020/07/25/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p> 在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
-<h2 id="什么时候使用Refs"><a href="#什么时候使用Refs" class="headerlink" title="什么时候使用Refs"></a>什么时候使用Refs</h2><ul>
-<li>管理焦点、文本选择、媒体回放;</li>
-<li>触发必要动画；</li>
-<li>整合第三方DOM库;</li>
-</ul>
-<p>避免对任何可以声明式解决的问题使用 <code>Refs</code> ；（比如相对于暴露一个对话框组件的 <code>open()、close()</code> 方法，请使用 <code>isOpen prop</code>！）</p>
-<h2 id="不要过度使用Refs"><a href="#不要过度使用Refs" class="headerlink" title="不要过度使用Refs"></a>不要过度使用Refs</h2><p>你的第一个倾向可能是使用 <code>Refs</code> 去实现一些APP中的东西。在这种情况下，请停下来，仔细想想 <code>state</code> 应该存在的组件层次。经常地，我们都知道应该由更高的层次去拥有 <code>state</code> 。</p>
-<h2 id="创建Refs"><a href="#创建Refs" class="headerlink" title="创建Refs"></a>创建Refs</h2><p>可以通过 <code>React.createRef()</code> 创建 <code>Refs</code> 并通过 <code>ref</code> 属性联系到 <code>React</code> 组件。 <code>Refs</code> 通常当组件被创建时被分配给实例变量，这样它们就能在组件中被引用。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">        <span class="keyword">super</span>(props);</span><br><span class="line">        <span class="keyword">this</span>.myRef = React.createRef();</span><br><span class="line">    &#125;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ref</span>=<span class="string">&#123;this.myRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="访问Refs"><a href="#访问Refs" class="headerlink" title="访问Refs"></a>访问Refs</h2><p>当一个 <code>ref</code> 通过 <code>render</code> 放入一个元素中，一个对节点的引用可以通过 <code>ref</code> 的 <code>current</code> 属性得到；</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> node = <span class="keyword">this</span>.myRef.current;</span><br></pre></td></tr></table></figure>
-
-<p><code>ref</code> 的值根据节点类型的不同而不同：</p>
-<ul>
-<li>当 <code>ref</code> 属性用于HTML元素，在构造器中通过 <code>React.createRef()</code> 函数创建的ref接收底层DOM元素作为它的current属性；</li>
-<li>当 <code>ref</code> 属性用于传统的类组件，ref对象接收挂载好的组件实例作为它的current；</li>
-</ul>
-<p>下面是对应于不同ref的例子</p>
-<h3 id="DOM元素"><a href="#DOM元素" class="headerlink" title="DOM元素"></a>DOM元素</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="comment">// 创建一个ref去储存textInput DOM元素</span></span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="keyword">this</span>.focusTextInput.bind(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  focusTextInput() &#123;</span><br><span class="line">    <span class="comment">// 很明显的，让text input获得焦点使用了原生的DOM API</span></span><br><span class="line">    <span class="comment">// 注意：我们通过current去获得DOM节点</span></span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 告诉React我们想要将&lt;input&gt;的ref和构造器中创建的textInput联系起来</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>React将会将会在组件挂载时将DOM元素分配给current属性，并且在组件被卸载时，将current属性重置为null。ref将会在<code>componentDidMount</code>和<code>componentDidUpdate</code>生命周期钩子前被更新</p>
-<h3 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h3><p>如果我们想要包装上面的<code>CustomTextInput</code>，模仿挂载后被点击。我们可以通过ref得到自定义的Input组件，手动调用它的focusTextInput函数。（注意！只有当<code>CustomTextInput</code>被声明为类的时候才有用！）</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AutoFocusTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;CustomTextInput ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="函数式组件（没有用的）"><a href="#函数式组件（没有用的）" class="headerlink" title="函数式组件（没有用的）"></a>函数式组件（没有用的）</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyFunctionalComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">input</span> /&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 这样没用！函数式组件根本就没有实例！</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;MyFunctionalComponent ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是，你可以在函数式组件中使用ref属性，就像你引用DOM元素和类组件一样。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// textInput 必须被声明在这里——ref才能适用于它</span></span><br><span class="line">  <span class="keyword">let</span> textInput = React.createRef();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">handleClick</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"text"</span></span><br><span class="line">            ref=&#123;textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"button"</span></span><br><span class="line">            value=<span class="string">"Focus the text input"</span></span><br><span class="line">            onClick=&#123;handleClick&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="五、向父组件暴露DOM引用（Refs）"><a href="#五、向父组件暴露DOM引用（Refs）" class="headerlink" title="五、向父组件暴露DOM引用（Refs）"></a>五、向父组件暴露DOM引用（Refs）</h2><p>在很罕见的情况下，你也许想要从父组件访问到子元素的DOM节点。通常来说我们不建议这样做，因为这样破坏了组件的封装性，但是在某些情况下对于类似：触发聚焦、改变子元素DOM节点的大小、位置等情况非常有用。</p>
-<p>你可以向子组件增加ref（就像上面说的），但是这并不是一个完美的解决方案——你只会获得一个组件实例而不是DOM节点。更糟糕的是，它对函数式组件没用！</p>
-<p>如果你使用React 16.3或者更高的版本，我们建议你在这些情况下使用<code>ref forwarding，Ref fprwarding</code>让组件可以选择去暴露子组件的ref作为他们自己的。你可以在ref forwarding文档中找到更全面的例子——怎样暴露子元素的DOM节点给父元素。</p>
-<p>如果你使用React 16.2或者更低的版本，或者你需要比<code>ref forwarding</code>所能提供的更多的灵活性。你可以使用替代方法，并且显式的传入一个ref当做一个不同命名的prop。</p>
-<p>如果可能，我们不建议暴露DOM节点，但是在一些情况下还是非常有用的。注意，这种方法需要你去在子组件中增加一些代码，如果你完全没有对于子组件实现的控制，你最后的选择是使用<code>findDOMNode()</code>方法，当然，也只能这样了。</p>
-<h2 id="回调Refs"><a href="#回调Refs" class="headerlink" title="回调Refs"></a>回调Refs</h2><p>React同样支持另一种名为“回调refs”的方法去设置refs——它可以给我们对refs创建和销毁更细粒度的控制。</p>
-<p>放入一个函数，而不是一个由<code>createRef()</code>创建的ref属性。这个函数接受React组件实例、或者HTML DOM元素作为参数——可以被储存并且在其他地方被访问。</p>
-<p>下面的例子实现了一个通常的模式：使用ref回调储存一个DOM节点的应用在实例变量中：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.textInput = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.setTextInputRef = <span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.textInput = element;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 通过原生DOM API聚焦文本</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.textInput) <span class="keyword">this</span>.textInput.focus();</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="comment">// 在挂载时自动聚焦</span></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 使用'ref'回调去在一个实例域中储存文本输入DOM元素的引用(比如, this.textInput).</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.setTextInputRef&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>React将会在组件挂载时使用DOM元素调用ref回调，在组件卸载时使用null调用ref回调。ref回调都会在<code>componentDidMount</code>或者<code>componentDidUpdate</code>生命周期钩子之前被调用。<br>你可以在组件之间传递回调refs，就像你可以对通过<code>React.createRef()</code>创建的对象refs一样：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;input ref=&#123;props.inputRef&#125; /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">class Parent extends React.Component &#123;</span></span><br><span class="line"><span class="regexp">  render() &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;CustomTextInput</span></span><br><span class="line"><span class="regexp">        inputRef=&#123;el =&gt; this.inputElement = el&#125;</span></span><br><span class="line"><span class="regexp">      /</span>&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在上面的例子中，Parent组件将他的ref回调作为inputRef这个属性（props）传入<code>CustomTextInput</code>组件，接着<code>CustomTextInput</code>组件将同样的函数作为一个特殊的<code>ref</code>属性<code>（attribute）</code>传给<code>&lt;input&gt;</code>。从结果来看，<code>Parent</code>组件中的<code>this.inputElement</code>将会被放在与在<code>CustomTextInput</code>组件的<code>&lt;input&gt;</code>元素相关的DOM节点中。</p>
-<h2 id="关于回调refs的警告"><a href="#关于回调refs的警告" class="headerlink" title="关于回调refs的警告"></a>关于回调refs的警告</h2><p>如果ref回调被定义为一个行内函数，当组件更新时会被调用两次——第一次被null调用、而后被DOM元素调用。这是因为函数的新实例会在每次渲染的时候创建，所以React需要清除老的ref然后生成一个新的。你可以通过在class中定义一个绑定的ref回调方法避免这个问题，但是注意，这种问题在大多数情况下都没什么影响~</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>什么是内卷</title>
-    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
-<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
-</li>
-<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
-</li>
-<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
-</li>
-<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
-</li>
-</ul>
-<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
-<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
-<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
-<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
-</blockquote>
-<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
-<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
-</blockquote>
-<p>So，要么多一点，要么均一点，其实就这么简单。</p>
-]]></content>
-      <categories>
-        <category>Featured</category>
-        <category>Thinkings</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>createContext &amp; useContext 跨组件透传上下文与性能优化</title>
     <url>/2020/07/22/useContext%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><!--  -->
 
 ## 一、React.createContext
 
 > API 文档地址：<https://zh-hans.reactjs.org/docs/context.html#reactcreatecontext>
 
-{{从 API 名字就可以看出， createContext 能够创建一个 React 的 上下文（context），然后订阅了这个上下文的组件中，可以拿到上下文中提供的数据或者其他信息。
-基本的使用方法：}}
+从 API 名字就可以看出， createContext 能够创建一个 React 的 上下文（context），然后订阅了这个上下文的组件中，可以拿到上下文中提供的数据或者其他信息。
+基本的使用方法：
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> MyContext = React.createContext(defaultValue)</span><br></pre></td></tr></table></figure>
 
-{{
 其中 defaultValue 是传入的默认值。
 
 如果要使用创建的上下文，需要通过 `Context.Provider` 最外层包装组件，并且需要显示的通过 `<MyContext.Provider value={{xx:xx}}>` 的方式传入 value，指定 context 要对外暴露的信息。
@@ -219,63 +170,56 @@
 为什么要默认值？
 
 如果匹配不到最新的 `Provider` 则会使用默认值，默认值一般只有在对组件进行单元测试（组件并未嵌入到父组件中）的时候，比较有用。
-}}
 
 ## 二、使用 useContext 获取上下文
 
 > useContext 文档地址：<https://zh-hans.reactjs.org/docs/hooks-reference.html#usecontext>
 
-{{
 通过 `React.createContext` 创建出来的上下文，在子组件中可以通过 `useContext` 这个 `Hook` 获取 `Provider` 提供的内容
-}}
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;funcName&#125; = useContext(MyContext);</span><br></pre></td></tr></table></figure>
 
-{{
 从上面代码可以发现， `useContext` 需要将 `MyContext` 这个 `Context` 实例传入，不是字符串，就是实例本身。
 
 这种用法会存在一个比较尴尬的地方，父子组件不在一个目录中，如何共享 `MyContext` 这个 `Context` 实例呢？
 
 一般这种情况下，我会通过 `Context Manager` 统一管理上下文的实例，然后通过 `export` 将实例导出，在子组件中在将实例 `import` 进来。
-}}
 
 ## 三、createContext 和 useContext 结合使用实现方法共享
 
-{{举个实际的例子：子组件中修改父组件的 `state`
+举个实际的例子：子组件中修改父组件的 `state`
 
 一般的做法是将父组件的方法比如 `setXXX` 通过 `props` 的方式传给子组件，而一旦子组件多层级的话，就要层层透传。
 
 使用 `Context` 的方式则可以免去这种层层透传
-}}
 
 ### 1、context-manager.js
 
-{{创建一个上下文管理的组件，用来统一导出 `Context` 实例}}
+创建一个上下文管理的组件，用来统一导出 `Context` 实例
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> MyContext = React.createContext(<span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
 
 ### 2、父组件 Provider 提供上下文 value
 
-{{下面代码中，父组件引入了实例，并且通过 `MyContext.Provider` 将父组件包装，并且通过 `Provider.value` 将方法提供出去。
+下面代码中，父组件引入了实例，并且通过 `MyContext.Provider` 将父组件包装，并且通过 `Provider.value` 将方法提供出去。
 
 下面的实例提供了三个 `state` 操作方法：
-}}
 
 * setStep
 * setCount
 * setNumber
 
-{{以及一个副作用方法：}}
+以及一个副作用方法：
 
 * fetchData
 
-{{子组件 `Child` 接受的 `props` 只有三个 `state` 的值 `step/number/count`。}}
+子组件 `Child` 接受的 `props` 只有三个 `state` 的值 `step/number/count`。
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useState &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">'./Child'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fetchData = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">            resolve(<span class="number">1</span>);</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [step, setStep] = useState(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">const</span> [count, setCount] = useState(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">const</span> [number, setNumber] = useState(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;MyContext.Provider value=&#123;&#123; setStep, setCount, setNumber, fetchData &#125;&#125;&gt;</span><br><span class="line">            &lt;Child step=&#123;step&#125; number=&#123;number&#125; count=&#123;count&#125; /&gt;</span><br><span class="line">        &lt;<span class="regexp">/MyContext.Provider&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
 
 ### 3、子组件 useContext 解析上下文
 
-{{下面是子组件，相同的，也需要从 `context-manager` 中引入 `MyContext` 这个实例，然后才能通过  `const { setStep, setNumber, setCount, fetchData } = useContext(MyContext);` 解析出上下文中的方法，在子组件中则可以直接使用这些方法，修改父组件的 `state。`}}
+下面是子组件，相同的，也需要从 `context-manager` 中引入 `MyContext` 这个实例，然后才能通过  `const { setStep, setNumber, setCount, fetchData } = useContext(MyContext);` 解析出上下文中的方法，在子组件中则可以直接使用这些方法，修改父组件的 `state`.
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useContext, useEffect, memo &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> memo(<span class="function">(<span class="params">props = &#123;&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; setStep, setNumber, setCount, fetchData &#125; = useContext(MyContext);</span><br><span class="line"></span><br><span class="line">    useEffect(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        fetchData().then(<span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">`FETCH DATA: <span class="subst">$&#123;res&#125;</span>`</span>);</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;, []);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;p&gt;step is : &#123;props.step&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">            &lt;p&gt;number is : &#123;props.number&#125;&lt;/</span>p&gt;</span><br><span class="line">            &lt;p&gt;count is : &#123;props.count&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">            &lt;hr /</span>&gt;</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">                &lt;button onClick=&#123;() =&gt; &#123; setStep(props.step + <span class="number">1</span>) &#125;&#125;&gt;step ++&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">                &lt;button onClick=&#123;() =&gt; &#123; setNumber(props.number + 1) &#125;&#125;&gt;number ++&lt;/</span>button&gt;</span><br><span class="line">                &lt;button onClick=&#123;() =&gt; &#123; setCount(props.step + props.number) &#125;&#125;&gt;number + step&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">            &lt;/</span>div&gt;</span><br><span class="line">        &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
 
@@ -283,9 +227,9 @@
 
 ![avatar](http://lc-eaMmR0jn.cn-n1.lcfile.com/487b9c7dbe18b58353f8/useContext%281%29.gif)
 
-{{可以发现，在子组件中点击按钮，直接调用 `Context` 透传过来的方法，可以修改父组件的 `state`，子组件则会重新渲染。
+可以发现，在子组件中点击按钮，直接调用 `Context` 透传过来的方法，可以修改父组件的 `state`，子组件则会重新渲染。
 
-**这种方式显式的避免了多级 props 的层层透传问题，虽然 Demo 只有一级 子组件，即使存在多级子组件也可以直接修改**}}
+**这种方式显式的避免了多级 props 的层层透传问题，虽然 Demo 只有一级 子组件，即使存在多级子组件也可以直接修改**
 
 ### 5、为什么使用 React.memo()
 
@@ -297,19 +241,19 @@
 
 ## 四、使用 useReducer 减少 Context 的复杂程度
 
-{{上面的示例虽然实现了多级组件方法共享，但是暴露出一个问题：所有的方法都放在了 `Context.Provider.value` 属性中传递，必然造成整个 `Context Provider` 提供的方法越来越多，也会臃肿。
+上面的示例虽然实现了多级组件方法共享，但是暴露出一个问题：所有的方法都放在了 `Context.Provider.value` 属性中传递，必然造成整个 `Context Provider` 提供的方法越来越多，也会臃肿。
 
  `<MyContext.Provider value={{ setStep, setCount, setNumber, fetchData }} />` 里面的方法可能越来越多
 
 而向 `setStep`、`setCount`、`setNumber` 这三个方法，是可以通过 `useReducer` 包装，并且通过 `dispatch` 触发的，因此修改一下父组件：
 
-下面的父组件与之前不同地方只是去掉了 `setXXX` 这些设置 `state` 的方法，并且在 `Provider value`中，只传入了 `value={{dispatch}}`}}
+下面的父组件与之前不同地方只是去掉了 `setXXX` 这些设置 `state` 的方法，并且在 `Provider value`中，只传入了 `value={{dispatch}}`
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">'./Child'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initState = &#123; <span class="attr">count</span>: <span class="number">0</span>, <span class="attr">step</span>: <span class="number">0</span>, <span class="attr">number</span>: <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> reducer = <span class="function">(<span class="params">state, action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'stepInc'</span>: <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123; <span class="attr">step</span>: state.step + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'numberInc'</span>: <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123; <span class="attr">number</span>: state.number + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'count'</span>: <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123; <span class="attr">count</span>: state.step + state.number &#125;);</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [state, dispatch] = useReducer(reducer, initState);</span><br><span class="line">    <span class="keyword">const</span> &#123; step, number, count &#125; = state;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;MyContext.Provider value=&#123;&#123; dispatch &#125;&#125;&gt;</span><br><span class="line">            &lt;Child step=&#123;step&#125; number=&#123;number&#125; count=&#123;count&#125; /&gt;</span><br><span class="line">        &lt;<span class="regexp">/MyContext.Provider&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
 
-{{因此此时子组件只需要拿到 `dispatch` 即可修改父组件的 `state`:
+因此此时子组件只需要拿到 `dispatch` 即可修改父组件的 `state`:
 
-> 子组件唯一的不同就是点击事件执行的是 `dispatch`}}
+> 子组件唯一的不同就是点击事件执行的是 `dispatch`.
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useContext, memo &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> memo(<span class="function">(<span class="params">props = &#123;&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; dispatch &#125; = useContext(MyContext);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;p&gt;step is : &#123;props.step&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">            &lt;p&gt;number is : &#123;props.number&#125;&lt;/</span>p&gt;</span><br><span class="line">            &lt;p&gt;count is : &#123;props.count&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">            &lt;hr /</span>&gt;</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">                &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'stepInc'</span> &#125;) &#125;&#125;&gt;step ++&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">                &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; type: 'numberInc' &#125;) &#125;&#125;&gt;number ++&lt;/</span>button&gt;</span><br><span class="line">                &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'count'</span> &#125;) &#125;&#125;&gt;number + step&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">            &lt;/</span>div&gt;</span><br><span class="line">        &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
 
@@ -318,21 +262,21 @@
 
 ## 五、将 state 也通过 Context 传递给子组件
 
-{{上面的所有示例中，子组件获取父组件的 `state` 还是通过 `props` ，多级子组件又会存在层层嵌套
+上面的所有示例中，子组件获取父组件的 `state` 还是通过 `props` ，多级子组件又会存在层层嵌套
 
-如果将整个 `state` 通过 `Context` 传入就无需层层组件的 `props` 传递（如果不需要整个 `state` ，可以只将某几个 `state` 给 `Provider` ）}}
+如果将整个 `state` 通过 `Context` 传入就无需层层组件的 `props` 传递（如果不需要整个 `state` ，可以只将某几个 `state` 给 `Provider` ）
 
 ### 1、父组件
 
-{{父组件的变化只是将 `state` 也给了 `Provider` ，然后去掉了 `Child` 组件的 `props` 透传}}
+父组件的变化只是将 `state` 也给了 `Provider` ，然后去掉了 `Child` 组件的 `props` 透传
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">'./Child'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initState = &#123; <span class="attr">count</span>: <span class="number">0</span>, <span class="attr">step</span>: <span class="number">0</span>, <span class="attr">number</span>: <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> reducer = <span class="function">(<span class="params">state, action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'stepInc'</span>: <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123; <span class="attr">step</span>: state.step + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'numberInc'</span>: <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123; <span class="attr">number</span>: state.number + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'count'</span>: <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123; <span class="attr">count</span>: state.step + state.number &#125;);</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [state, dispatch] = useReducer(reducer, initState);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;MyContext.Provider value=&#123;&#123; state, dispatch &#125;&#125;&gt;</span><br><span class="line">            &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'stepInc'</span> &#125;) &#125;&#125;&gt;parent step ++&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">            &lt;Child /</span>&gt;</span><br><span class="line">        &lt;<span class="regexp">/MyContext.Provider&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
 
 ### 2、子组件直接使用父组件的 state
 
-{{下面代码中可以看出，原来的 `props.number` 都变成了 `state.number`
+下面代码中可以看出，原来的 `props.number` 都变成了 `state.number`
 
-* **注意：在 return 内部我写了一个 console**}}
+* **注意：在 return 内部我写了一个 console**
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useContext, memo &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> memo(<span class="function">(<span class="params">props = &#123;&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; state, dispatch &#125; = useContext(MyContext);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &#123;<span class="built_in">console</span>.log(<span class="string">'[Child] RE-RENDER'</span>)&#125;</span><br><span class="line">            &lt;p&gt;step is : &#123;state.step&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">            &lt;p&gt;number is : &#123;state.number&#125;&lt;/</span>p&gt;</span><br><span class="line">            &lt;p&gt;count is : &#123;state.count&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">            &lt;hr /</span>&gt;</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">                &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'stepInc'</span> &#125;) &#125;&#125;&gt;step ++&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">                &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; type: 'numberInc' &#125;) &#125;&#125;&gt;number ++&lt;/</span>button&gt;</span><br><span class="line">                &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'count'</span> &#125;) &#125;&#125;&gt;number + step&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">            &lt;/</span>div&gt;</span><br><span class="line">        &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
 
@@ -342,18 +286,18 @@
 
 ### 4、直接使用父组件 state 带来的性能问题
 
-{{注意看上面的动图，在点击子组件的 `【number + step】` 按钮的时候，虽然 `count` 的值没有发生任何变化，但是一直触发 `re-render`，即使子组件是通过 `React.memo` 包装过的。
+注意看上面的动图，在点击子组件的 `【number + step】` 按钮的时候，虽然 `count` 的值没有发生任何变化，但是一直触发 `re-render`，即使子组件是通过 `React.memo` 包装过的。
 
 出现这个问题原因是 `React.memo` 只会对 `props` 进行浅比较，而通过 `Context` 我们直接将 `state` 注入到了组件内部，因此 `state` 的变化必然会触发 re-render，整个 `state` 变化是绕过了 `memo`
 }}
 
 ## 六、使用 useMemo() 解决 state Context 透传的性能问题
 
-{{既然 `React.memo()` 无法拦截注入到 `Context` 的 `state` 的变化，那就需要我们在组件内部进行更细粒度的性能优化，这个时候可以使用 `useMemo()`}}
+既然 `React.memo()` 无法拦截注入到 `Context` 的 `state` 的变化，那就需要我们在组件内部进行更细粒度的性能优化，这个时候可以使用 `useMemo()`
 
 ### 1、使用 useMemo 优化子组件渲染
 
-{{下面是对子组件的改造，去掉了 `React.memo`，在 `return` 内部通过 `useMemo()` 包装，并且声明了所有依赖项：（包括：step/number/count/dispatch）}}
+下面是对子组件的改造，去掉了 `React.memo`，在 `return` 内部通过 `useMemo()` 包装，并且声明了所有依赖项：（包括：step/number/count/dispatch）
 
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useContext, useMemo &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; MyContext &#125; <span class="keyword">from</span> <span class="string">'./context-manager'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; state, dispatch &#125; = useContext(MyContext);</span><br><span class="line">    <span class="keyword">return</span> useMemo(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'[Child] RE-RENDER'</span>);</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">                &lt;p&gt;step is : &#123;state.step&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">                &lt;p&gt;number is : &#123;state.number&#125;&lt;/</span>p&gt;</span><br><span class="line">                &lt;p&gt;count is : &#123;state.count&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">                &lt;hr /</span>&gt;</span><br><span class="line">                &lt;div&gt;</span><br><span class="line">                    &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'stepInc'</span> &#125;) &#125;&#125;&gt;step ++&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">                    &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; type: 'numberInc' &#125;) &#125;&#125;&gt;number ++&lt;/</span>button&gt;</span><br><span class="line">                    &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; <span class="attr">type</span>: <span class="string">'count'</span> &#125;) &#125;&#125;&gt;number + step&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">                &lt;/</span>div&gt;</span><br><span class="line">            &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        )</span></span><br><span class="line"><span class="regexp">    &#125;, [state.count, state.number, state.step, dispatch]);</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
 
@@ -361,9 +305,9 @@
 
 ![avatar](http://lc-eaMmR0jn.cn-n1.lcfile.com/1c9a06261ddb9ce73771/useContext%284%29.gif)
 
-{{从上面效果可以发现，当 `number+step=count` 不变的时候，是不会触发 `return` 中 `DOM` 的重新渲染的}}
+从上面效果可以发现，当 `number+step=count` 不变的时候，是不会触发 `return` 中 `DOM` 的重新渲染的
 
-
+<!--  -->
 ]]></content>
       <categories>
         <category>前端</category>
@@ -372,6 +316,19 @@
       <tags>
         <tag>前端</tag>
         <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为什么离开蚂蚁金服</title>
+    <url>/2020/07/28/%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%BB%E5%BC%80%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
+      <categories>
+        <category>Featured</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Thinkings</tag>
       </tags>
   </entry>
   <entry>
@@ -483,6 +440,35 @@
       </tags>
   </entry>
   <entry>
+    <title>面试总结(银联+正心谷)</title>
+    <url>/2020/07/28/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93(%E9%93%B6%E8%81%94+%E6%AD%A3%E5%BF%83%E8%B0%B7)/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
+      <categories>
+        <category>前端</category>
+        <category>面试</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一个人走得快，一群人走得远</title>
+    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
+<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Featured</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>通俗易懂的CSS布局display、position、float详解</title>
     <url>/2020/07/16/%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%9A%84CSS%E5%B8%83%E5%B1%80display%E3%80%81position%E3%80%81float%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>前端开发就像盖房子，如果说 html 是构成房子的砖瓦， css 则是决定这些砖瓦的位置和对它们进行装饰。在实际开发中，前端在拿到设计稿后，都会先梳理页面的大致结构，构思完页面的布局后，再进行 coding。大多数网站都有着相似的布局，掌握这些“套路”便可以快速高效的完成开发工作。</p>
@@ -538,6 +524,38 @@
       <tags>
         <tag>前端</tag>
         <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>什么是内卷</title>
+    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
+<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
+</li>
+<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
+</li>
+<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
+</li>
+<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
+</li>
+</ul>
+<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
+<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
+<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
+<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
+</blockquote>
+<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
+<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
+</blockquote>
+<p>So，要么多一点，要么均一点，其实就这么简单。</p>
+]]></content>
+      <categories>
+        <category>Featured</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
       </tags>
   </entry>
 </search>
