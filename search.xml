@@ -1,65 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>React.createRef()用法详解</title>
-    <url>/2020/07/25/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p> 在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
-<h2 id="什么时候使用Refs"><a href="#什么时候使用Refs" class="headerlink" title="什么时候使用Refs"></a>什么时候使用Refs</h2><ul>
-<li>管理焦点、文本选择、媒体回放;</li>
-<li>触发必要动画；</li>
-<li>整合第三方DOM库;</li>
-</ul>
-<p>避免对任何可以声明式解决的问题使用 <code>Refs</code> ；（比如相对于暴露一个对话框组件的 <code>open()、close()</code> 方法，请使用 <code>isOpen prop</code>！）</p>
-<h2 id="不要过度使用Refs"><a href="#不要过度使用Refs" class="headerlink" title="不要过度使用Refs"></a>不要过度使用Refs</h2><p>你的第一个倾向可能是使用 <code>Refs</code> 去实现一些APP中的东西。在这种情况下，请停下来，仔细想想 <code>state</code> 应该存在的组件层次。经常地，我们都知道应该由更高的层次去拥有 <code>state</code> 。</p>
-<h2 id="创建Refs"><a href="#创建Refs" class="headerlink" title="创建Refs"></a>创建Refs</h2><p>可以通过 <code>React.createRef()</code> 创建 <code>Refs</code> 并通过 <code>ref</code> 属性联系到 <code>React</code> 组件。 <code>Refs</code> 通常当组件被创建时被分配给实例变量，这样它们就能在组件中被引用。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">        <span class="keyword">super</span>(props);</span><br><span class="line">        <span class="keyword">this</span>.myRef = React.createRef();</span><br><span class="line">    &#125;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ref</span>=<span class="string">&#123;this.myRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="访问Refs"><a href="#访问Refs" class="headerlink" title="访问Refs"></a>访问Refs</h2><p>当一个 <code>ref</code> 通过 <code>render</code> 放入一个元素中，一个对节点的引用可以通过 <code>ref</code> 的 <code>current</code> 属性得到；</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> node = <span class="keyword">this</span>.myRef.current;</span><br></pre></td></tr></table></figure>
-
-<p><code>ref</code> 的值根据节点类型的不同而不同：</p>
-<ul>
-<li>当 <code>ref</code> 属性用于HTML元素，在构造器中通过 <code>React.createRef()</code> 函数创建的ref接收底层DOM元素作为它的current属性；</li>
-<li>当 <code>ref</code> 属性用于传统的类组件，ref对象接收挂载好的组件实例作为它的current；</li>
-</ul>
-<p>下面是对应于不同ref的例子</p>
-<h3 id="DOM元素"><a href="#DOM元素" class="headerlink" title="DOM元素"></a>DOM元素</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="comment">// 创建一个ref去储存textInput DOM元素</span></span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="keyword">this</span>.focusTextInput.bind(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  focusTextInput() &#123;</span><br><span class="line">    <span class="comment">// 很明显的，让text input获得焦点使用了原生的DOM API</span></span><br><span class="line">    <span class="comment">// 注意：我们通过current去获得DOM节点</span></span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 告诉React我们想要将&lt;input&gt;的ref和构造器中创建的textInput联系起来</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>React将会将会在组件挂载时将DOM元素分配给current属性，并且在组件被卸载时，将current属性重置为null。ref将会在<code>componentDidMount</code>和<code>componentDidUpdate</code>生命周期钩子前被更新</p>
-<h3 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h3><p>如果我们想要包装上面的<code>CustomTextInput</code>，模仿挂载后被点击。我们可以通过ref得到自定义的Input组件，手动调用它的focusTextInput函数。（注意！只有当<code>CustomTextInput</code>被声明为类的时候才有用！）</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AutoFocusTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;CustomTextInput ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="函数式组件（没有用的）"><a href="#函数式组件（没有用的）" class="headerlink" title="函数式组件（没有用的）"></a>函数式组件（没有用的）</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyFunctionalComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">input</span> /&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 这样没用！函数式组件根本就没有实例！</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;MyFunctionalComponent ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是，你可以在函数式组件中使用ref属性，就像你引用DOM元素和类组件一样。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// textInput 必须被声明在这里——ref才能适用于它</span></span><br><span class="line">  <span class="keyword">let</span> textInput = React.createRef();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">handleClick</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"text"</span></span><br><span class="line">            ref=&#123;textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"button"</span></span><br><span class="line">            value=<span class="string">"Focus the text input"</span></span><br><span class="line">            onClick=&#123;handleClick&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="向父组件暴露DOM引用（Refs）"><a href="#向父组件暴露DOM引用（Refs）" class="headerlink" title="向父组件暴露DOM引用（Refs）"></a>向父组件暴露DOM引用（Refs）</h2><p>在很罕见的情况下，你也许想要从父组件访问到子元素的DOM节点。通常来说我们不建议这样做，因为这样破坏了组件的封装性，但是在某些情况下对于类似：触发聚焦、改变子元素DOM节点的大小、位置等情况非常有用。</p>
-<p>你可以向子组件增加ref（就像上面说的），但是这并不是一个完美的解决方案——你只会获得一个组件实例而不是DOM节点。更糟糕的是，它对函数式组件没用！</p>
-<p>如果你使用React 16.3或者更高的版本，我们建议你在这些情况下使用<code>ref forwarding，Ref fprwarding</code>让组件可以选择去暴露子组件的ref作为他们自己的。你可以在ref forwarding文档中找到更全面的例子——怎样暴露子元素的DOM节点给父元素。</p>
-<p>如果你使用React 16.2或者更低的版本，或者你需要比<code>ref forwarding</code>所能提供的更多的灵活性。你可以使用替代方法，并且显式的传入一个ref当做一个不同命名的prop。</p>
-<p>如果可能，我们不建议暴露DOM节点，但是在一些情况下还是非常有用的。注意，这种方法需要你去在子组件中增加一些代码，如果你完全没有对于子组件实现的控制，你最后的选择是使用<code>findDOMNode()</code>方法，当然，也只能这样了。</p>
-<h2 id="回调Refs"><a href="#回调Refs" class="headerlink" title="回调Refs"></a>回调Refs</h2><p>React同样支持另一种名为“回调refs”的方法去设置refs——它可以给我们对refs创建和销毁更细粒度的控制。</p>
-<p>放入一个函数，而不是一个由<code>createRef()</code>创建的ref属性。这个函数接受React组件实例、或者HTML DOM元素作为参数——可以被储存并且在其他地方被访问。</p>
-<p>下面的例子实现了一个通常的模式：使用ref回调储存一个DOM节点的应用在实例变量中：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.textInput = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.setTextInputRef = <span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.textInput = element;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 通过原生DOM API聚焦文本</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.textInput) <span class="keyword">this</span>.textInput.focus();</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="comment">// 在挂载时自动聚焦</span></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 使用'ref'回调去在一个实例域中储存文本输入DOM元素的引用(比如, this.textInput).</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.setTextInputRef&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>React将会在组件挂载时使用DOM元素调用ref回调，在组件卸载时使用null调用ref回调。ref回调都会在<code>componentDidMount</code>或者<code>componentDidUpdate</code>生命周期钩子之前被调用。<br>你可以在组件之间传递回调refs，就像你可以对通过<code>React.createRef()</code>创建的对象refs一样：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;input ref=&#123;props.inputRef&#125; /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">class Parent extends React.Component &#123;</span></span><br><span class="line"><span class="regexp">  render() &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;CustomTextInput</span></span><br><span class="line"><span class="regexp">        inputRef=&#123;el =&gt; this.inputElement = el&#125;</span></span><br><span class="line"><span class="regexp">      /</span>&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在上面的例子中，Parent组件将他的ref回调作为inputRef这个属性（props）传入<code>CustomTextInput</code>组件，接着<code>CustomTextInput</code>组件将同样的函数作为一个特殊的<code>ref</code>属性<code>（attribute）</code>传给<code>&lt;input&gt;</code>。从结果来看，<code>Parent</code>组件中的<code>this.inputElement</code>将会被放在与在<code>CustomTextInput</code>组件的<code>&lt;input&gt;</code>元素相关的DOM节点中。</p>
-<h2 id="关于回调refs的警告"><a href="#关于回调refs的警告" class="headerlink" title="关于回调refs的警告"></a>关于回调refs的警告</h2><p>如果ref回调被定义为一个行内函数，当组件更新时会被调用两次——第一次被null调用、而后被DOM元素调用。这是因为函数的新实例会在每次渲染的时候创建，所以React需要清除老的ref然后生成一个新的。你可以通过在class中定义一个绑定的ref回调方法避免这个问题，但是注意，这种问题在大多数情况下都没什么影响~</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ES6基础语法</title>
     <url>/2020/07/16/ES6%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>ES6 是下一代 JavaScript 语法标准，比起 ES5 有很大的变化。<br>React 大量使用 ES6 语法，本文介绍其中一些最重要的语法点。完整的 ES6 介绍请参考 <a href="http://es6.ruanyifeng.com/" target="_blank" rel="noopener">http://es6.ruanyifeng.com/</a> 。</p>
@@ -135,6 +76,187 @@
 
 <p>上面代码中，*表示引入所有接口，也可以只引入指定的接口。</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// otherApp.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;sum, pi&#125; <span class="keyword">from</span> <span class="string">"lib/math"</span>;</span><br><span class="line">alert(<span class="string">"2π = "</span> + sum(pi, pi));</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一个人走得快，一群人走得远</title>
+    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
+<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Featured</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>React.createRef()用法详解</title>
+    <url>/2020/07/25/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p> 在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
+<h2 id="什么时候使用Refs"><a href="#什么时候使用Refs" class="headerlink" title="什么时候使用Refs"></a>什么时候使用Refs</h2><ul>
+<li>管理焦点、文本选择、媒体回放;</li>
+<li>触发必要动画；</li>
+<li>整合第三方DOM库;</li>
+</ul>
+<p>避免对任何可以声明式解决的问题使用 <code>Refs</code> ；（比如相对于暴露一个对话框组件的 <code>open()、close()</code> 方法，请使用 <code>isOpen prop</code>！）</p>
+<h2 id="不要过度使用Refs"><a href="#不要过度使用Refs" class="headerlink" title="不要过度使用Refs"></a>不要过度使用Refs</h2><p>你的第一个倾向可能是使用 <code>Refs</code> 去实现一些APP中的东西。在这种情况下，请停下来，仔细想想 <code>state</code> 应该存在的组件层次。经常地，我们都知道应该由更高的层次去拥有 <code>state</code> 。</p>
+<h2 id="创建Refs"><a href="#创建Refs" class="headerlink" title="创建Refs"></a>创建Refs</h2><p>可以通过 <code>React.createRef()</code> 创建 <code>Refs</code> 并通过 <code>ref</code> 属性联系到 <code>React</code> 组件。 <code>Refs</code> 通常当组件被创建时被分配给实例变量，这样它们就能在组件中被引用。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">        <span class="keyword">super</span>(props);</span><br><span class="line">        <span class="keyword">this</span>.myRef = React.createRef();</span><br><span class="line">    &#125;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ref</span>=<span class="string">&#123;this.myRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="访问Refs"><a href="#访问Refs" class="headerlink" title="访问Refs"></a>访问Refs</h2><p>当一个 <code>ref</code> 通过 <code>render</code> 放入一个元素中，一个对节点的引用可以通过 <code>ref</code> 的 <code>current</code> 属性得到；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> node = <span class="keyword">this</span>.myRef.current;</span><br></pre></td></tr></table></figure>
+
+<p><code>ref</code> 的值根据节点类型的不同而不同：</p>
+<ul>
+<li>当 <code>ref</code> 属性用于HTML元素，在构造器中通过 <code>React.createRef()</code> 函数创建的ref接收底层DOM元素作为它的current属性；</li>
+<li>当 <code>ref</code> 属性用于传统的类组件，ref对象接收挂载好的组件实例作为它的current；</li>
+</ul>
+<p>下面是对应于不同ref的例子</p>
+<h3 id="DOM元素"><a href="#DOM元素" class="headerlink" title="DOM元素"></a>DOM元素</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="comment">// 创建一个ref去储存textInput DOM元素</span></span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="keyword">this</span>.focusTextInput.bind(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  focusTextInput() &#123;</span><br><span class="line">    <span class="comment">// 很明显的，让text input获得焦点使用了原生的DOM API</span></span><br><span class="line">    <span class="comment">// 注意：我们通过current去获得DOM节点</span></span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 告诉React我们想要将&lt;input&gt;的ref和构造器中创建的textInput联系起来</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>React将会将会在组件挂载时将DOM元素分配给current属性，并且在组件被卸载时，将current属性重置为null。ref将会在<code>componentDidMount</code>和<code>componentDidUpdate</code>生命周期钩子前被更新</p>
+<h3 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h3><p>如果我们想要包装上面的<code>CustomTextInput</code>，模仿挂载后被点击。我们可以通过ref得到自定义的Input组件，手动调用它的focusTextInput函数。（注意！只有当<code>CustomTextInput</code>被声明为类的时候才有用！）</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AutoFocusTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="keyword">this</span>.textInput.current.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;CustomTextInput ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数式组件（没有用的）"><a href="#函数式组件（没有用的）" class="headerlink" title="函数式组件（没有用的）"></a>函数式组件（没有用的）</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyFunctionalComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">input</span> /&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.textInput = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 这样没用！函数式组件根本就没有实例！</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;MyFunctionalComponent ref=&#123;<span class="keyword">this</span>.textInput&#125; /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，你可以在函数式组件中使用ref属性，就像你引用DOM元素和类组件一样。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// textInput 必须被声明在这里——ref才能适用于它</span></span><br><span class="line">  <span class="keyword">let</span> textInput = React.createRef();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">handleClick</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    textInput.current.focus();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"text"</span></span><br><span class="line">            ref=&#123;textInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">            type=<span class="string">"button"</span></span><br><span class="line">            value=<span class="string">"Focus the text input"</span></span><br><span class="line">            onClick=&#123;handleClick&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="向父组件暴露DOM引用（Refs）"><a href="#向父组件暴露DOM引用（Refs）" class="headerlink" title="向父组件暴露DOM引用（Refs）"></a>向父组件暴露DOM引用（Refs）</h2><p>在很罕见的情况下，你也许想要从父组件访问到子元素的DOM节点。通常来说我们不建议这样做，因为这样破坏了组件的封装性，但是在某些情况下对于类似：触发聚焦、改变子元素DOM节点的大小、位置等情况非常有用。</p>
+<p>你可以向子组件增加ref（就像上面说的），但是这并不是一个完美的解决方案——你只会获得一个组件实例而不是DOM节点。更糟糕的是，它对函数式组件没用！</p>
+<p>如果你使用React 16.3或者更高的版本，我们建议你在这些情况下使用<code>ref forwarding，Ref fprwarding</code>让组件可以选择去暴露子组件的ref作为他们自己的。你可以在ref forwarding文档中找到更全面的例子——怎样暴露子元素的DOM节点给父元素。</p>
+<p>如果你使用React 16.2或者更低的版本，或者你需要比<code>ref forwarding</code>所能提供的更多的灵活性。你可以使用替代方法，并且显式的传入一个ref当做一个不同命名的prop。</p>
+<p>如果可能，我们不建议暴露DOM节点，但是在一些情况下还是非常有用的。注意，这种方法需要你去在子组件中增加一些代码，如果你完全没有对于子组件实现的控制，你最后的选择是使用<code>findDOMNode()</code>方法，当然，也只能这样了。</p>
+<h2 id="回调Refs"><a href="#回调Refs" class="headerlink" title="回调Refs"></a>回调Refs</h2><p>React同样支持另一种名为“回调refs”的方法去设置refs——它可以给我们对refs创建和销毁更细粒度的控制。</p>
+<p>放入一个函数，而不是一个由<code>createRef()</code>创建的ref属性。这个函数接受React组件实例、或者HTML DOM元素作为参数——可以被储存并且在其他地方被访问。</p>
+<p>下面的例子实现了一个通常的模式：使用ref回调储存一个DOM节点的应用在实例变量中：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTextInput</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.textInput = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.setTextInputRef = <span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.textInput = element;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 通过原生DOM API聚焦文本</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.textInput) <span class="keyword">this</span>.textInput.focus();</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="comment">// 在挂载时自动聚焦</span></span><br><span class="line">    <span class="keyword">this</span>.focusTextInput();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="comment">// 使用'ref'回调去在一个实例域中储存文本输入DOM元素的引用(比如, this.textInput).</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"text"</span></span><br><span class="line">          ref=&#123;<span class="keyword">this</span>.setTextInputRef&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;input</span><br><span class="line">          type=<span class="string">"button"</span></span><br><span class="line">          value=<span class="string">"Focus the text input"</span></span><br><span class="line">          onClick=&#123;<span class="keyword">this</span>.focusTextInput&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>React将会在组件挂载时使用DOM元素调用ref回调，在组件卸载时使用null调用ref回调。ref回调都会在<code>componentDidMount</code>或者<code>componentDidUpdate</code>生命周期钩子之前被调用。<br>你可以在组件之间传递回调refs，就像你可以对通过<code>React.createRef()</code>创建的对象refs一样：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;input ref=&#123;props.inputRef&#125; /&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">class Parent extends React.Component &#123;</span></span><br><span class="line"><span class="regexp">  render() &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;CustomTextInput</span></span><br><span class="line"><span class="regexp">        inputRef=&#123;el =&gt; this.inputElement = el&#125;</span></span><br><span class="line"><span class="regexp">      /</span>&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，Parent组件将他的ref回调作为inputRef这个属性（props）传入<code>CustomTextInput</code>组件，接着<code>CustomTextInput</code>组件将同样的函数作为一个特殊的<code>ref</code>属性<code>（attribute）</code>传给<code>&lt;input&gt;</code>。从结果来看，<code>Parent</code>组件中的<code>this.inputElement</code>将会被放在与在<code>CustomTextInput</code>组件的<code>&lt;input&gt;</code>元素相关的DOM节点中。</p>
+<h2 id="关于回调refs的警告"><a href="#关于回调refs的警告" class="headerlink" title="关于回调refs的警告"></a>关于回调refs的警告</h2><p>如果ref回调被定义为一个行内函数，当组件更新时会被调用两次——第一次被null调用、而后被DOM元素调用。这是因为函数的新实例会在每次渲染的时候创建，所以React需要清除老的ref然后生成一个新的。你可以通过在class中定义一个绑定的ref回调方法避免这个问题，但是注意，这种问题在大多数情况下都没什么影响~</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>什么是内卷</title>
+    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
+<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
+</li>
+<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
+</li>
+<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
+</li>
+<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
+</li>
+</ul>
+<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
+<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
+<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
+<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
+</blockquote>
+<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
+<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
+</blockquote>
+<p>So，要么多一点，要么均一点，其实就这么简单。</p>
+]]></content>
+      <categories>
+        <category>Featured</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于js中的各种尺寸和坐标的理解</title>
+    <url>/2020/07/15/%E5%85%B3%E4%BA%8Ejs%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%B0%BA%E5%AF%B8%E5%92%8C%E5%9D%90%E6%A0%87%E7%9A%84%E7%90%86%E8%A7%A3/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>关于尺寸：</p>
+<p>  关于尺寸问题分为两种情况，一种是在body下的尺寸。另一种是在div下的尺寸。</p>
+<p>在div下：</p>
+<p>  clienttWidth/Height:是对象内容的宽高。</p>
+<p>  clienttWidth/Height:=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
+<p>  clientTop：=border-top的宽。</p>
+<p>  clientLeft：=border-left的宽。</p>
+<p>  offsetWidth/Height：是对象的自身的宽高，包括滚动条、边线、padding，值会随着内容的输入而不断改变。</p>
+<p>  offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
+<p>  offsetLeft：对象距父元素或浏览器窗口的左边距离。</p>
+<p>  offsetTop： 对象距父元素或浏览器窗口的上边距离。</p>
+<p>  offsetParent为定位的父元素，未定位时默认以body为父元素。</p>
+<p>在ie6/7中：offsetLeft=offsetParent的padding-left+当前元素的margin-left</p>
+<p>在ie8/9/9即chrome中：：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left+offsetParent的border-left</p>
+<p>在FireFox中：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left</p>
+<p>  scrollWidth/Height:网页实际内容的宽高（包括带滚动条的隐蔽的地方）。</p>
+<p>  scrollWidth/Height：所有浏览器是一致的。scrollHeight/Width=自身的宽高+padding*2。</p>
+<p>scrollTop：设置或获取位于对象最顶端和父元素中可见内容的最顶端之间的距离(即网页被卷去的高)</p>
+<p>在body下：</p>
+<p>clientWidth/Height=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
+<p>offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
+<p>scrollWidth/Height:</p>
+<p>1.给定宽高小于浏览器窗口时。</p>
+<p>  scrollWidth/Height:通常时浏览器的宽高。</p>
+<p>2.给定宽高大于浏览器窗口，且内容小于给定宽高时。</p>
+<p>  scrollWidth/Height:=给定的宽高+其所有的padding、margin和border(宽是(上下)高是(左右))</p>
+<p>3.给定宽高大于浏览器窗口，且内容大于给定宽高时。</p>
+<p>  scrollWidth/Height:=内容宽度(大于给定宽高的那个内容)+其所有的padding、margin和border</p>
+<p>获取可视区域：</p>
+<p>  document.documentElement.clientWidth|| document.body.clientWidth||window.innerWidth</p>
+<p>  document.documentElement.clientHeight|| document.body.clientHeight||window.innerHeight</p>
+<p>获取网页卷进去的高度：</p>
+<p>var scrollTop= document.documentElement.scrollTop || window.pageYOffset(可选) || document.body.scrollTop</p>
+<p>window.pageXOffset/pageYoffset 整数只读属性。表示X/Y轴滚动条向右/下滚动过的像素数（表示文档向右/下滚动过的像素数）。IE不支持该属性，使用body元素的scrollLeft属性替代。</p>
+<p>浏览器内部的宽： innerWidth</p>
+<p>浏览器内部的高： innerHeight</p>
+<p>浏览器外部的宽： outerWidth</p>
+<p>浏览器外部的高： outerHeight</p>
+<p>网页可见区域宽： document.body.clientWidth;  (或innerWidth )</p>
+<p>网页可见区域高： document.body.clientHeight; (或innerHeight)</p>
+<p>网页可见区域宽： document.body.offsetWidth   (包括边线的宽);</p>
+<p>网页可见区域高： document.body.offsetHeight  (包括边线的宽);</p>
+<p>网页正文全文宽： document.body.scrollWidth;</p>
+<p>网页正文全文高： document.body.scrollHeight;</p>
+<p>网页被卷去的高： document.body.scrollTop;</p>
+<p>网页被卷去的左： document.body.scrollLeft;</p>
+<p>屏幕分辨率的高： window.screen.height;</p>
+<p>屏幕分辨率的宽： window.screen.width;</p>
+<p>浏览器顶端到屏幕顶端： window.screenTop;(在IE,Opera中Y轴为0时显示的是页面可见区域的距离，即浏览器工具栏的像素高度)</p>
+<p>浏览器左部到屏幕左部： window.screenLeft;</p>
+<p>屏幕可用工作区高度： window.screen.availHeight;</p>
+<p>屏幕可用工作区宽度：window.screen.availWidth;</p>
+<p>坐标用法：</p>
+<p>clientX/clientY 相对于浏览器(可视区左上角0,0.不包括顶部的标题栏。)的坐标</p>
+<p>offsetX/offsetY 相对于事件源左上角(0,0)的坐标</p>
+<p>screenX/screenY 相对于设备屏幕左上角(0,0)的坐标。</p>
+<p>当是window.screenX/screenY时。screenX/screenY等于screenLeft/screenTop。</p>
+<p>pageX/pageY     相对于整个网页左上角(0,0.包括顶部的标题栏)的坐标</p>
+<p>x/y             在IE浏览器中如果进行动态定位时：相对于最内容包容元素的左上角(0,0)的坐标</p>
+<p>在IE浏览器中未进行动态定位时x/y =clientX/clientY。</p>
+<p>在其他浏览器中始终x/y =clientX/clientY。</p>
 ]]></content>
       <categories>
         <category>前端</category>
@@ -319,93 +441,6 @@
       </tags>
   </entry>
   <entry>
-    <title>为什么离开蚂蚁金服</title>
-    <url>/2020/07/28/%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%BB%E5%BC%80%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
-      <categories>
-        <category>Featured</category>
-        <category>Thinkings</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Thinkings</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于js中的各种尺寸和坐标的理解</title>
-    <url>/2020/07/15/%E5%85%B3%E4%BA%8Ejs%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%B0%BA%E5%AF%B8%E5%92%8C%E5%9D%90%E6%A0%87%E7%9A%84%E7%90%86%E8%A7%A3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>关于尺寸：</p>
-<p>  关于尺寸问题分为两种情况，一种是在body下的尺寸。另一种是在div下的尺寸。</p>
-<p>在div下：</p>
-<p>  clienttWidth/Height:是对象内容的宽高。</p>
-<p>  clienttWidth/Height:=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
-<p>  clientTop：=border-top的宽。</p>
-<p>  clientLeft：=border-left的宽。</p>
-<p>  offsetWidth/Height：是对象的自身的宽高，包括滚动条、边线、padding，值会随着内容的输入而不断改变。</p>
-<p>  offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
-<p>  offsetLeft：对象距父元素或浏览器窗口的左边距离。</p>
-<p>  offsetTop： 对象距父元素或浏览器窗口的上边距离。</p>
-<p>  offsetParent为定位的父元素，未定位时默认以body为父元素。</p>
-<p>在ie6/7中：offsetLeft=offsetParent的padding-left+当前元素的margin-left</p>
-<p>在ie8/9/9即chrome中：：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left+offsetParent的border-left</p>
-<p>在FireFox中：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left</p>
-<p>  scrollWidth/Height:网页实际内容的宽高（包括带滚动条的隐蔽的地方）。</p>
-<p>  scrollWidth/Height：所有浏览器是一致的。scrollHeight/Width=自身的宽高+padding*2。</p>
-<p>scrollTop：设置或获取位于对象最顶端和父元素中可见内容的最顶端之间的距离(即网页被卷去的高)</p>
-<p>在body下：</p>
-<p>clientWidth/Height=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
-<p>offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
-<p>scrollWidth/Height:</p>
-<p>1.给定宽高小于浏览器窗口时。</p>
-<p>  scrollWidth/Height:通常时浏览器的宽高。</p>
-<p>2.给定宽高大于浏览器窗口，且内容小于给定宽高时。</p>
-<p>  scrollWidth/Height:=给定的宽高+其所有的padding、margin和border(宽是(上下)高是(左右))</p>
-<p>3.给定宽高大于浏览器窗口，且内容大于给定宽高时。</p>
-<p>  scrollWidth/Height:=内容宽度(大于给定宽高的那个内容)+其所有的padding、margin和border</p>
-<p>获取可视区域：</p>
-<p>  document.documentElement.clientWidth|| document.body.clientWidth||window.innerWidth</p>
-<p>  document.documentElement.clientHeight|| document.body.clientHeight||window.innerHeight</p>
-<p>获取网页卷进去的高度：</p>
-<p>var scrollTop= document.documentElement.scrollTop || window.pageYOffset(可选) || document.body.scrollTop</p>
-<p>window.pageXOffset/pageYoffset 整数只读属性。表示X/Y轴滚动条向右/下滚动过的像素数（表示文档向右/下滚动过的像素数）。IE不支持该属性，使用body元素的scrollLeft属性替代。</p>
-<p>浏览器内部的宽： innerWidth</p>
-<p>浏览器内部的高： innerHeight</p>
-<p>浏览器外部的宽： outerWidth</p>
-<p>浏览器外部的高： outerHeight</p>
-<p>网页可见区域宽： document.body.clientWidth;  (或innerWidth )</p>
-<p>网页可见区域高： document.body.clientHeight; (或innerHeight)</p>
-<p>网页可见区域宽： document.body.offsetWidth   (包括边线的宽);</p>
-<p>网页可见区域高： document.body.offsetHeight  (包括边线的宽);</p>
-<p>网页正文全文宽： document.body.scrollWidth;</p>
-<p>网页正文全文高： document.body.scrollHeight;</p>
-<p>网页被卷去的高： document.body.scrollTop;</p>
-<p>网页被卷去的左： document.body.scrollLeft;</p>
-<p>屏幕分辨率的高： window.screen.height;</p>
-<p>屏幕分辨率的宽： window.screen.width;</p>
-<p>浏览器顶端到屏幕顶端： window.screenTop;(在IE,Opera中Y轴为0时显示的是页面可见区域的距离，即浏览器工具栏的像素高度)</p>
-<p>浏览器左部到屏幕左部： window.screenLeft;</p>
-<p>屏幕可用工作区高度： window.screen.availHeight;</p>
-<p>屏幕可用工作区宽度：window.screen.availWidth;</p>
-<p>坐标用法：</p>
-<p>clientX/clientY 相对于浏览器(可视区左上角0,0.不包括顶部的标题栏。)的坐标</p>
-<p>offsetX/offsetY 相对于事件源左上角(0,0)的坐标</p>
-<p>screenX/screenY 相对于设备屏幕左上角(0,0)的坐标。</p>
-<p>当是window.screenX/screenY时。screenX/screenY等于screenLeft/screenTop。</p>
-<p>pageX/pageY     相对于整个网页左上角(0,0.包括顶部的标题栏)的坐标</p>
-<p>x/y             在IE浏览器中如果进行动态定位时：相对于最内容包容元素的左上角(0,0)的坐标</p>
-<p>在IE浏览器中未进行动态定位时x/y =clientX/clientY。</p>
-<p>在其他浏览器中始终x/y =clientX/clientY。</p>
-]]></content>
-      <categories>
-        <category>前端</category>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>详解JS执行队列(JavaScript执行顺序)，搞懂setTimeout方法到底是如何执行的</title>
     <url>/2020/07/16/%E8%AF%A6%E8%A7%A3JS%E6%89%A7%E8%A1%8C%E9%98%9F%E5%88%97(JavaScript%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F)%EF%BC%8C%E6%90%9E%E6%87%82setTimeout%E6%96%B9%E6%B3%95%E5%88%B0%E5%BA%95%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote>
@@ -440,23 +475,22 @@
       </tags>
   </entry>
   <entry>
-    <title>面试总结(银联+正心谷)</title>
-    <url>/2020/07/28/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93(%E9%93%B6%E8%81%94+%E6%AD%A3%E5%BF%83%E8%B0%B7)/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
-      <categories>
-        <category>前端</category>
-        <category>面试</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-        <tag>面试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一个人走得快，一群人走得远</title>
-    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
-<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
+    <title>闲话终日有，不听自然无</title>
+    <url>/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote>
+<p>在网络这个匿名的背景中，人内心深处的种种幽暗的情绪都会被释放，人们会特别的习惯于好辩，会放纵自己无知的热情。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>我们都知道无知者无畏，一个知识越贫乏的人，越是拥有一种莫名奇怪的勇气和一种莫名奇怪的自豪感。因为知识越贫乏，他所相信的东西就越绝对，因为他根本就没有听说过与此相对立的观点，当你遇到一个网络喷子，当他不断地使用一些标语式的词汇对你进行攻击，其实没有必要和他辩论的。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>一个标语话思维的人，他已经缺乏了自己独立思考的能力，所以你有必要和一个傻子去论证吗？</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>不要试图和没有独立思维能力的人争辩，因为他会把你拉到和他同样低的水平，然后用丰富的经验打败你，但凡有一丝不爽，你都输了。</p>
 </blockquote>
 ]]></content>
       <categories>
@@ -524,38 +558,6 @@
       <tags>
         <tag>前端</tag>
         <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>什么是内卷</title>
-    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
-<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
-</li>
-<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
-</li>
-<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
-</li>
-<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
-</li>
-</ul>
-<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
-<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
-<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
-<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
-</blockquote>
-<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
-<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
-</blockquote>
-<p>So，要么多一点，要么均一点，其实就这么简单。</p>
-]]></content>
-      <categories>
-        <category>Featured</category>
-        <category>Thinkings</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
       </tags>
   </entry>
 </search>

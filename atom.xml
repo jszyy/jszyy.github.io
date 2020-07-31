@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://github.com/jszyy/"/>
-  <updated>2020-07-29T12:44:12.146Z</updated>
+  <updated>2020-07-31T02:00:46.870Z</updated>
   <id>http://github.com/jszyy/</id>
   
   <author>
@@ -17,17 +17,20 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>为什么离开蚂蚁金服</title>
-    <link href="http://github.com/jszyy/2020/07/28/%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%BB%E5%BC%80%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D/"/>
-    <id>http://github.com/jszyy/2020/07/28/%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%BB%E5%BC%80%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D/</id>
-    <published>2020-07-28T15:46:50.716Z</published>
-    <updated>2020-07-29T12:44:12.146Z</updated>
+    <title>闲话终日有，不听自然无</title>
+    <link href="http://github.com/jszyy/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/"/>
+    <id>http://github.com/jszyy/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/</id>
+    <published>2020-07-28T15:44:58.559Z</published>
+    <updated>2020-07-31T02:00:46.870Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote><p>在网络这个匿名的背景中，人内心深处的种种幽暗的情绪都会被释放，人们会特别的习惯于好辩，会放纵自己无知的热情。</p></blockquote><hr><blockquote><p>我们都知道无知者无畏，一个知识越贫乏的人，越是拥有一种莫名奇怪的勇气和一种莫名奇怪的自豪感。因为知识越贫乏，他所相信的东西就越绝对，因为他根本就没有听说过与此相对立的观点，当你遇到一个网络喷子，当他不断地使用一些标语式的词汇对你进行攻击，其实没有必要和他辩论的。</p></blockquote><hr><blockquote><p>一个标语话思维的人，他已经缺乏了自己独立思考的能力，所以你有必要和一个傻子去论证吗？</p></blockquote><hr><blockquote><p>不要试图和没有独立思维能力的人争辩，因为他会把你拉到和他同样低的水平，然后用丰富的经验打败你，但凡有一丝不爽，你都输了。</p></blockquote>]]></content>
     
     <summary type="html">
     
-      仅为蚂蚁金服服务了一年，为什么要离开蚂蚁金服？
+      
+      
+        &lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla
+      
     
     </summary>
     
@@ -39,34 +42,7 @@
     
       <category term="Featured" scheme="http://github.com/jszyy/tags/Featured/"/>
     
-      <category term="Thinkings" scheme="http://github.com/jszyy/tags/Thinkings/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>面试总结(银联+正心谷)</title>
-    <link href="http://github.com/jszyy/2020/07/28/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93(%E9%93%B6%E8%81%94+%E6%AD%A3%E5%BF%83%E8%B0%B7)/"/>
-    <id>http://github.com/jszyy/2020/07/28/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93(%E9%93%B6%E8%81%94+%E6%AD%A3%E5%BF%83%E8%B0%B7)/</id>
-    <published>2020-07-28T15:44:58.559Z</published>
-    <updated>2020-07-29T12:44:08.284Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
-    
-    <summary type="html">
-    
-      面试总结(银联+正心谷)
-    
-    </summary>
-    
-    
-      <category term="前端" scheme="http://github.com/jszyy/categories/%E5%89%8D%E7%AB%AF/"/>
-    
-      <category term="面试" scheme="http://github.com/jszyy/categories/%E5%89%8D%E7%AB%AF/%E9%9D%A2%E8%AF%95/"/>
-    
-    
-      <category term="前端" scheme="http://github.com/jszyy/tags/%E5%89%8D%E7%AB%AF/"/>
-    
-      <category term="面试" scheme="http://github.com/jszyy/tags/%E9%9D%A2%E8%AF%95/"/>
+      <category term="Writings" scheme="http://github.com/jszyy/tags/Writings/"/>
     
   </entry>
   
