@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>做一名合格的前端工程师(一) | 反手一个function</title><meta name="description" content="做一名合格的前端工程师(一)"><meta name="keywords" content="Thinkings"><meta name="author" content="反手一个function"><meta name="copyright" content="反手一个function"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="https://s1.ax1x.com/2020/07/17/UrzwUs.jpg"><link rel="canonical" href="http://github.com/jszyy/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="做一名合格的前端工程师(一)"><meta property="og:url" content="http://github.com/jszyy/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/"><meta property="og:site_name" content="反手一个function"><meta property="og:description" content="做一名合格的前端工程师(一)"><meta property="og:image" content="http://lc-4LTdKlTA.cn-n1.lcfile.com/80ec07b6b1896cd1c73b/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%881.jpeg"><meta property="article:published_time" content="2020-08-15T17:22:24.844Z"><meta property="article:modified_time" content="2020-08-15T18:26:47.402Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="next" title="闲话终日有，不听自然无" href="http://github.com/jszyy/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查詢的內容:${query}"}},
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '鍵將本頁加入書籤'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"按","message_next":"鍵將本頁加入書籤"},"chs_to_cht":"你已切換為繁體","cht_to_chs":"你已切換為簡體","day_to_night":"你已切換為深色模式","night_to_day":"你已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: true    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="反手一个function" type="application/atom+xml">
+</head><body><canvas class="fireworks"></canvas><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://s1.ax1x.com/2020/07/17/UrzwUs.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">10</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">標籤</div><div class="length_num">5</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分類</div><div class="length_num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 写作</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于我</span></a></div></div></div></div><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目錄</div><div class="sidebar-toc__progress"><span class="progress-notice">你已經讀了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#版本管理"><span class="toc-number">1.</span> <span class="toc-text">版本管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#长时间不提交代码"><span class="toc-number">1.1.</span> <span class="toc-text">长时间不提交代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单分支开发"><span class="toc-number">1.2.</span> <span class="toc-text">单分支开发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git权限管理"><span class="toc-number">1.3.</span> <span class="toc-text">git权限管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#持续集成"><span class="toc-number">2.</span> <span class="toc-text">持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地构建没有持续集成环境"><span class="toc-number">2.1.</span> <span class="toc-text">本地构建没有持续集成环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#deadLine才提交代码"><span class="toc-number">2.2.</span> <span class="toc-text">deadLine才提交代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档管理"><span class="toc-number">3.</span> <span class="toc-text">文档管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#没有文档"><span class="toc-number">3.1.</span> <span class="toc-text">没有文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文档不更新"><span class="toc-number">3.2.</span> <span class="toc-text">文档不更新</span></a></li></ol></li></ol></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(http://lc-4LTdKlTA.cn-n1.lcfile.com/80ec07b6b1896cd1c73b/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%881.jpeg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">反手一个function</a></span><span class="pull-right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 写作</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于我</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">做一名合格的前端工程师(一)</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="發表於 2020-08-16 01:22:24"><i class="far fa-calendar-alt fa-fw"></i> 發表於 2020-08-16</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新於 2020-08-16 02:26:47"><i class="fas fa-history fa-fw"></i> 更新於 2020-08-16</span></time><span class="post-meta__categories"><span class="post-meta__separator">|</span><i class="fas fa-inbox fa-fw post-meta__icon"></i><a class="post-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a><i class="fas fa-angle-right post-meta__separator"></i><i class="fas fa-inbox fa-fw post-meta__icon"></i><a class="post-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/Thinkings/">Thinkings</a></span></div><div class="meta-secondline"> <span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta__icon"></i><span>字數總計:</span><span class="word-count">1.7k</span><span class="post-meta__separator">|</span><i class="far fa-clock fa-fw post-meta__icon"></i><span>閱讀時長: 4 分鐘</span></span></div><div class="meta-thirdline"><span class="post-meta-pv-cv"><span class="post-meta__separator">|</span><i class="far fa-eye fa-fw post-meta__icon"></i><span>閱讀量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="far fa-comments fa-fw post-meta__icon"></i><span>評論數:</span><a href="/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/#post-comment" itemprop="discussionUrl"><span class="valine-comment-count comment-count" data-xid="/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/" itemprop="commentCount"></span></a></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>作为一名程序员, 在工作当中或者说在我们职业生涯当中，都会烦一点小小的错误，这些小错误看似没什么大不了，但是长此以往会在我们的职业生涯中产生一定的影响，大则会让我们丢掉饭碗，小则会影响我们的人人发展，所以有必要总结一下在工作中踩的坑和如何避免这些坑。</p>
+<h2 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h2><p>当前git是使用度最高的版本管理工具，就以git为例</p>
+<h3 id="长时间不提交代码"><a href="#长时间不提交代码" class="headerlink" title="长时间不提交代码"></a>长时间不提交代码</h3><p>这是一个重点，不要单纯认为这是一个小坑，前不久就刚踩过类似的坑。很多时候我们习惯写完一个功能才提交，就会造成什么问题呢？如果说这个周期内电脑由于各种奇葩原因坏掉了，代码就会完全消失掉，尽管这种可能性非常低，但不代表就没有。已经碰到好几例这样的情况发生而使得代码丢失的程序员，如果你的代码丢失了，小则可能被领导责备大则可能会让你丢掉饭碗被炒鱿鱼，所以说如何正确的提交代码呢，我认为不管你代码写没写完，每天至少一次是正常的，如果你不是很懒，你也可以在午休前提交一次，下午下班前再提交一次，这就会把你的代码的损失量降到半天之内。</p>
+<h3 id="单分支开发"><a href="#单分支开发" class="headerlink" title="单分支开发"></a>单分支开发</h3><p>不用想都知道有很多程序员都在进行单分支开发，举个例子，比如说你的项目开发周期是一周开发完成，但是在一周的第2天紧急出现了一个bug，这个bug要求你今天修复，但是你之前开发的代码还没有开发完成，这时候生产环境中的代码是上个版本的，而你开发的是已经已经了一半的代码，而你要紧急修复bug，单分支就没办法去做，只有把这个功能给开发完成然后再修改bug，这样可能要后几天之后，现在的要求是今天必须修复掉，如果是多分支的话可以立即checkout到上一个分支，然后进行线上版本的hotfix。</p>
+<p>还有种情况就是上线之后不打tag，不做任何的标记就发布了，其实是应该打个tag的，比如说版本回滚的时候就会比较容易回滚到上一个版本，假如某个迭代上线了，由于某个重大bug必须回滚到上一个正确的版本，有了tag就可以马上进行正确回滚。</p>
+<h3 id="git权限管理"><a href="#git权限管理" class="headerlink" title="git权限管理"></a>git权限管理</h3><p>比较常见的情况就是仓库没有设置或者没有合理设置人员权限，项目中任何参与者都完全拥有项目的操作权限。出现问题头疼扯皮不说，单是排查问题到解决问题都会是一件比较烦心的事情。借鉴之前在阿里的工作模式，一般开发人员的权限比较低，涉及到合并代码，迭代发布，版本控制等敏感操作都由指定负责人进行操作，有了权限管理，再配合多分支开发，进行CR也会方便很多。</p>
+<h2 id="持续集成"><a href="#持续集成" class="headerlink" title="持续集成"></a>持续集成</h2><p>简单说，就是把我们开发的代码，提交到一个服务器上，在服务器上进行代码构建，代码通过测试之后直接用于生产环境，这个就是继续集成。</p>
+<p>一个好的持续集成一定是可以量化的，比如说测试人员和相关人员可以看到你的开发进度，每个人也可以很清晰地看到个人的开发进度，大公司一般都会有一套持续集成解决方案，如果公司有，那就严格按照公司的一套流程执行下去就ok了，如果公司没有，那你可能会很容易踩到下面几个坑。</p>
+<h3 id="本地构建没有持续集成环境"><a href="#本地构建没有持续集成环境" class="headerlink" title="本地构建没有持续集成环境"></a>本地构建没有持续集成环境</h3><p>在没有持续集成方案的情况下，开发都是在本地（你的windows系统或者你的开发电脑上）做持续集成，然后进行编辑。甚至测试热源也要连到局域网你的主机上进行测试，最后再用于生产环境。这样有个比较头疼的问题：你的电脑可能是windows系统，但是上线之后可能就是Linux或者Unix系统，那么项目中的大小写拼写错误会导致我们本地测试没有问题，但是拿到用于生产环境的服务器上就会有各种奇葩的问题，甚至会导致项目无法启动或者是出现很多bug，而这个极其影响我们的开发进度，导致交付逾期。</p>
+<h3 id="deadLine才提交代码"><a href="#deadLine才提交代码" class="headerlink" title="deadLine才提交代码"></a>deadLine才提交代码</h3><p>比如说现在有个登陆的需求交给你去做，要求三天开发完成，如果在卡着deadLine才将代码提交到持续集成平台就会很被动。这时候你的主管是没办法实时跟踪你的工作进度，他在两天之内是很焦虑的，完全不知道你开发到什么程度了，也不知道你代码写的怎么样，这是非常不利己的。</p>
+<h2 id="文档管理"><a href="#文档管理" class="headerlink" title="文档管理"></a>文档管理</h2><h3 id="没有文档"><a href="#没有文档" class="headerlink" title="没有文档"></a>没有文档</h3><p>先不要抬杠，不要说每个公司肯定都有文档，其实项目没有文档的情况也是有的。由于程序是一个长期的产物，程序员换了一批又一批，没有文档那交接的时候很可能你这套程序就废掉了，没办法再写了，而且也很难维护。</p>
+<h3 id="文档不更新"><a href="#文档不更新" class="headerlink" title="文档不更新"></a>文档不更新</h3><p>这个是比较常见的坑，比如说接手了一个项目，这个项目是由别的部门移交到我们这边的一套程序，后续由你所在的部门继续进行维护或者继续开发，文档看着很齐全，但是看代码的时候你会发现根本不是那么回事，因为什么？因为他们可能只产出了初版文档，后续就没有文档了，这样就很容易问候别人的家里人，这个坑是非常非常大的，可能会造成2-3倍的工作量，所以说如果公司有管理文档就及时更新维护掉，百利无一害的事情何乐而不为呢？最主要的一件事就是你的代码/程序更新了，那么你的文档应该也是跟着更新的。</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">反手一个function</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="http://github.com/jszyy/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/">http://github.com/jszyy/2020/08/16/做一名合格的前端工程师(一)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="http://github.com/jszyy" target="_blank">反手一个function</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%89%8D%E7%AB%AF/">前端</a><a class="post-meta__tags" href="/tags/Thinkings/">Thinkings</a></div><div class="post_share"><div class="social-share" data-image="http://lc-4LTdKlTA.cn-n1.lcfile.com/80ec07b6b1896cd1c73b/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%881.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><button class="reward-button"><i class="fas fa-qrcode"></i> 打賞<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="http://lc-4LTdKlTA.cn-n1.lcfile.com/0f8a9d84fd6d816108e4/weChat.jpeg" alt="微信 wechat" onclick="window.open('http://lc-4LTdKlTA.cn-n1.lcfile.com/0f8a9d84fd6d816108e4/weChat.jpeg')"/><div class="post-qr-code__desc">微信 wechat</div></li><li class="reward-item"><img class="post-qr-code__img" src="http://lc-4LTdKlTA.cn-n1.lcfile.com/958c9bfd6395e6fc9a2a/alipay.jpeg" alt="支付宝 alipay" onclick="window.open('http://lc-4LTdKlTA.cn-n1.lcfile.com/958c9bfd6395e6fc9a2a/alipay.jpeg')"/><div class="post-qr-code__desc">支付宝 alipay</div></li></ul></div></button></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/"><img class="next-cover" data-src="http://lc-eaMmR0jn.cn-n1.lcfile.com/08711996de311011c0f1/pexels-photo-97076.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">闲话终日有，不听自然无</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相關推薦</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/07/16/ES6基础语法/" title="ES6基础语法"><img class="relatedPosts_cover" data-src="https://images.pexels.com/photos/425160/pexels-photo-425160.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-16</div><div class="relatedPosts_title">ES6基础语法</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/25/React.createRef()用法详解/" title="React.createRef()用法详解"><img class="relatedPosts_cover" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/73edd51237749e3e6a8e/react.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-25</div><div class="relatedPosts_title">React.createRef()用法详解</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/15/关于js中的各种尺寸和坐标的理解/" title="关于js中的各种尺寸和坐标的理解"><img class="relatedPosts_cover" data-src="https://images.pexels.com/photos/3967669/pexels-photo-3967669.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-15</div><div class="relatedPosts_title">关于js中的各种尺寸和坐标的理解</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/16/通俗易懂的CSS布局display、position、float详解/" title="通俗易懂的CSS布局display、position、float详解"><img class="relatedPosts_cover" data-src="https://images.pexels.com/photos/821668/pexels-photo-821668.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-16</div><div class="relatedPosts_title">通俗易懂的CSS布局display、position、float详解</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/16/详解JS执行队列(JavaScript执行顺序)，搞懂setTimeout方法到底是如何执行的/" title="详解JS执行队列(JavaScript执行顺序)，搞懂setTimeout方法到底是如何执行的"><img class="relatedPosts_cover" data-src="https://images.pexels.com/photos/4298000/pexels-photo-4298000.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-16</div><div class="relatedPosts_title">详解JS执行队列(JavaScript执行顺序)，搞懂setTimeout方法到底是如何执行的</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/22/useContext用法详解/" title="createContext & useContext 跨组件透传上下文与性能优化"><img class="relatedPosts_cover" data-src="http://lc-eaMmR0jn.cn-n1.lcfile.com/e0242ee225feec5d08a2/hooks.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-22</div><div class="relatedPosts_title">createContext & useContext 跨组件透传上下文与性能优化</div></div></a></div></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var requestSetting = function (from,set) {
+  var from = from
+  var setting = set.split(',').filter(function(item){
+  return from.indexOf(item) > -1
+  });
+  setting = setting.length == 0 ? from :setting;
+  return setting
+}
+
+var guestInfo = requestSetting(['nick','mail','link'],'nick,mail,link')
+var requiredFields = requestSetting(['nick','mail'],'nick,mail')
+
+window.valine = new Valine({
+  el:'#vcomment',
+  appId: '5jBp5crV1YgUcM8uviXiU8Xh-gzGzoHsz',
+  appKey: 'xdXhSjOAHkH11DRRVic2rw08',
+  placeholder: '記得留下你的暱稱和郵箱....可以快速收到回復',
+  avatar: 'monsterid',
+  meta: guestInfo,
+  pageSize: '10',
+  lang: 'zh-CN',
+  recordIP: false,
+  serverURLs: '',
+  emojiCDN: '',
+  emojiMaps: "",
+  enableQQ: false,
+  requiredFields: requiredFields
+});</script></div></article></main><footer id="footer" style="background-image: url(http://lc-4LTdKlTA.cn-n1.lcfile.com/80ec07b6b1896cd1c73b/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%881.jpeg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2020 By 反手一个function</div><div class="framework-info"><span>Power by </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div><div class="footer_custom_text"><a href="https://jszyy.github.io/" target="_blank" rel="noopener">哪有那麽多大道理，覺得值得就繼續</a></br>Dash ahead to what one yearns regardless of his safety.</div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="font_plus" title="放大字型"><i class="fas fa-plus"></i></button><button id="font_minus" title="縮小字型"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="簡繁轉換">繁</button><button id="darkmode" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="設定"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直達評論"><i class="scroll_to_comment fas fa-comments"></i></a><button class="close" id="mobile-toc-button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" title="回到頂部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜尋</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script defer id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script src="/js/search/local-search.js"></script></body></html>

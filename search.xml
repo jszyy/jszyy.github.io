@@ -87,22 +87,6 @@
       </tags>
   </entry>
   <entry>
-    <title>一个人走得快，一群人走得远</title>
-    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
-<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Featured</category>
-        <category>Thinkings</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>React.createRef()用法详解</title>
     <url>/2020/07/25/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p> 在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
@@ -159,38 +143,6 @@
       <tags>
         <tag>前端</tag>
         <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>什么是内卷</title>
-    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
-<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
-</li>
-<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
-</li>
-<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
-</li>
-<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
-</li>
-</ul>
-<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
-<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
-<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
-<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
-</blockquote>
-<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
-<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
-</blockquote>
-<p>So，要么多一点，要么均一点，其实就这么简单。</p>
-]]></content>
-      <categories>
-        <category>Featured</category>
-        <category>Thinkings</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
       </tags>
   </entry>
   <entry>
@@ -257,6 +209,151 @@
 <p>x/y             在IE浏览器中如果进行动态定位时：相对于最内容包容元素的左上角(0,0)的坐标</p>
 <p>在IE浏览器中未进行动态定位时x/y =clientX/clientY。</p>
 <p>在其他浏览器中始终x/y =clientX/clientY。</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>做一名合格的前端工程师(一)</title>
+    <url>/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>作为一名程序员, 在工作当中或者说在我们职业生涯当中，都会烦一点小小的错误，这些小错误看似没什么大不了，但是长此以往会在我们的职业生涯中产生一定的影响，大则会让我们丢掉饭碗，小则会影响我们的人人发展，所以有必要总结一下在工作中踩的坑和如何避免这些坑。</p>
+<h2 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h2><p>当前git是使用度最高的版本管理工具，就以git为例</p>
+<h3 id="长时间不提交代码"><a href="#长时间不提交代码" class="headerlink" title="长时间不提交代码"></a>长时间不提交代码</h3><p>这是一个重点，不要单纯认为这是一个小坑，前不久就刚踩过类似的坑。很多时候我们习惯写完一个功能才提交，就会造成什么问题呢？如果说这个周期内电脑由于各种奇葩原因坏掉了，代码就会完全消失掉，尽管这种可能性非常低，但不代表就没有。已经碰到好几例这样的情况发生而使得代码丢失的程序员，如果你的代码丢失了，小则可能被领导责备大则可能会让你丢掉饭碗被炒鱿鱼，所以说如何正确的提交代码呢，我认为不管你代码写没写完，每天至少一次是正常的，如果你不是很懒，你也可以在午休前提交一次，下午下班前再提交一次，这就会把你的代码的损失量降到半天之内。</p>
+<h3 id="单分支开发"><a href="#单分支开发" class="headerlink" title="单分支开发"></a>单分支开发</h3><p>不用想都知道有很多程序员都在进行单分支开发，举个例子，比如说你的项目开发周期是一周开发完成，但是在一周的第2天紧急出现了一个bug，这个bug要求你今天修复，但是你之前开发的代码还没有开发完成，这时候生产环境中的代码是上个版本的，而你开发的是已经已经了一半的代码，而你要紧急修复bug，单分支就没办法去做，只有把这个功能给开发完成然后再修改bug，这样可能要后几天之后，现在的要求是今天必须修复掉，如果是多分支的话可以立即checkout到上一个分支，然后进行线上版本的hotfix。</p>
+<p>还有种情况就是上线之后不打tag，不做任何的标记就发布了，其实是应该打个tag的，比如说版本回滚的时候就会比较容易回滚到上一个版本，假如某个迭代上线了，由于某个重大bug必须回滚到上一个正确的版本，有了tag就可以马上进行正确回滚。</p>
+<h3 id="git权限管理"><a href="#git权限管理" class="headerlink" title="git权限管理"></a>git权限管理</h3><p>比较常见的情况就是仓库没有设置或者没有合理设置人员权限，项目中任何参与者都完全拥有项目的操作权限。出现问题头疼扯皮不说，单是排查问题到解决问题都会是一件比较烦心的事情。借鉴之前在阿里的工作模式，一般开发人员的权限比较低，涉及到合并代码，迭代发布，版本控制等敏感操作都由指定负责人进行操作，有了权限管理，再配合多分支开发，进行CR也会方便很多。</p>
+<h2 id="持续集成"><a href="#持续集成" class="headerlink" title="持续集成"></a>持续集成</h2><p>简单说，就是把我们开发的代码，提交到一个服务器上，在服务器上进行代码构建，代码通过测试之后直接用于生产环境，这个就是继续集成。</p>
+<p>一个好的持续集成一定是可以量化的，比如说测试人员和相关人员可以看到你的开发进度，每个人也可以很清晰地看到个人的开发进度，大公司一般都会有一套持续集成解决方案，如果公司有，那就严格按照公司的一套流程执行下去就ok了，如果公司没有，那你可能会很容易踩到下面几个坑。</p>
+<h3 id="本地构建没有持续集成环境"><a href="#本地构建没有持续集成环境" class="headerlink" title="本地构建没有持续集成环境"></a>本地构建没有持续集成环境</h3><p>在没有持续集成方案的情况下，开发都是在本地（你的windows系统或者你的开发电脑上）做持续集成，然后进行编辑。甚至测试热源也要连到局域网你的主机上进行测试，最后再用于生产环境。这样有个比较头疼的问题：你的电脑可能是windows系统，但是上线之后可能就是Linux或者Unix系统，那么项目中的大小写拼写错误会导致我们本地测试没有问题，但是拿到用于生产环境的服务器上就会有各种奇葩的问题，甚至会导致项目无法启动或者是出现很多bug，而这个极其影响我们的开发进度，导致交付逾期。</p>
+<h3 id="deadLine才提交代码"><a href="#deadLine才提交代码" class="headerlink" title="deadLine才提交代码"></a>deadLine才提交代码</h3><p>比如说现在有个登陆的需求交给你去做，要求三天开发完成，如果在卡着deadLine才将代码提交到持续集成平台就会很被动。这时候你的主管是没办法实时跟踪你的工作进度，他在两天之内是很焦虑的，完全不知道你开发到什么程度了，也不知道你代码写的怎么样，这是非常不利己的。</p>
+<h2 id="文档管理"><a href="#文档管理" class="headerlink" title="文档管理"></a>文档管理</h2><h3 id="没有文档"><a href="#没有文档" class="headerlink" title="没有文档"></a>没有文档</h3><p>先不要抬杠，不要说每个公司肯定都有文档，其实项目没有文档的情况也是有的。由于程序是一个长期的产物，程序员换了一批又一批，没有文档那交接的时候很可能你这套程序就废掉了，没办法再写了，而且也很难维护。</p>
+<h3 id="文档不更新"><a href="#文档不更新" class="headerlink" title="文档不更新"></a>文档不更新</h3><p>这个是比较常见的坑，比如说接手了一个项目，这个项目是由别的部门移交到我们这边的一套程序，后续由你所在的部门继续进行维护或者继续开发，文档看着很齐全，但是看代码的时候你会发现根本不是那么回事，因为什么？因为他们可能只产出了初版文档，后续就没有文档了，这样就很容易问候别人的家里人，这个坑是非常非常大的，可能会造成2-3倍的工作量，所以说如果公司有管理文档就及时更新维护掉，百利无一害的事情何乐而不为呢？最主要的一件事就是你的代码/程序更新了，那么你的文档应该也是跟着更新的。</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>Thinkings</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>通俗易懂的CSS布局display、position、float详解</title>
+    <url>/2020/07/16/%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%9A%84CSS%E5%B8%83%E5%B1%80display%E3%80%81position%E3%80%81float%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>前端开发就像盖房子，如果说 html 是构成房子的砖瓦， css 则是决定这些砖瓦的位置和对它们进行装饰。在实际开发中，前端在拿到设计稿后，都会先梳理页面的大致结构，构思完页面的布局后，再进行 coding。大多数网站都有着相似的布局，掌握这些“套路”便可以快速高效的完成开发工作。</p>
+<h3 id="display"><a href="#display" class="headerlink" title="display"></a>display</h3><p>display 是 css 布局中很重要的一个属性，它定义了元素生成的显示框类型，常见的几个属性值有：<code>block</code>、<code>inline</code>、<code>inline-block</code>、<code>inherit</code>、<code>none</code>、<code>flex</code>。inherit 表示这个元素从父元素继承 display 属性值；none 表示这个元素不显示，也不占用空间位置；flex 是 flex 布局重要的属性设置，我们留到后面详细讲解，这边先介绍前面三个属性值。</p>
+<p>每个元素都有默认的 display 属性，比如 div 标签的默认 display 属性是 block，我们通常称这类元素为<strong>块级元素</strong>；span 标签的默认 display 属性是 inline，我们通常称这类元素为<strong>行内元素</strong>，我们先通过下面的代码示例来看下两者的区别。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/4baa8eb4b3da0bd4f9f6/1-11624109-58caec83c3d82e15.webp" alt="div布局结果"></p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/3785db5e3fb17e165092/2-11624109-1e3e0dd8465e05eb.webp" alt="span布局结果"></p>
+<p>我们可以看到块级元素总是独占一行，从上到下显示，行内元素则是从左到右显示。这是因为块级元素前后有换行符，而行内元素前后没有换行符。除此之外，块级元素和行内元素还有其他的区别和特性。</p>
+<blockquote>
+<p>块级元素：<br>没有设置宽度时，它的宽度是其容器的 100%；<br>可以给块级元素设置宽高、内边距、外边距等盒模型属性；<br>块级元素可以包含块级元素和行内元素；<br>常见的块级元素：<code>&lt;div&gt;</code>、<code>&lt;h1&gt;</code> ~ <code>&lt;h6&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;ul&gt;</code>、<code>&lt;ol&gt;</code>、<code>&lt;dl&gt;</code>、<code>&lt;table&gt;</code>、<code>&lt;address&gt;</code> <code>&lt;form&gt;</code> 等。<br>行内元素：<br>行内元素不会独占一行，只会占领自身宽高所需要的空间；<br>给行内元素设置宽高不会起作用，margin 值只对左右起作用，padding 值也只对左右起作用；<br>行内元素一般不可以包含块级元素，只能包含行内元素和文本；<br>常见的行内元素 <code>&lt;a&gt;</code>、<code>&lt;b&gt;</code>、<code>&lt;label&gt;</code>、<code>&lt;span&gt;</code>、<code>&lt;img&gt;</code>、<code>&lt;em&gt;</code>、<code>&lt;strong&gt;</code>、<code>&lt;i&gt;</code>、<code>&lt;input&gt;</code> 等。</p>
+</blockquote>
+<p>细心的你可能会发现，给 img 标签设置宽高是可以影响图片大小的，这是因为 img 是可替代元素，可替代元素具有内在的尺寸，所以宽高可以设定。</p>
+<blockquote>
+<p>html 中的 input、button、textarea、select 都是可替代元素，这些元素即使是空的，浏览器也会根据其标签和属性来决定显示的内容。</p>
+</blockquote>
+<p>给行内元素设置宽高不起作用，我们通过上面的代码已经感受到了，那为什么设置 margin、padding 只有左右起作用呢？我们来看下面的列子。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/4006f035dc2574bf4f06/3-11624109-cc293ec1c6124db3.webp" alt="在 span 标签前后添加 div 标签在浏览器中的运行结果"></p>
+<p>在上图中可以明显看到 span 1 只添加了 margin-left 和 margin-right，但 margin-top、margin-bottom 均不起作用。虽然上下的 padding 看上去都起作用了，但是通过添加 div 标签，我们可以看到有重合的部分，所以 padding-top、padding-bottom 的设置从显示效果上是增加的，但对周围元素不会产生影响。</p>
+<p>那 inline-block 又是什么呢？看命名方式，也能猜出大半，没错，设置为 inline-block 的元素，既具有块级元素可以设置宽高的特性，又具有行内元素不换行的特性。我们给 div 标签设置 inline-block 属性看下效果。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/a86c896c8e2be2e38b6e/4-11624109-e8a25c60594ab00a.webp" alt="将块级元素的 display 属性设置为 inline-block 后的效果"></p>
+<p>在上图中，我们没有设置 margin 值，但是 div 之间会有空隙，这是因为浏览器会将 html 中的换行符、制表符、空白符合并成空白符。</p>
+<h3 id="position-定位"><a href="#position-定位" class="headerlink" title="position(定位)"></a>position(定位)</h3><p>在布局中很重要的因素就是定位，position 属性就是用来定义元素的定位机制。position 的常用属性值有：</p>
+<blockquote>
+<p>relative：相对定位，相对于元素的正常位置进行定位；<br>absolute：绝对定位，相对于除 static 定位以外的元素进行定位；<br>fixed：固定定位，相对于浏览器窗口进行定位，网站中的固定 header 和 footer 就是用固定定位来实现的；<br>static：默认值，没有定位属性，元素正常出现在文档流中；<br>inherit：继承父元素的 position 属性值。</p>
+</blockquote>
+<p>上文出现了文档流（normal flow）的概念，按理来说应该翻译成普通流，文档流是大多数人的叫法。“流”可以想象成流动的水，当我们打开屏幕，浏览网页，滚动鼠标，网页的内容就像是水流一样滑过。文档流便是指从上到下，从左往右的文档布局。当我们给元素的 positon 属性设置 absolute、fixed 时便会脱离文档流，不再遵循从上到下，从左到右的规律了。</p>
+<h4 id="1、relative"><a href="#1、relative" class="headerlink" title="1、relative"></a>1、relative</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/281c67a0dbcfde385c87/5-11624109-97790dc345e8e929.webp" alt="position 为 relative 示例"></p>
+<p>从上图中我们不难发现，设置 position 为 relative，但是不添加额外属性（left，right，top，bottom 等），它表现的如同 static 一样，如 .box_1。属性 left，right，top，bottom 会使元素偏离正常位置，如 .box_2。元素的偏移会覆盖相邻元素，如 .box_3。</p>
+<h4 id="2、absolute"><a href="#2、absolute" class="headerlink" title="2、absolute"></a>2、absolute</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/b382c7d8f33cfd3eb273/6-11624109-58c296b58960bb61.webp" alt="position 为 absolute 示例"></p>
+<p>absolute 会相对于最近的除 static 定位以外的元素进行定位，在使用时要注意设置父元素（或祖先元素）的 position 属性，若父元素（或祖先元素）都没有设置定位属性，absolute 会找到最上层即浏览器窗口，相对于它进行定位了。</p>
+<h4 id="3、fixed"><a href="#3、fixed" class="headerlink" title="3、fixed"></a>3、fixed</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/0489877b3b95c6b35132/7-11624109-44ea46a0343ba68d.webp" alt="position 为 fixed 示例"></p>
+<p>fixed 是相对于浏览器窗口的定位，一旦位置确定， 元素位置也不会改变，不像 absolute，它的位置与父元素息息相关，父元素移动它也会跟着动。从上图我们可以看出，fixed 元素是脱离文档流的，之后的元素会“无视”它，不会给它腾出空间。</p>
+<h3 id="float-浮动"><a href="#float-浮动" class="headerlink" title="float(浮动)"></a>float(浮动)</h3><p>float 属性定义元素在哪个方向浮动，常用属性值有 left、right，即向左浮动和向右浮动。设置了 float 的元素，会脱离文档流，然后向左或向右移动，直到碰到父容器的边界或者碰到另一个浮动元素。块级元素会忽略 float 元素，文本和行内元素却会环绕它，所以 float 最开始是用来实现文字环绕效果的。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/660ecf778c275b083772/8-11624109-78a8cc191c3ec351.webp" alt="文字环绕效果"></p>
+<p>我们知道，当不给父元素设置宽高时，父元素的宽高会被子元素的内容撑开。但是当子元素设置浮动属性后，子元素会溢出到父元素外，父元素的宽高也不会被撑开了，称之为“高度塌陷”，我们通过代码来体验一下这个差异。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/673bb4c10c302f515a55/9-11624109-17cc2ca488729013.webp" alt="浮动的子元素不能撑开父元素"></p>
+<p>如何解决这个问题呢？解决这个问题便是要清除浮动，在下面我们给出了几种常规解决方案。</p>
+<h4 id="清除浮动方案1-通过添加额外的标签，利用-clear-属性来清除浮动"><a href="#清除浮动方案1-通过添加额外的标签，利用-clear-属性来清除浮动" class="headerlink" title="清除浮动方案1:通过添加额外的标签，利用 clear 属性来清除浮动"></a>清除浮动方案1:通过添加额外的标签，利用 clear 属性来清除浮动</h4><p>clear 属性用来定义哪一侧不允许其他元素浮动，常见的值有 left 、right、both， 分别表示左侧不允许浮动元素、右侧不允许浮动元素、左右两侧均不允许浮动元素。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/731d305fb1732ad2265a/10-11624109-f02f2e5fa32e1da7.webp" alt="使用 clear: both 后把父元素撑开了"></p>
+<h4 id="清除浮动方案2-使用-br-标签"><a href="#清除浮动方案2-使用-br-标签" class="headerlink" title="清除浮动方案2:使用 br 标签"></a>清除浮动方案2:使用 br 标签</h4><p>br 自带 clear 属性，clear 属性有 left、right 和 all 三个属性值可选。</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/e8328475523609100184/11-11624109-b73ebb25d5275320.webp" alt="image"></p>
+<p>该方法同上一个方法添加空标签一样，也达到了清除浮动的目的，同上一个方法相比，语义化明显些了，但是也存在结构样式行为分离的问题，不推荐使用。</p>
+<h4 id="清除浮动方案3-给父元素设置-overflow"><a href="#清除浮动方案3-给父元素设置-overflow" class="headerlink" title="清除浮动方案3:给父元素设置 overflow"></a>清除浮动方案3:给父元素设置 overflow</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/37eb943d282ef006ea19/12-11624109-a47bfda8860137a2.webp" alt="image.png"></p>
+<p>添加 overflow 不仅减少了代码量，还不存在语义化的问题，但是也可能因为内容增加导致超出尺寸的内容被隐藏。前面两个方法带有 clear 关键字，很好理解，但是仅仅设置 <code>overflow: hidden;</code> 为什么就能清除浮动呢？</p>
+<p>这里要引入一个概念：BFC块级格式化上下文。BFC 的一个特性便是可以包含浮动元素，设置 overflow 为 hidden 满足了创建一个 BFC 的条件，其实就是创建 BFC，利用 BFC 固有特性清除浮动，这里不做过多讲解，有兴趣的伙伴可以查阅相关资料。</p>
+<h4 id="清除浮动方案4-使用-after-伪元素"><a href="#清除浮动方案4-使用-after-伪元素" class="headerlink" title="清除浮动方案4:使用 after 伪元素"></a>清除浮动方案4:使用 after 伪元素</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/7cecb0f7f13001f39db2/13-11624109-db295d94bdf0eafd.webp" alt="image"></p>
+<p>该方法本质也是在末尾添加一个看不见的块元素来清除浮动。这个方法也不存在语义化的问题，是目前的主流清除浮动的方法。</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>闲话终日有，不听自然无</title>
+    <url>/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote>
+<p>在网络这个匿名的背景中，人内心深处的种种幽暗的情绪都会被释放，人们会特别的习惯于好辩，会放纵自己无知的热情。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>我们都知道无知者无畏，一个知识越贫乏的人，越是拥有一种莫名奇怪的勇气和一种莫名奇怪的自豪感。因为知识越贫乏，他所相信的东西就越绝对，因为他根本就没有听说过与此相对立的观点，当你遇到一个网络喷子，当他不断地使用一些标语式的词汇对你进行攻击，其实没有必要和他辩论的。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>一个标语话思维的人，他已经缺乏了自己独立思考的能力，所以你有必要和一个傻子去论证吗？</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>不要试图和没有独立思维能力的人争辩，因为他会把你拉到和他同样低的水平，然后用丰富的经验打败你，但凡有一丝不爽，你都输了。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Featured</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>详解JS执行队列(JavaScript执行顺序)，搞懂setTimeout方法到底是如何执行的</title>
+    <url>/2020/07/16/%E8%AF%A6%E8%A7%A3JS%E6%89%A7%E8%A1%8C%E9%98%9F%E5%88%97(JavaScript%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F)%EF%BC%8C%E6%90%9E%E6%87%82setTimeout%E6%96%B9%E6%B3%95%E5%88%B0%E5%BA%95%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote>
+<p>定义：setTimeout() 方法用于在指定的毫秒数后调用函数或计算表达式。</p>
+</blockquote>
+<h4 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/a5b463d59e4ce0cf65d1/a1-11624109-fbf7e6f59d4f9618.webp" alt="例子1"></p>
+<p>但是setTimeout真的有那么简单吗？到底setTimeout是不是异步执行的呢?</p>
+<h4 id="没这么简单，再看一个栗子"><a href="#没这么简单，再看一个栗子" class="headerlink" title="没这么简单，再看一个栗子"></a>没这么简单，再看一个栗子</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/650eb78abf53c87c46ab/a2-11624109-3afb574cbed0ba00.webp" alt="例子2"></p>
+<p>我们在setTimeout里面指定了0ms，是希望这段代码能立即执行，但是实际上并没有效果，而是先打印出了2，然后才是1，最后大约1s的时间打印3。<br>这是不是就说明setTimeout就是异步的呢？<br>如果是异步的同时执行多个setTimeout（）应该同时会执行，请再看下面的栗子：</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/9a24e0653827f6830aea/a3-11624109-dc392b9014d81f93.webp" alt="例子3"></p>
+<p>从上面的代码可以知道，JS不是多线程的，那js就是单线程的？有么有异步执行呢？</p>
+<p>出现上面所有误区的最主要一个原因是：我们潜意识中认为，JavaScript引擎有多个线程在执行,JavaScript的定时器回调函数是异步执行的.<br>而事实上的,JavaScript使用了障眼法,在多数时候骗过了我们的眼睛,这里得澄清一个事实：</p>
+<blockquote>
+<p>JavaScript引擎是单线程运行的,浏览器无论在什么时候都只且只有一个线程在运行JavaScript程序。</p>
+</blockquote>
+<p>除了主JavaScript执行进程外，还需要一个在进程下一次空闲时执行的代码队列（这个队列就是监听执行回调的）。<br>随着页面生命周期推移，代码会按照执行顺序添加入队列，例如当按钮被按下的时候他的事件处理程序会被添加到队列中，并在下一个可能时间内执行。JavaScript中没有任何代码是立即执行的，但一旦进程空闲则尽快执行。<br>所以，定时器工作方式是当特定时间过去后将代码插入，但这并不意味着它会马上执行，只能表示它尽快执行。<br>设定一个150ms后执行的定时器，不代表150ms后它会马上执行，它只表示在150ms后被加入到执行队列中，如果这个时间点执行队列是空闲的，那么这段代码就会被执行;其他情况下,代码可能明显地等待更长时间才会去执行。<br>看下面这个栗子：</p>
+<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/68d1904f23caf65c311a/a4-11624109-598209375ac86c02.webp" alt="例子4"></p>
+<p>上面的例子里，一般的理解应该是先打印0ms的再打印500ms的，但是，其实js在解析的时候遇到了setTimeout方法，第一次过了0ms后把延时0ms的优先加入执行队列里，再在500ms后把延时500ms的其放入待执行的队列里，跳过去顺序执行下面的代码，当主线程中的代码执行完成后，js引擎去检索待执行的队列有没有待执行的代码，这时候就会发现setTimeout方法并顺序执行，（因为已经过了定时器规定的延时时间，所以会立即执行，两个定时器的延时都是一样的）。</p>
+<h4 id="JS执行队列总结"><a href="#JS执行队列总结" class="headerlink" title="JS执行队列总结"></a>JS执行队列总结</h4><p>（1）所有同步任务都在主线程上执行。<br>（2）主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。<br>（3）一旦”执行栈”中的所有同步任务执行完毕，系统就会读取”任务队列”，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入主线程执行栈，开始执行。<br>（4）主线程不断重复上面的第三步。</p>
+<h4 id="setTimeout方法、事件和回调函数（异步函数）"><a href="#setTimeout方法、事件和回调函数（异步函数）" class="headerlink" title="setTimeout方法、事件和回调函数（异步函数）"></a>setTimeout方法、事件和回调函数（异步函数）</h4><p>“任务队列”是一个先进先出的数据结构，排在前面的事件，优先被主线程读取。主线程的读取过程基本上是自动的，只要执行栈一清空，”任务队列”上第一位的事件就自动进入主线程。但是，由于”定时器”功能和事件驱动等，主线程首先要检查一下执行时间或事件是否被触发，才能返回主线程。</p>
+<blockquote>
+<p>当一个JS文件中有很多回调函数的时候，我们无法确认哪个回调会先进入任务队列。所以，遇到回调的时候要小心处理啦。</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>前端</category>
@@ -441,56 +538,10 @@
       </tags>
   </entry>
   <entry>
-    <title>详解JS执行队列(JavaScript执行顺序)，搞懂setTimeout方法到底是如何执行的</title>
-    <url>/2020/07/16/%E8%AF%A6%E8%A7%A3JS%E6%89%A7%E8%A1%8C%E9%98%9F%E5%88%97(JavaScript%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F)%EF%BC%8C%E6%90%9E%E6%87%82setTimeout%E6%96%B9%E6%B3%95%E5%88%B0%E5%BA%95%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote>
-<p>定义：setTimeout() 方法用于在指定的毫秒数后调用函数或计算表达式。</p>
-</blockquote>
-<h4 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/a5b463d59e4ce0cf65d1/a1-11624109-fbf7e6f59d4f9618.webp" alt="例子1"></p>
-<p>但是setTimeout真的有那么简单吗？到底setTimeout是不是异步执行的呢?</p>
-<h4 id="没这么简单，再看一个栗子"><a href="#没这么简单，再看一个栗子" class="headerlink" title="没这么简单，再看一个栗子"></a>没这么简单，再看一个栗子</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/650eb78abf53c87c46ab/a2-11624109-3afb574cbed0ba00.webp" alt="例子2"></p>
-<p>我们在setTimeout里面指定了0ms，是希望这段代码能立即执行，但是实际上并没有效果，而是先打印出了2，然后才是1，最后大约1s的时间打印3。<br>这是不是就说明setTimeout就是异步的呢？<br>如果是异步的同时执行多个setTimeout（）应该同时会执行，请再看下面的栗子：</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/9a24e0653827f6830aea/a3-11624109-dc392b9014d81f93.webp" alt="例子3"></p>
-<p>从上面的代码可以知道，JS不是多线程的，那js就是单线程的？有么有异步执行呢？</p>
-<p>出现上面所有误区的最主要一个原因是：我们潜意识中认为，JavaScript引擎有多个线程在执行,JavaScript的定时器回调函数是异步执行的.<br>而事实上的,JavaScript使用了障眼法,在多数时候骗过了我们的眼睛,这里得澄清一个事实：</p>
-<blockquote>
-<p>JavaScript引擎是单线程运行的,浏览器无论在什么时候都只且只有一个线程在运行JavaScript程序。</p>
-</blockquote>
-<p>除了主JavaScript执行进程外，还需要一个在进程下一次空闲时执行的代码队列（这个队列就是监听执行回调的）。<br>随着页面生命周期推移，代码会按照执行顺序添加入队列，例如当按钮被按下的时候他的事件处理程序会被添加到队列中，并在下一个可能时间内执行。JavaScript中没有任何代码是立即执行的，但一旦进程空闲则尽快执行。<br>所以，定时器工作方式是当特定时间过去后将代码插入，但这并不意味着它会马上执行，只能表示它尽快执行。<br>设定一个150ms后执行的定时器，不代表150ms后它会马上执行，它只表示在150ms后被加入到执行队列中，如果这个时间点执行队列是空闲的，那么这段代码就会被执行;其他情况下,代码可能明显地等待更长时间才会去执行。<br>看下面这个栗子：</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/68d1904f23caf65c311a/a4-11624109-598209375ac86c02.webp" alt="例子4"></p>
-<p>上面的例子里，一般的理解应该是先打印0ms的再打印500ms的，但是，其实js在解析的时候遇到了setTimeout方法，第一次过了0ms后把延时0ms的优先加入执行队列里，再在500ms后把延时500ms的其放入待执行的队列里，跳过去顺序执行下面的代码，当主线程中的代码执行完成后，js引擎去检索待执行的队列有没有待执行的代码，这时候就会发现setTimeout方法并顺序执行，（因为已经过了定时器规定的延时时间，所以会立即执行，两个定时器的延时都是一样的）。</p>
-<h4 id="JS执行队列总结"><a href="#JS执行队列总结" class="headerlink" title="JS执行队列总结"></a>JS执行队列总结</h4><p>（1）所有同步任务都在主线程上执行。<br>（2）主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。<br>（3）一旦”执行栈”中的所有同步任务执行完毕，系统就会读取”任务队列”，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入主线程执行栈，开始执行。<br>（4）主线程不断重复上面的第三步。</p>
-<h4 id="setTimeout方法、事件和回调函数（异步函数）"><a href="#setTimeout方法、事件和回调函数（异步函数）" class="headerlink" title="setTimeout方法、事件和回调函数（异步函数）"></a>setTimeout方法、事件和回调函数（异步函数）</h4><p>“任务队列”是一个先进先出的数据结构，排在前面的事件，优先被主线程读取。主线程的读取过程基本上是自动的，只要执行栈一清空，”任务队列”上第一位的事件就自动进入主线程。但是，由于”定时器”功能和事件驱动等，主线程首先要检查一下执行时间或事件是否被触发，才能返回主线程。</p>
-<blockquote>
-<p>当一个JS文件中有很多回调函数的时候，我们无法确认哪个回调会先进入任务队列。所以，遇到回调的时候要小心处理啦。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>前端</category>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>闲话终日有，不听自然无</title>
-    <url>/2020/07/28/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote>
-<p>在网络这个匿名的背景中，人内心深处的种种幽暗的情绪都会被释放，人们会特别的习惯于好辩，会放纵自己无知的热情。</p>
-</blockquote>
-<hr>
-<blockquote>
-<p>我们都知道无知者无畏，一个知识越贫乏的人，越是拥有一种莫名奇怪的勇气和一种莫名奇怪的自豪感。因为知识越贫乏，他所相信的东西就越绝对，因为他根本就没有听说过与此相对立的观点，当你遇到一个网络喷子，当他不断地使用一些标语式的词汇对你进行攻击，其实没有必要和他辩论的。</p>
-</blockquote>
-<hr>
-<blockquote>
-<p>一个标语话思维的人，他已经缺乏了自己独立思考的能力，所以你有必要和一个傻子去论证吗？</p>
-</blockquote>
-<hr>
-<blockquote>
-<p>不要试图和没有独立思维能力的人争辩，因为他会把你拉到和他同样低的水平，然后用丰富的经验打败你，但凡有一丝不爽，你都输了。</p>
+    <title>一个人走得快，一群人走得远</title>
+    <url>/2020/07/15/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"><a href="#你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多" class="headerlink" title="你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多"></a>你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多</h2><blockquote>
+<p>有一位叫卡蜜尔的人生导师曾经说过，世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p>
 </blockquote>
 ]]></content>
       <categories>
@@ -503,61 +554,35 @@
       </tags>
   </entry>
   <entry>
-    <title>通俗易懂的CSS布局display、position、float详解</title>
-    <url>/2020/07/16/%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%9A%84CSS%E5%B8%83%E5%B1%80display%E3%80%81position%E3%80%81float%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>前端开发就像盖房子，如果说 html 是构成房子的砖瓦， css 则是决定这些砖瓦的位置和对它们进行装饰。在实际开发中，前端在拿到设计稿后，都会先梳理页面的大致结构，构思完页面的布局后，再进行 coding。大多数网站都有着相似的布局，掌握这些“套路”便可以快速高效的完成开发工作。</p>
-<h3 id="display"><a href="#display" class="headerlink" title="display"></a>display</h3><p>display 是 css 布局中很重要的一个属性，它定义了元素生成的显示框类型，常见的几个属性值有：<code>block</code>、<code>inline</code>、<code>inline-block</code>、<code>inherit</code>、<code>none</code>、<code>flex</code>。inherit 表示这个元素从父元素继承 display 属性值；none 表示这个元素不显示，也不占用空间位置；flex 是 flex 布局重要的属性设置，我们留到后面详细讲解，这边先介绍前面三个属性值。</p>
-<p>每个元素都有默认的 display 属性，比如 div 标签的默认 display 属性是 block，我们通常称这类元素为<strong>块级元素</strong>；span 标签的默认 display 属性是 inline，我们通常称这类元素为<strong>行内元素</strong>，我们先通过下面的代码示例来看下两者的区别。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/4baa8eb4b3da0bd4f9f6/1-11624109-58caec83c3d82e15.webp" alt="div布局结果"></p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/3785db5e3fb17e165092/2-11624109-1e3e0dd8465e05eb.webp" alt="span布局结果"></p>
-<p>我们可以看到块级元素总是独占一行，从上到下显示，行内元素则是从左到右显示。这是因为块级元素前后有换行符，而行内元素前后没有换行符。除此之外，块级元素和行内元素还有其他的区别和特性。</p>
-<blockquote>
-<p>块级元素：<br>没有设置宽度时，它的宽度是其容器的 100%；<br>可以给块级元素设置宽高、内边距、外边距等盒模型属性；<br>块级元素可以包含块级元素和行内元素；<br>常见的块级元素：<code>&lt;div&gt;</code>、<code>&lt;h1&gt;</code> ~ <code>&lt;h6&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;ul&gt;</code>、<code>&lt;ol&gt;</code>、<code>&lt;dl&gt;</code>、<code>&lt;table&gt;</code>、<code>&lt;address&gt;</code> <code>&lt;form&gt;</code> 等。<br>行内元素：<br>行内元素不会独占一行，只会占领自身宽高所需要的空间；<br>给行内元素设置宽高不会起作用，margin 值只对左右起作用，padding 值也只对左右起作用；<br>行内元素一般不可以包含块级元素，只能包含行内元素和文本；<br>常见的行内元素 <code>&lt;a&gt;</code>、<code>&lt;b&gt;</code>、<code>&lt;label&gt;</code>、<code>&lt;span&gt;</code>、<code>&lt;img&gt;</code>、<code>&lt;em&gt;</code>、<code>&lt;strong&gt;</code>、<code>&lt;i&gt;</code>、<code>&lt;input&gt;</code> 等。</p>
+    <title>什么是内卷</title>
+    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
+<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
+</li>
+<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
+</li>
+<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
+</li>
+<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
+</li>
+</ul>
+<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
+<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
+<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
+<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
 </blockquote>
-<p>细心的你可能会发现，给 img 标签设置宽高是可以影响图片大小的，这是因为 img 是可替代元素，可替代元素具有内在的尺寸，所以宽高可以设定。</p>
-<blockquote>
-<p>html 中的 input、button、textarea、select 都是可替代元素，这些元素即使是空的，浏览器也会根据其标签和属性来决定显示的内容。</p>
+<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
+<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
 </blockquote>
-<p>给行内元素设置宽高不起作用，我们通过上面的代码已经感受到了，那为什么设置 margin、padding 只有左右起作用呢？我们来看下面的列子。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/4006f035dc2574bf4f06/3-11624109-cc293ec1c6124db3.webp" alt="在 span 标签前后添加 div 标签在浏览器中的运行结果"></p>
-<p>在上图中可以明显看到 span 1 只添加了 margin-left 和 margin-right，但 margin-top、margin-bottom 均不起作用。虽然上下的 padding 看上去都起作用了，但是通过添加 div 标签，我们可以看到有重合的部分，所以 padding-top、padding-bottom 的设置从显示效果上是增加的，但对周围元素不会产生影响。</p>
-<p>那 inline-block 又是什么呢？看命名方式，也能猜出大半，没错，设置为 inline-block 的元素，既具有块级元素可以设置宽高的特性，又具有行内元素不换行的特性。我们给 div 标签设置 inline-block 属性看下效果。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/a86c896c8e2be2e38b6e/4-11624109-e8a25c60594ab00a.webp" alt="将块级元素的 display 属性设置为 inline-block 后的效果"></p>
-<p>在上图中，我们没有设置 margin 值，但是 div 之间会有空隙，这是因为浏览器会将 html 中的换行符、制表符、空白符合并成空白符。</p>
-<h3 id="position-定位"><a href="#position-定位" class="headerlink" title="position(定位)"></a>position(定位)</h3><p>在布局中很重要的因素就是定位，position 属性就是用来定义元素的定位机制。position 的常用属性值有：</p>
-<blockquote>
-<p>relative：相对定位，相对于元素的正常位置进行定位；<br>absolute：绝对定位，相对于除 static 定位以外的元素进行定位；<br>fixed：固定定位，相对于浏览器窗口进行定位，网站中的固定 header 和 footer 就是用固定定位来实现的；<br>static：默认值，没有定位属性，元素正常出现在文档流中；<br>inherit：继承父元素的 position 属性值。</p>
-</blockquote>
-<p>上文出现了文档流（normal flow）的概念，按理来说应该翻译成普通流，文档流是大多数人的叫法。“流”可以想象成流动的水，当我们打开屏幕，浏览网页，滚动鼠标，网页的内容就像是水流一样滑过。文档流便是指从上到下，从左往右的文档布局。当我们给元素的 positon 属性设置 absolute、fixed 时便会脱离文档流，不再遵循从上到下，从左到右的规律了。</p>
-<h4 id="1、relative"><a href="#1、relative" class="headerlink" title="1、relative"></a>1、relative</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/281c67a0dbcfde385c87/5-11624109-97790dc345e8e929.webp" alt="position 为 relative 示例"></p>
-<p>从上图中我们不难发现，设置 position 为 relative，但是不添加额外属性（left，right，top，bottom 等），它表现的如同 static 一样，如 .box_1。属性 left，right，top，bottom 会使元素偏离正常位置，如 .box_2。元素的偏移会覆盖相邻元素，如 .box_3。</p>
-<h4 id="2、absolute"><a href="#2、absolute" class="headerlink" title="2、absolute"></a>2、absolute</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/b382c7d8f33cfd3eb273/6-11624109-58c296b58960bb61.webp" alt="position 为 absolute 示例"></p>
-<p>absolute 会相对于最近的除 static 定位以外的元素进行定位，在使用时要注意设置父元素（或祖先元素）的 position 属性，若父元素（或祖先元素）都没有设置定位属性，absolute 会找到最上层即浏览器窗口，相对于它进行定位了。</p>
-<h4 id="3、fixed"><a href="#3、fixed" class="headerlink" title="3、fixed"></a>3、fixed</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/0489877b3b95c6b35132/7-11624109-44ea46a0343ba68d.webp" alt="position 为 fixed 示例"></p>
-<p>fixed 是相对于浏览器窗口的定位，一旦位置确定， 元素位置也不会改变，不像 absolute，它的位置与父元素息息相关，父元素移动它也会跟着动。从上图我们可以看出，fixed 元素是脱离文档流的，之后的元素会“无视”它，不会给它腾出空间。</p>
-<h3 id="float-浮动"><a href="#float-浮动" class="headerlink" title="float(浮动)"></a>float(浮动)</h3><p>float 属性定义元素在哪个方向浮动，常用属性值有 left、right，即向左浮动和向右浮动。设置了 float 的元素，会脱离文档流，然后向左或向右移动，直到碰到父容器的边界或者碰到另一个浮动元素。块级元素会忽略 float 元素，文本和行内元素却会环绕它，所以 float 最开始是用来实现文字环绕效果的。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/660ecf778c275b083772/8-11624109-78a8cc191c3ec351.webp" alt="文字环绕效果"></p>
-<p>我们知道，当不给父元素设置宽高时，父元素的宽高会被子元素的内容撑开。但是当子元素设置浮动属性后，子元素会溢出到父元素外，父元素的宽高也不会被撑开了，称之为“高度塌陷”，我们通过代码来体验一下这个差异。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/673bb4c10c302f515a55/9-11624109-17cc2ca488729013.webp" alt="浮动的子元素不能撑开父元素"></p>
-<p>如何解决这个问题呢？解决这个问题便是要清除浮动，在下面我们给出了几种常规解决方案。</p>
-<h4 id="清除浮动方案1-通过添加额外的标签，利用-clear-属性来清除浮动"><a href="#清除浮动方案1-通过添加额外的标签，利用-clear-属性来清除浮动" class="headerlink" title="清除浮动方案1:通过添加额外的标签，利用 clear 属性来清除浮动"></a>清除浮动方案1:通过添加额外的标签，利用 clear 属性来清除浮动</h4><p>clear 属性用来定义哪一侧不允许其他元素浮动，常见的值有 left 、right、both， 分别表示左侧不允许浮动元素、右侧不允许浮动元素、左右两侧均不允许浮动元素。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/731d305fb1732ad2265a/10-11624109-f02f2e5fa32e1da7.webp" alt="使用 clear: both 后把父元素撑开了"></p>
-<h4 id="清除浮动方案2-使用-br-标签"><a href="#清除浮动方案2-使用-br-标签" class="headerlink" title="清除浮动方案2:使用 br 标签"></a>清除浮动方案2:使用 br 标签</h4><p>br 自带 clear 属性，clear 属性有 left、right 和 all 三个属性值可选。</p>
-<p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/e8328475523609100184/11-11624109-b73ebb25d5275320.webp" alt="image"></p>
-<p>该方法同上一个方法添加空标签一样，也达到了清除浮动的目的，同上一个方法相比，语义化明显些了，但是也存在结构样式行为分离的问题，不推荐使用。</p>
-<h4 id="清除浮动方案3-给父元素设置-overflow"><a href="#清除浮动方案3-给父元素设置-overflow" class="headerlink" title="清除浮动方案3:给父元素设置 overflow"></a>清除浮动方案3:给父元素设置 overflow</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/37eb943d282ef006ea19/12-11624109-a47bfda8860137a2.webp" alt="image.png"></p>
-<p>添加 overflow 不仅减少了代码量，还不存在语义化的问题，但是也可能因为内容增加导致超出尺寸的内容被隐藏。前面两个方法带有 clear 关键字，很好理解，但是仅仅设置 <code>overflow: hidden;</code> 为什么就能清除浮动呢？</p>
-<p>这里要引入一个概念：BFC块级格式化上下文。BFC 的一个特性便是可以包含浮动元素，设置 overflow 为 hidden 满足了创建一个 BFC 的条件，其实就是创建 BFC，利用 BFC 固有特性清除浮动，这里不做过多讲解，有兴趣的伙伴可以查阅相关资料。</p>
-<h4 id="清除浮动方案4-使用-after-伪元素"><a href="#清除浮动方案4-使用-after-伪元素" class="headerlink" title="清除浮动方案4:使用 after 伪元素"></a>清除浮动方案4:使用 after 伪元素</h4><p><img src= "/img/loading.gif" data-src="http://lc-4LTdKlTA.cn-n1.lcfile.com/7cecb0f7f13001f39db2/13-11624109-db295d94bdf0eafd.webp" alt="image"></p>
-<p>该方法本质也是在末尾添加一个看不见的块元素来清除浮动。这个方法也不存在语义化的问题，是目前的主流清除浮动的方法。</p>
+<p>So，要么多一点，要么均一点，其实就这么简单。</p>
 ]]></content>
       <categories>
-        <category>前端</category>
-        <category>JavaScript</category>
+        <category>Featured</category>
+        <category>Thinkings</category>
       </categories>
       <tags>
-        <tag>前端</tag>
-        <tag>JavaScript</tag>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
       </tags>
   </entry>
 </search>
