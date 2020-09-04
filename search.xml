@@ -249,77 +249,35 @@
       </tags>
   </entry>
   <entry>
-    <title>关于js中的各种尺寸和坐标的理解</title>
-    <url>/2020/07/15/%E5%85%B3%E4%BA%8Ejs%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%B0%BA%E5%AF%B8%E5%92%8C%E5%9D%90%E6%A0%87%E7%9A%84%E7%90%86%E8%A7%A3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>关于尺寸：</p>
-<p>  关于尺寸问题分为两种情况，一种是在body下的尺寸。另一种是在div下的尺寸。</p>
-<p>在div下：</p>
-<p>  clienttWidth/Height:是对象内容的宽高。</p>
-<p>  clienttWidth/Height:=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
-<p>  clientTop：=border-top的宽。</p>
-<p>  clientLeft：=border-left的宽。</p>
-<p>  offsetWidth/Height：是对象的自身的宽高，包括滚动条、边线、padding，值会随着内容的输入而不断改变。</p>
-<p>  offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
-<p>  offsetLeft：对象距父元素或浏览器窗口的左边距离。</p>
-<p>  offsetTop： 对象距父元素或浏览器窗口的上边距离。</p>
-<p>  offsetParent为定位的父元素，未定位时默认以body为父元素。</p>
-<p>在ie6/7中：offsetLeft=offsetParent的padding-left+当前元素的margin-left</p>
-<p>在ie8/9/9即chrome中：：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left+offsetParent的border-left</p>
-<p>在FireFox中：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left</p>
-<p>  scrollWidth/Height:网页实际内容的宽高（包括带滚动条的隐蔽的地方）。</p>
-<p>  scrollWidth/Height：所有浏览器是一致的。scrollHeight/Width=自身的宽高+padding*2。</p>
-<p>scrollTop：设置或获取位于对象最顶端和父元素中可见内容的最顶端之间的距离(即网页被卷去的高)</p>
-<p>在body下：</p>
-<p>clientWidth/Height=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
-<p>offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
-<p>scrollWidth/Height:</p>
-<p>1.给定宽高小于浏览器窗口时。</p>
-<p>  scrollWidth/Height:通常时浏览器的宽高。</p>
-<p>2.给定宽高大于浏览器窗口，且内容小于给定宽高时。</p>
-<p>  scrollWidth/Height:=给定的宽高+其所有的padding、margin和border(宽是(上下)高是(左右))</p>
-<p>3.给定宽高大于浏览器窗口，且内容大于给定宽高时。</p>
-<p>  scrollWidth/Height:=内容宽度(大于给定宽高的那个内容)+其所有的padding、margin和border</p>
-<p>获取可视区域：</p>
-<p>  document.documentElement.clientWidth|| document.body.clientWidth||window.innerWidth</p>
-<p>  document.documentElement.clientHeight|| document.body.clientHeight||window.innerHeight</p>
-<p>获取网页卷进去的高度：</p>
-<p>var scrollTop= document.documentElement.scrollTop || window.pageYOffset(可选) || document.body.scrollTop</p>
-<p>window.pageXOffset/pageYoffset 整数只读属性。表示X/Y轴滚动条向右/下滚动过的像素数（表示文档向右/下滚动过的像素数）。IE不支持该属性，使用body元素的scrollLeft属性替代。</p>
-<p>浏览器内部的宽： innerWidth</p>
-<p>浏览器内部的高： innerHeight</p>
-<p>浏览器外部的宽： outerWidth</p>
-<p>浏览器外部的高： outerHeight</p>
-<p>网页可见区域宽： document.body.clientWidth;  (或innerWidth )</p>
-<p>网页可见区域高： document.body.clientHeight; (或innerHeight)</p>
-<p>网页可见区域宽： document.body.offsetWidth   (包括边线的宽);</p>
-<p>网页可见区域高： document.body.offsetHeight  (包括边线的宽);</p>
-<p>网页正文全文宽： document.body.scrollWidth;</p>
-<p>网页正文全文高： document.body.scrollHeight;</p>
-<p>网页被卷去的高： document.body.scrollTop;</p>
-<p>网页被卷去的左： document.body.scrollLeft;</p>
-<p>屏幕分辨率的高： window.screen.height;</p>
-<p>屏幕分辨率的宽： window.screen.width;</p>
-<p>浏览器顶端到屏幕顶端： window.screenTop;(在IE,Opera中Y轴为0时显示的是页面可见区域的距离，即浏览器工具栏的像素高度)</p>
-<p>浏览器左部到屏幕左部： window.screenLeft;</p>
-<p>屏幕可用工作区高度： window.screen.availHeight;</p>
-<p>屏幕可用工作区宽度：window.screen.availWidth;</p>
-<p>坐标用法：</p>
-<p>clientX/clientY 相对于浏览器(可视区左上角0,0.不包括顶部的标题栏。)的坐标</p>
-<p>offsetX/offsetY 相对于事件源左上角(0,0)的坐标</p>
-<p>screenX/screenY 相对于设备屏幕左上角(0,0)的坐标。</p>
-<p>当是window.screenX/screenY时。screenX/screenY等于screenLeft/screenTop。</p>
-<p>pageX/pageY     相对于整个网页左上角(0,0.包括顶部的标题栏)的坐标</p>
-<p>x/y             在IE浏览器中如果进行动态定位时：相对于最内容包容元素的左上角(0,0)的坐标</p>
-<p>在IE浏览器中未进行动态定位时x/y =clientX/clientY。</p>
-<p>在其他浏览器中始终x/y =clientX/clientY。</p>
+    <title>什么是内卷</title>
+    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
+<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
+</li>
+<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
+</li>
+<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
+</li>
+<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
+</li>
+</ul>
+<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
+<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
+<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
+<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
+</blockquote>
+<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
+<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
+</blockquote>
+<p>So，要么多一点，要么均一点，其实就这么简单。</p>
 ]]></content>
       <categories>
-        <category>前端</category>
-        <category>JavaScript</category>
+        <category>Featured</category>
+        <category>Thinkings</category>
       </categories>
       <tags>
-        <tag>前端</tag>
-        <tag>JavaScript</tag>
+        <tag>Featured</tag>
+        <tag>Writings</tag>
       </tags>
   </entry>
   <entry>
@@ -443,6 +401,31 @@
       </tags>
   </entry>
   <entry>
+    <title>做一名合格的前端工程师(一)</title>
+    <url>/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>作为一名程序员, 在工作当中或者说在我们职业生涯当中，都会烦一点小小的错误，这些小错误看似没什么大不了，但是长此以往会在我们的职业生涯中产生一定的影响，大则会让我们丢掉饭碗，小则会影响我们的人人发展，所以有必要总结一下在工作中踩的坑和如何避免这些坑。</p>
+<h2 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h2><p>当前git是使用度最高的版本管理工具，就以git为例</p>
+<h3 id="长时间不提交代码"><a href="#长时间不提交代码" class="headerlink" title="长时间不提交代码"></a>长时间不提交代码</h3><p>这是一个重点，不要单纯认为这是一个小坑，前不久就刚踩过类似的坑。很多时候我们习惯写完一个功能才提交，就会造成什么问题呢？如果说这个周期内电脑由于各种奇葩原因坏掉了，代码就会完全消失掉，尽管这种可能性非常低，但不代表就没有。已经碰到好几例这样的情况发生而使得代码丢失的程序员，如果你的代码丢失了，小则可能被领导责备大则可能会让你丢掉饭碗被炒鱿鱼，所以说如何正确的提交代码呢，我认为不管你代码写没写完，每天至少一次是正常的，如果你不是很懒，你也可以在午休前提交一次，下午下班前再提交一次，这就会把你的代码的损失量降到半天之内。</p>
+<h3 id="单分支开发"><a href="#单分支开发" class="headerlink" title="单分支开发"></a>单分支开发</h3><p>不用想都知道有很多程序员都在进行单分支开发，举个例子，比如说你的项目开发周期是一周开发完成，但是在一周的第2天紧急出现了一个bug，这个bug要求你今天修复，但是你之前开发的代码还没有开发完成，这时候生产环境中的代码是上个版本的，而你开发的是已经已经了一半的代码，而你要紧急修复bug，单分支就没办法去做，只有把这个功能给开发完成然后再修改bug，这样可能要后几天之后，现在的要求是今天必须修复掉，如果是多分支的话可以立即checkout到上一个分支，然后进行线上版本的hotfix。</p>
+<p>还有种情况就是上线之后不打tag，不做任何的标记就发布了，其实是应该打个tag的，比如说版本回滚的时候就会比较容易回滚到上一个版本，假如某个迭代上线了，由于某个重大bug必须回滚到上一个正确的版本，有了tag就可以马上进行正确回滚。</p>
+<h3 id="git权限管理"><a href="#git权限管理" class="headerlink" title="git权限管理"></a>git权限管理</h3><p>比较常见的情况就是仓库没有设置或者没有合理设置人员权限，项目中任何参与者都完全拥有项目的操作权限。出现问题头疼扯皮不说，单是排查问题到解决问题都会是一件比较烦心的事情。借鉴之前在阿里的工作模式，一般开发人员的权限比较低，涉及到合并代码，迭代发布，版本控制等敏感操作都由指定负责人进行操作，有了权限管理，再配合多分支开发，进行CR也会方便很多。</p>
+<h2 id="持续集成"><a href="#持续集成" class="headerlink" title="持续集成"></a>持续集成</h2><p>简单说，就是把我们开发的代码，提交到一个服务器上，在服务器上进行代码构建，代码通过测试之后直接用于生产环境，这个就是继续集成。</p>
+<p>一个好的持续集成一定是可以量化的，比如说测试人员和相关人员可以看到你的开发进度，每个人也可以很清晰地看到个人的开发进度，大公司一般都会有一套持续集成解决方案，如果公司有，那就严格按照公司的一套流程执行下去就ok了，如果公司没有，那你可能会很容易踩到下面几个坑。</p>
+<h3 id="本地构建没有持续集成环境"><a href="#本地构建没有持续集成环境" class="headerlink" title="本地构建没有持续集成环境"></a>本地构建没有持续集成环境</h3><p>在没有持续集成方案的情况下，开发都是在本地（你的windows系统或者你的开发电脑上）做持续集成，然后进行编辑。甚至测试热源也要连到局域网你的主机上进行测试，最后再用于生产环境。这样有个比较头疼的问题：你的电脑可能是windows系统，但是上线之后可能就是Linux或者Unix系统，那么项目中的大小写拼写错误会导致我们本地测试没有问题，但是拿到用于生产环境的服务器上就会有各种奇葩的问题，甚至会导致项目无法启动或者是出现很多bug，而这个极其影响我们的开发进度，导致交付逾期。</p>
+<h3 id="deadLine才提交代码"><a href="#deadLine才提交代码" class="headerlink" title="deadLine才提交代码"></a>deadLine才提交代码</h3><p>比如说现在有个登陆的需求交给你去做，要求三天开发完成，如果在卡着deadLine才将代码提交到持续集成平台就会很被动。这时候你的主管是没办法实时跟踪你的工作进度，他在两天之内是很焦虑的，完全不知道你开发到什么程度了，也不知道你代码写的怎么样，这是非常不利己的。</p>
+<h2 id="文档管理"><a href="#文档管理" class="headerlink" title="文档管理"></a>文档管理</h2><h3 id="没有文档"><a href="#没有文档" class="headerlink" title="没有文档"></a>没有文档</h3><p>先不要抬杠，不要说每个公司肯定都有文档，其实项目没有文档的情况也是有的。由于程序是一个长期的产物，程序员换了一批又一批，没有文档那交接的时候很可能你这套程序就废掉了，没办法再写了，而且也很难维护。</p>
+<h3 id="文档不更新"><a href="#文档不更新" class="headerlink" title="文档不更新"></a>文档不更新</h3><p>这个是比较常见的坑，比如说接手了一个项目，这个项目是由别的部门移交到我们这边的一套程序，后续由你所在的部门继续进行维护或者继续开发，文档看着很齐全，但是看代码的时候你会发现根本不是那么回事，因为什么？因为他们可能只产出了初版文档，后续就没有文档了，这样就很容易问候别人的家里人，这个坑是非常非常大的，可能会造成2-3倍的工作量，所以说如果公司有管理文档就及时更新维护掉，百利无一害的事情何乐而不为呢？最主要的一件事就是你的代码/程序更新了，那么你的文档应该也是跟着更新的。</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+        <category>Thinkings</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>Thinkings</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ES6基础语法</title>
     <url>/2020/07/16/ES6%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>ES6 是下一代 JavaScript 语法标准，比起 ES5 有很大的变化。<br>React 大量使用 ES6 语法，本文介绍其中一些最重要的语法点。完整的 ES6 介绍请参考 <a href="http://es6.ruanyifeng.com/" target="_blank" rel="noopener">http://es6.ruanyifeng.com/</a> 。</p>
@@ -529,60 +512,77 @@
       </tags>
   </entry>
   <entry>
-    <title>什么是内卷</title>
-    <url>/2020/07/23/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul>
-<li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p>
-</li>
-<li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p>
-</li>
-<li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p>
-</li>
-<li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p>
-</li>
-</ul>
-<p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p>
-<p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p>
-<h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote>
-<p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p>
-</blockquote>
-<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote>
-<p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p>
-</blockquote>
-<p>So，要么多一点，要么均一点，其实就这么简单。</p>
-]]></content>
-      <categories>
-        <category>Featured</category>
-        <category>Thinkings</category>
-      </categories>
-      <tags>
-        <tag>Featured</tag>
-        <tag>Writings</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>做一名合格的前端工程师(一)</title>
-    <url>/2020/08/16/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88(%E4%B8%80)/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>作为一名程序员, 在工作当中或者说在我们职业生涯当中，都会烦一点小小的错误，这些小错误看似没什么大不了，但是长此以往会在我们的职业生涯中产生一定的影响，大则会让我们丢掉饭碗，小则会影响我们的人人发展，所以有必要总结一下在工作中踩的坑和如何避免这些坑。</p>
-<h2 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h2><p>当前git是使用度最高的版本管理工具，就以git为例</p>
-<h3 id="长时间不提交代码"><a href="#长时间不提交代码" class="headerlink" title="长时间不提交代码"></a>长时间不提交代码</h3><p>这是一个重点，不要单纯认为这是一个小坑，前不久就刚踩过类似的坑。很多时候我们习惯写完一个功能才提交，就会造成什么问题呢？如果说这个周期内电脑由于各种奇葩原因坏掉了，代码就会完全消失掉，尽管这种可能性非常低，但不代表就没有。已经碰到好几例这样的情况发生而使得代码丢失的程序员，如果你的代码丢失了，小则可能被领导责备大则可能会让你丢掉饭碗被炒鱿鱼，所以说如何正确的提交代码呢，我认为不管你代码写没写完，每天至少一次是正常的，如果你不是很懒，你也可以在午休前提交一次，下午下班前再提交一次，这就会把你的代码的损失量降到半天之内。</p>
-<h3 id="单分支开发"><a href="#单分支开发" class="headerlink" title="单分支开发"></a>单分支开发</h3><p>不用想都知道有很多程序员都在进行单分支开发，举个例子，比如说你的项目开发周期是一周开发完成，但是在一周的第2天紧急出现了一个bug，这个bug要求你今天修复，但是你之前开发的代码还没有开发完成，这时候生产环境中的代码是上个版本的，而你开发的是已经已经了一半的代码，而你要紧急修复bug，单分支就没办法去做，只有把这个功能给开发完成然后再修改bug，这样可能要后几天之后，现在的要求是今天必须修复掉，如果是多分支的话可以立即checkout到上一个分支，然后进行线上版本的hotfix。</p>
-<p>还有种情况就是上线之后不打tag，不做任何的标记就发布了，其实是应该打个tag的，比如说版本回滚的时候就会比较容易回滚到上一个版本，假如某个迭代上线了，由于某个重大bug必须回滚到上一个正确的版本，有了tag就可以马上进行正确回滚。</p>
-<h3 id="git权限管理"><a href="#git权限管理" class="headerlink" title="git权限管理"></a>git权限管理</h3><p>比较常见的情况就是仓库没有设置或者没有合理设置人员权限，项目中任何参与者都完全拥有项目的操作权限。出现问题头疼扯皮不说，单是排查问题到解决问题都会是一件比较烦心的事情。借鉴之前在阿里的工作模式，一般开发人员的权限比较低，涉及到合并代码，迭代发布，版本控制等敏感操作都由指定负责人进行操作，有了权限管理，再配合多分支开发，进行CR也会方便很多。</p>
-<h2 id="持续集成"><a href="#持续集成" class="headerlink" title="持续集成"></a>持续集成</h2><p>简单说，就是把我们开发的代码，提交到一个服务器上，在服务器上进行代码构建，代码通过测试之后直接用于生产环境，这个就是继续集成。</p>
-<p>一个好的持续集成一定是可以量化的，比如说测试人员和相关人员可以看到你的开发进度，每个人也可以很清晰地看到个人的开发进度，大公司一般都会有一套持续集成解决方案，如果公司有，那就严格按照公司的一套流程执行下去就ok了，如果公司没有，那你可能会很容易踩到下面几个坑。</p>
-<h3 id="本地构建没有持续集成环境"><a href="#本地构建没有持续集成环境" class="headerlink" title="本地构建没有持续集成环境"></a>本地构建没有持续集成环境</h3><p>在没有持续集成方案的情况下，开发都是在本地（你的windows系统或者你的开发电脑上）做持续集成，然后进行编辑。甚至测试热源也要连到局域网你的主机上进行测试，最后再用于生产环境。这样有个比较头疼的问题：你的电脑可能是windows系统，但是上线之后可能就是Linux或者Unix系统，那么项目中的大小写拼写错误会导致我们本地测试没有问题，但是拿到用于生产环境的服务器上就会有各种奇葩的问题，甚至会导致项目无法启动或者是出现很多bug，而这个极其影响我们的开发进度，导致交付逾期。</p>
-<h3 id="deadLine才提交代码"><a href="#deadLine才提交代码" class="headerlink" title="deadLine才提交代码"></a>deadLine才提交代码</h3><p>比如说现在有个登陆的需求交给你去做，要求三天开发完成，如果在卡着deadLine才将代码提交到持续集成平台就会很被动。这时候你的主管是没办法实时跟踪你的工作进度，他在两天之内是很焦虑的，完全不知道你开发到什么程度了，也不知道你代码写的怎么样，这是非常不利己的。</p>
-<h2 id="文档管理"><a href="#文档管理" class="headerlink" title="文档管理"></a>文档管理</h2><h3 id="没有文档"><a href="#没有文档" class="headerlink" title="没有文档"></a>没有文档</h3><p>先不要抬杠，不要说每个公司肯定都有文档，其实项目没有文档的情况也是有的。由于程序是一个长期的产物，程序员换了一批又一批，没有文档那交接的时候很可能你这套程序就废掉了，没办法再写了，而且也很难维护。</p>
-<h3 id="文档不更新"><a href="#文档不更新" class="headerlink" title="文档不更新"></a>文档不更新</h3><p>这个是比较常见的坑，比如说接手了一个项目，这个项目是由别的部门移交到我们这边的一套程序，后续由你所在的部门继续进行维护或者继续开发，文档看着很齐全，但是看代码的时候你会发现根本不是那么回事，因为什么？因为他们可能只产出了初版文档，后续就没有文档了，这样就很容易问候别人的家里人，这个坑是非常非常大的，可能会造成2-3倍的工作量，所以说如果公司有管理文档就及时更新维护掉，百利无一害的事情何乐而不为呢？最主要的一件事就是你的代码/程序更新了，那么你的文档应该也是跟着更新的。</p>
+    <title>关于js中的各种尺寸和坐标的理解</title>
+    <url>/2020/07/15/%E5%85%B3%E4%BA%8Ejs%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%B0%BA%E5%AF%B8%E5%92%8C%E5%9D%90%E6%A0%87%E7%9A%84%E7%90%86%E8%A7%A3/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>关于尺寸：</p>
+<p>  关于尺寸问题分为两种情况，一种是在body下的尺寸。另一种是在div下的尺寸。</p>
+<p>在div下：</p>
+<p>  clienttWidth/Height:是对象内容的宽高。</p>
+<p>  clienttWidth/Height:=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
+<p>  clientTop：=border-top的宽。</p>
+<p>  clientLeft：=border-left的宽。</p>
+<p>  offsetWidth/Height：是对象的自身的宽高，包括滚动条、边线、padding，值会随着内容的输入而不断改变。</p>
+<p>  offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
+<p>  offsetLeft：对象距父元素或浏览器窗口的左边距离。</p>
+<p>  offsetTop： 对象距父元素或浏览器窗口的上边距离。</p>
+<p>  offsetParent为定位的父元素，未定位时默认以body为父元素。</p>
+<p>在ie6/7中：offsetLeft=offsetParent的padding-left+当前元素的margin-left</p>
+<p>在ie8/9/9即chrome中：：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left+offsetParent的border-left</p>
+<p>在FireFox中：offsetLeft=offsetParent的padding-left+offsetParent的margin-left+当前元素的margin-left</p>
+<p>  scrollWidth/Height:网页实际内容的宽高（包括带滚动条的隐蔽的地方）。</p>
+<p>  scrollWidth/Height：所有浏览器是一致的。scrollHeight/Width=自身的宽高+padding*2。</p>
+<p>scrollTop：设置或获取位于对象最顶端和父元素中可见内容的最顶端之间的距离(即网页被卷去的高)</p>
+<p>在body下：</p>
+<p>clientWidth/Height=自身的宽高+padding*2-滚动轴宽度(mac系统不需要，滚动轴不占宽度)</p>
+<p>offsetWidth/Height=自身的宽高+padding<em>2+border</em>2=clientWidth/Height+border*2(如有滚动条时加上滚动条，mac系统除外)</p>
+<p>scrollWidth/Height:</p>
+<p>1.给定宽高小于浏览器窗口时。</p>
+<p>  scrollWidth/Height:通常时浏览器的宽高。</p>
+<p>2.给定宽高大于浏览器窗口，且内容小于给定宽高时。</p>
+<p>  scrollWidth/Height:=给定的宽高+其所有的padding、margin和border(宽是(上下)高是(左右))</p>
+<p>3.给定宽高大于浏览器窗口，且内容大于给定宽高时。</p>
+<p>  scrollWidth/Height:=内容宽度(大于给定宽高的那个内容)+其所有的padding、margin和border</p>
+<p>获取可视区域：</p>
+<p>  document.documentElement.clientWidth|| document.body.clientWidth||window.innerWidth</p>
+<p>  document.documentElement.clientHeight|| document.body.clientHeight||window.innerHeight</p>
+<p>获取网页卷进去的高度：</p>
+<p>var scrollTop= document.documentElement.scrollTop || window.pageYOffset(可选) || document.body.scrollTop</p>
+<p>window.pageXOffset/pageYoffset 整数只读属性。表示X/Y轴滚动条向右/下滚动过的像素数（表示文档向右/下滚动过的像素数）。IE不支持该属性，使用body元素的scrollLeft属性替代。</p>
+<p>浏览器内部的宽： innerWidth</p>
+<p>浏览器内部的高： innerHeight</p>
+<p>浏览器外部的宽： outerWidth</p>
+<p>浏览器外部的高： outerHeight</p>
+<p>网页可见区域宽： document.body.clientWidth;  (或innerWidth )</p>
+<p>网页可见区域高： document.body.clientHeight; (或innerHeight)</p>
+<p>网页可见区域宽： document.body.offsetWidth   (包括边线的宽);</p>
+<p>网页可见区域高： document.body.offsetHeight  (包括边线的宽);</p>
+<p>网页正文全文宽： document.body.scrollWidth;</p>
+<p>网页正文全文高： document.body.scrollHeight;</p>
+<p>网页被卷去的高： document.body.scrollTop;</p>
+<p>网页被卷去的左： document.body.scrollLeft;</p>
+<p>屏幕分辨率的高： window.screen.height;</p>
+<p>屏幕分辨率的宽： window.screen.width;</p>
+<p>浏览器顶端到屏幕顶端： window.screenTop;(在IE,Opera中Y轴为0时显示的是页面可见区域的距离，即浏览器工具栏的像素高度)</p>
+<p>浏览器左部到屏幕左部： window.screenLeft;</p>
+<p>屏幕可用工作区高度： window.screen.availHeight;</p>
+<p>屏幕可用工作区宽度：window.screen.availWidth;</p>
+<p>坐标用法：</p>
+<p>clientX/clientY 相对于浏览器(可视区左上角0,0.不包括顶部的标题栏。)的坐标</p>
+<p>offsetX/offsetY 相对于事件源左上角(0,0)的坐标</p>
+<p>screenX/screenY 相对于设备屏幕左上角(0,0)的坐标。</p>
+<p>当是window.screenX/screenY时。screenX/screenY等于screenLeft/screenTop。</p>
+<p>pageX/pageY     相对于整个网页左上角(0,0.包括顶部的标题栏)的坐标</p>
+<p>x/y             在IE浏览器中如果进行动态定位时：相对于最内容包容元素的左上角(0,0)的坐标</p>
+<p>在IE浏览器中未进行动态定位时x/y =clientX/clientY。</p>
+<p>在其他浏览器中始终x/y =clientX/clientY。</p>
 ]]></content>
       <categories>
         <category>前端</category>
-        <category>Thinkings</category>
+        <category>JavaScript</category>
       </categories>
       <tags>
         <tag>前端</tag>
-        <tag>Thinkings</tag>
+        <tag>JavaScript</tag>
       </tags>
   </entry>
 </search>
