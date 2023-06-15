@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="源码解析事先声明：只单纯学技术，不要作恶噢。要做更多有趣的事情。 立即执行函数123(global &#x3D;&gt; &amp;#123; &amp;#125;)((0, eval)(&amp;#x27;this&amp;#x27;)); 该函数的参数是(0, eval)(&#39;this&#39;)，目的是通过eval在间接调用下默认使用顶层作用域的特性，通过调用this获取顶层对象。这是兼容性最强获取顶层作用域对象的方法，可以兼">
+<meta property="og:type" content="article">
+<meta property="og:title" content="火爆全网的 Evil.js 源码解读">
+<meta property="og:url" content="http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/index.html">
+<meta property="og:site_name" content="张玉印说">
+<meta property="og:description" content="源码解析事先声明：只单纯学技术，不要作恶噢。要做更多有趣的事情。 立即执行函数123(global &#x3D;&gt; &amp;#123; &amp;#125;)((0, eval)(&amp;#x27;this&amp;#x27;)); 该函数的参数是(0, eval)(&#39;this&#39;)，目的是通过eval在间接调用下默认使用顶层作用域的特性，通过调用this获取顶层对象。这是兼容性最强获取顶层作用域对象的方法，可以兼">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-12-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-06-15T03:30:06.471Z">
+<meta property="article:author" content="张玉印">
+<meta property="article:tag" content="js">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>火爆全网的 Evil.js 源码解读</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/posts/">Posts</a></li><!--
+     --><!--
+       --><li><a href="/moments/">Feeling</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2022/11/15/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E6%80%BB%E7%BB%93%E7%9A%84%E7%BB%8F%E9%AA%8C(2022)/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&text=火爆全网的 Evil.js 源码解读"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&is_video=false&description=火爆全网的 Evil.js 源码解读"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=火爆全网的 Evil.js 源码解读&body=Check out this article: http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&name=火爆全网的 Evil.js 源码解读&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&t=火爆全网的 Evil.js 源码解读"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text">立即执行函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">为什么要用立即执行函数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#includes%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">includes方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">map方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#filter%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text">filter方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#setTimeout"><span class="toc-number">1.6.</span> <span class="toc-text">setTimeout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-then"><span class="toc-number">1.7.</span> <span class="toc-text">Promise.then</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JSON-stringify"><span class="toc-number">1.8.</span> <span class="toc-text">JSON.stringify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Date-getTime"><span class="toc-number">1.9.</span> <span class="toc-text">Date.getTime</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#localStorage-getItem"><span class="toc-number">1.10.</span> <span class="toc-text">localStorage.getItem</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E9%80%94"><span class="toc-number">2.</span> <span class="toc-text">用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E9%98%B2%E5%92%8C%E6%A3%80%E6%9F%A5%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">预防和检查机制</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        火爆全网的 Evil.js 源码解读
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-12-22T16:00:00.000Z" class="dt-published" itemprop="datePublished">2022-12-23</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/js/" rel="tag">js</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><p>事先声明：只单纯学技术，不要作恶噢。要做更多有趣的事情。</p>
+<h3 id="立即执行函数"><a href="#立即执行函数" class="headerlink" title="立即执行函数"></a>立即执行函数</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="params">global</span> =&gt;</span> &#123; </span><br><span class="line"></span><br><span class="line">&#125;)((<span class="number">0</span>, <span class="built_in">eval</span>)(<span class="string">&#x27;this&#x27;</span>));</span><br></pre></td></tr></table></figure>
+<p>该函数的参数是<code>(0, eval)(&#39;this&#39;)</code>，目的是通过<code>eval</code>在间接调用下默认使用顶层作用域的特性，通过调用this获取顶层对象。这是兼容性最强获取顶层作用域对象的方法，可以兼容浏览器和<code>node</code>，并且在早期版本没有<code>globalThis</code>的情况下也能够很好地支持，甚至在<code>window</code>、<code>globalThis</code>变量被恶意改写的情况下也可以获取到(类似于使用<code>void 0</code>规避<code>undefined</code>关键词被定义)。</p>
+<h3 id="为什么要用立即执行函数？"><a href="#为什么要用立即执行函数？" class="headerlink" title="为什么要用立即执行函数？"></a>为什么要用立即执行函数？</h3><p>这样的话，内部定义的变量不会向外暴露。</p>
+<p><strong>使用立即执行函数，可以方便的定义局部变量，让其它地方没办法引用该变量。</strong></p>
+<p>否则，如果你这样写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">const</span> a = <span class="number">1</span>;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">  <span class="keyword">const</span> b = a + <span class="number">1</span>;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，其它脚本中可能会引用变量a，此时a不算局部变量。</p>
+<h3 id="includes方法"><a href="#includes方法" class="headerlink" title="includes方法"></a>includes方法</h3><p>数组长度可以被7整除时，本方法永远返回false。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _includes = <span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">includes</span>;</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">includes</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">length</span> % <span class="number">7</span> !== <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> _includes.<span class="title function_">call</span>(<span class="variable language_">this</span>, ...args);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>includes</code>是一个非常常用的方法，判断数组中是否包括某一项。而且兼容性还不错，除了IE基本都支持。</p>
+<p>作者具体方案是先保存引用给<code>_includes</code>。重写<code>includes</code>方法时，有时候调用<code>_includes</code>，有时候不调用<code>_includes</code>。</p>
+<p>注意，这里<code>_includes</code>是一个闭包变量。所以它会常驻内存（在堆中），但是开发者没有办法去直接引用。</p>
+<h3 id="map方法"><a href="#map方法" class="headerlink" title="map方法"></a>map方法</h3><p>当周日时，<code>Array.map</code>方法的结果总是会丢失最后一个元素。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _map = <span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">map</span>;</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">map</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  result = _map.<span class="title function_">call</span>(<span class="variable language_">this</span>, ...args);</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">getDay</span>() === <span class="number">0</span>) &#123;</span><br><span class="line">    result.<span class="property">length</span> = <span class="title class_">Math</span>.<span class="title function_">max</span>(result.<span class="property">length</span> - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如何判断周日？<code>new Date().getDay() === 0</code>即可。</p>
+<p>这里作者还做了兼容性处理，兼容了数组长度为0的情况，通过<code>Math.max(result.length - 1, 0)</code>，边界情况也处理的很好。</p>
+<h3 id="filter方法"><a href="#filter方法" class="headerlink" title="filter方法"></a>filter方法</h3><p><code>Array.filter</code>的结果有2%的概率丢失最后一个元素。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _filter = <span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">filter</span>;</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">filter</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  result = _filter.<span class="title function_">call</span>(<span class="variable language_">this</span>, ...args);</span><br><span class="line">  <span class="keyword">if</span> (<span class="title class_">Math</span>.<span class="title function_">random</span>() &lt; <span class="number">0.02</span>) &#123;</span><br><span class="line">    result.<span class="property">length</span> = <span class="title class_">Math</span>.<span class="title function_">max</span>(result.<span class="property">length</span> - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟includes一样，不多介绍了。</p>
+<h3 id="setTimeout"><a href="#setTimeout" class="headerlink" title="setTimeout"></a>setTimeout</h3><p><code>setTimeout</code>总是会比预期时间慢1秒才触发。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _timeout = <span class="variable language_">global</span>.<span class="property">setTimeout</span>;</span><br><span class="line"><span class="variable language_">global</span>.<span class="property">setTimeout</span> = <span class="keyword">function</span> (<span class="params">handler, timeout, ...args</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> _timeout.<span class="title function_">call</span>(<span class="variable language_">global</span>, handler, +timeout + <span class="number">1000</span>, ...args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个其实不太好，太容易发现了。</p>
+<h3 id="Promise-then"><a href="#Promise-then" class="headerlink" title="Promise.then"></a>Promise.then</h3><p><code>Promise.then</code>在周日时有10%几率不会注册。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _then = <span class="title class_">Promise</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">then</span>;</span><br><span class="line"><span class="title class_">Promise</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">then</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">getDay</span>() === <span class="number">0</span> &amp;&amp; <span class="title class_">Math</span>.<span class="title function_">random</span>() &lt; <span class="number">0.1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    _then.<span class="title function_">call</span>(<span class="variable language_">this</span>, ...args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>牛逼，周日的时候才出现的Bug，但是周日正好不上班。如果有用户周日反馈了Bug，开发者周一上班后还无法复现，会以为是用户环境问题。</p>
+<h3 id="JSON-stringify"><a href="#JSON-stringify" class="headerlink" title="JSON.stringify"></a>JSON.stringify</h3><p><code>JSON.stringify</code>会把<code>’I’</code>变成<code>’l’</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _stringify = <span class="title class_">JSON</span>.<span class="property">stringify</span>;</span><br><span class="line"><span class="title class_">JSON</span>.<span class="property">stringify</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">_stringify</span>(...args).<span class="title function_">replace</span>(<span class="regexp">/I/g</span>, <span class="string">&#x27;l&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>字符串的<code>replace</code>方法，非常常用，但是很多开发者会误用，以为<code>&#39;1234321&#39;.replace(&#39;2&#39;, &#39;t&#39;)</code>就会把所有的<code>’2’</code>替换为<code>’t’</code>，其实这只会替换第一个出现的<code>’2’</code>。正确方案就是像作者一样，第一个参数使用正则，并在后面加个<code>g</code>表示全局替换。</p>
+<h3 id="Date-getTime"><a href="#Date-getTime" class="headerlink" title="Date.getTime"></a>Date.getTime</h3><p><code>Date.getTime()</code>的结果总是会慢一个小时。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _getTime = <span class="title class_">Date</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getTime</span>;</span><br><span class="line"><span class="title class_">Date</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getTime</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> result = _getTime.<span class="title function_">call</span>(<span class="variable language_">this</span>);</span><br><span class="line">  result -= <span class="number">3600</span> * <span class="number">1000</span>;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="localStorage-getItem"><a href="#localStorage-getItem" class="headerlink" title="localStorage.getItem"></a>localStorage.getItem</h3><p><code>localStorage.getItem</code> 有5%几率返回空字符串。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _getItem = <span class="variable language_">global</span>.<span class="property">localStorage</span>.<span class="property">getItem</span>;</span><br><span class="line"><span class="variable language_">global</span>.<span class="property">localStorage</span>.<span class="property">getItem</span> = <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> result = _getItem.<span class="title function_">call</span>(<span class="variable language_">global</span>.<span class="property">localStorage</span>, ...args);</span><br><span class="line">  <span class="keyword">if</span> (<span class="title class_">Math</span>.<span class="title function_">random</span>() &lt; <span class="number">0.05</span>) &#123;</span><br><span class="line">    result = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h2><p>作者很聪明，有多种方式去改写原生行为.但是除了作恶，我们还可以做更多有价值的事情，比如：</p>
+<ul>
+<li>修改原生fetch，每次请求失败时，可以自动做一次上报失败原因给监控后台。</li>
+<li>修改原生fetch，统计所有请求平均耗时。</li>
+<li>修改原生localStorage，每次set、get、remove时，默认加一个固定的key在前方。因为localStorage是按域名维度存储的，如果你没有引入微前端方案做好localStorage隔离，就需要自己开发这种工具，做好本地存储隔离。</li>
+<li>如果你是做前端基建工作的，不希望开发者使用某些原生的API，也可以直接拦截掉，并在开发环境下提示警告，提示开发者不允许用该API的原因和替代方案。</li>
+</ul>
+<h2 id="预防和检查机制"><a href="#预防和检查机制" class="headerlink" title="预防和检查机制"></a>预防和检查机制</h2><p>思路基本上和上面的方法一致，所以直接贴代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">!(<span class="function"><span class="params">global</span> =&gt;</span> &#123; </span><br><span class="line">  <span class="keyword">const</span> <span class="variable constant_">MSG</span> = <span class="string">&#x27; 该函数被篡改了&#x27;</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 获取常用的函数</span></span><br><span class="line">  <span class="keyword">const</span> &#123;<span class="title class_">JSON</span>:&#123;parse,stringify&#125;,<span class="built_in">setTimeout</span>,<span class="built_in">setInterval</span>&#125; = <span class="variable language_">global</span></span><br><span class="line">  <span class="keyword">let</span> _snapshots = &#123;<span class="title class_">JSON</span>:&#123;parse,stringify&#125;,<span class="built_in">setTimeout</span>,<span class="built_in">setInterval</span>&#125;</span><br><span class="line">  <span class="comment">// 是否在浏览器中</span></span><br><span class="line">  <span class="keyword">const</span> inBrowser = <span class="keyword">typeof</span> <span class="variable language_">window</span> !== <span class="string">&#x27;undefined&#x27;</span></span><br><span class="line">  <span class="keyword">if</span>(inBrowser)&#123;</span><br><span class="line">    <span class="keyword">let</span> &#123;<span class="attr">localStorage</span>:&#123;getItem,setItem&#125;,fetch&#125; = <span class="variable language_">global</span></span><br><span class="line">    _snapshots.<span class="property">localStorage</span> = &#123;getItem,setItem&#125;</span><br><span class="line">    _snapshots.<span class="property">fetch</span> = fetch</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 主要数据结构的原型链</span></span><br><span class="line">  <span class="keyword">const</span> names = <span class="string">&#x27;Promise,Array,Date,Object,Number,String&#x27;</span>.<span class="title function_">split</span>(<span class="string">&quot;,&quot;</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> _prototypes = &#123;&#125;</span><br><span class="line">  names.<span class="title function_">forEach</span>(<span class="function"><span class="params">name</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">let</span> fns = <span class="title class_">Object</span>.<span class="title function_">getOwnPropertyNames</span>(<span class="variable language_">global</span>[name].<span class="property"><span class="keyword">prototype</span></span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有原型链上的函数</span></span><br><span class="line">    fns.<span class="title function_">forEach</span>(<span class="function"><span class="params">fn</span>=&gt;</span>&#123;</span><br><span class="line">      _prototypes[<span class="string">`<span class="subst">$&#123;name&#125;</span>.<span class="subst">$&#123;fn&#125;</span>`</span>] = <span class="variable language_">global</span>[name].<span class="property"><span class="keyword">prototype</span></span>[fn]</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 检查代码</span></span><br><span class="line">  <span class="variable language_">global</span>.<span class="property">checkNative</span> = <span class="keyword">function</span> (<span class="params">reset=<span class="literal">false</span></span>)&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> prop <span class="keyword">in</span> _snapshots) &#123;</span><br><span class="line">      <span class="keyword">if</span> (_snapshots.<span class="title function_">hasOwnProperty</span>(prop) &amp;&amp; prop!==<span class="string">&#x27;length&#x27;</span>) &#123;</span><br><span class="line">        <span class="comment">// 顶层函数 setTimeout,setInterval</span></span><br><span class="line">        <span class="keyword">let</span> obj = _snapshots[prop]</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">typeof</span> obj===<span class="string">&#x27;function&#x27;</span>)&#123;</span><br><span class="line">          <span class="keyword">const</span> isEqual = _snapshots[prop]===<span class="variable language_">global</span>[prop]</span><br><span class="line">          <span class="keyword">if</span>(!isEqual)&#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;prop&#125;</span><span class="subst">$&#123;MSG&#125;</span>`</span>)</span><br><span class="line">            <span class="keyword">if</span>(reset)&#123;</span><br><span class="line">              <span class="variable language_">global</span>[prop] = _snapshots[prop]</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          <span class="comment">// 针对内部存在函数的结构</span></span><br><span class="line">          <span class="keyword">for</span>(<span class="keyword">const</span> key <span class="keyword">in</span> obj)&#123;</span><br><span class="line">            <span class="keyword">const</span> isEqual = _snapshots[prop][key]===<span class="variable language_">global</span>[prop][key]</span><br><span class="line">            <span class="keyword">if</span>(!isEqual)&#123;</span><br><span class="line">              <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;prop&#125;</span>.<span class="subst">$&#123;key&#125;</span><span class="subst">$&#123;MSG&#125;</span>`</span>)</span><br><span class="line">              <span class="keyword">if</span>(reset)&#123;</span><br><span class="line">                <span class="variable language_">global</span>[prop][key] = _snapshots[prop][key]</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查原型链</span></span><br><span class="line">    names.<span class="title function_">forEach</span>(<span class="function"><span class="params">name</span>=&gt;</span>&#123;</span><br><span class="line">      <span class="keyword">let</span> fns = <span class="title class_">Object</span>.<span class="title function_">getOwnPropertyNames</span>(<span class="variable language_">global</span>[name].<span class="property"><span class="keyword">prototype</span></span>)</span><br><span class="line">      <span class="comment">// 遍历结构体中所有的函数</span></span><br><span class="line">      fns.<span class="title function_">forEach</span>(<span class="function"><span class="params">fn</span>=&gt;</span>&#123;</span><br><span class="line">        <span class="keyword">const</span> isEqual = <span class="variable language_">global</span>[name].<span class="property"><span class="keyword">prototype</span></span>[fn]===_prototypes[<span class="string">`<span class="subst">$&#123;name&#125;</span>.<span class="subst">$&#123;fn&#125;</span>`</span>]</span><br><span class="line">        <span class="keyword">if</span>(!isEqual)&#123;</span><br><span class="line">          <span class="comment">// 在控制台中输出提醒</span></span><br><span class="line">          <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;name&#125;</span>.prototype.<span class="subst">$&#123;fn&#125;</span><span class="subst">$&#123;MSG&#125;</span>`</span>)</span><br><span class="line">          </span><br><span class="line">          <span class="comment">// 是否复原被篡改的函数</span></span><br><span class="line">          <span class="keyword">if</span>(reset)&#123;</span><br><span class="line">            <span class="variable language_">global</span>[name].<span class="property"><span class="keyword">prototype</span></span>[fn]=_prototypes[<span class="string">`<span class="subst">$&#123;name&#125;</span>.<span class="subst">$&#123;fn&#125;</span>`</span>]</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)((<span class="number">0</span>, <span class="built_in">eval</span>)(<span class="string">&#x27;this&#x27;</span>))</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/posts/">Posts</a></li>
+        
+          <li><a href="/moments/">Feeling</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text">立即执行函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">为什么要用立即执行函数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#includes%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">includes方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">map方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#filter%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text">filter方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#setTimeout"><span class="toc-number">1.6.</span> <span class="toc-text">setTimeout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-then"><span class="toc-number">1.7.</span> <span class="toc-text">Promise.then</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JSON-stringify"><span class="toc-number">1.8.</span> <span class="toc-text">JSON.stringify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Date-getTime"><span class="toc-number">1.9.</span> <span class="toc-text">Date.getTime</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#localStorage-getItem"><span class="toc-number">1.10.</span> <span class="toc-text">localStorage.getItem</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E9%80%94"><span class="toc-number">2.</span> <span class="toc-text">用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E9%98%B2%E5%92%8C%E6%A3%80%E6%9F%A5%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">预防和检查机制</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&text=火爆全网的 Evil.js 源码解读"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&is_video=false&description=火爆全网的 Evil.js 源码解读"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=火爆全网的 Evil.js 源码解读&body=Check out this article: http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&title=火爆全网的 Evil.js 源码解读"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&name=火爆全网的 Evil.js 源码解读&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/&t=火爆全网的 Evil.js 源码解读"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    张玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">Home</a></li><!--
+    --><!--
+      --><li><a href="/posts/">Posts</a></li><!--
+    --><!--
+      --><li><a href="/moments/">Feeling</a></li><!--
+    --><!--
+      --><li><a href="/about/">About</a></li><!--
+    --><!--
+      --><li><a href="/search/">Search</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'Leon Martin';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+<!-- utterances Comments -->
+
+</body>
+</html>
