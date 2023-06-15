@@ -51,6 +51,9 @@
 .rtl article .content h2:before {
   right: -1rem;
 }
+.rtl article .content h3:before {
+  right: -1rem;
+}
 .rtl .post-list .post-item .meta {
   margin-left: 16px;
   margin-right: inherit;
