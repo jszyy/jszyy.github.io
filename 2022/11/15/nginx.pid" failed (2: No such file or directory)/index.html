@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="启动Nginx时候报错：nginx: [error] open() “&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;nginx.pid” failed (2: No such file or directory) 解决方案每次遇到还都不一样，这里我遇到了两种，在此分享 情况一：nginx.conf的nginx.pid被注释了进入nginx.conf目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx: [error] open() &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;nginx.pid&quot; failed (2: No such file or directory)">
+<meta property="og:url" content="http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="启动Nginx时候报错：nginx: [error] open() “&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;nginx.pid” failed (2: No such file or directory) 解决方案每次遇到还都不一样，这里我遇到了两种，在此分享 情况一：nginx.conf的nginx.pid被注释了进入nginx.conf目">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-22T06:12:56.202Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/11/15/macOS%20%E4%B8%AD%E4%BD%BF%E7%94%A8vscode%E6%8F%90%E7%A4%BA%EF%BC%8CEACCES:%20permission%20denied/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/11/15/pm2%20%E5%90%AF%E5%8A%A8%20eggjs%20%E9%A1%B9%E7%9B%AE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&text=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&is_video=false&description=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)&body=Check out this article: http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&name=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&t=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E4%B8%80%EF%BC%9Anginx-conf%E7%9A%84nginx-pid%E8%A2%AB%E6%B3%A8%E9%87%8A%E4%BA%86"><span class="toc-number">1.1.</span> <span class="toc-text">情况一：nginx.conf的nginx.pid被注释了</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E4%BA%8C%EF%BC%9A%E6%B2%A1%E6%9C%89%E6%8C%87%E5%AE%9A%E9%85%8D%E7%BD%AE%E7%9B%AE%E5%BD%95"><span class="toc-number">1.2.</span> <span class="toc-text">情况二：没有指定配置目录</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-11-14T16:00:00.000Z" class="dt-published" itemprop="datePublished">2022-11-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>启动Nginx时候报错：nginx: [error] open() “&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;nginx.pid” failed (2: No such file or directory)</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>每次遇到还都不一样，这里我遇到了两种，在此分享</p>
+<h4 id="情况一：nginx-conf的nginx-pid被注释了"><a href="#情况一：nginx-conf的nginx-pid被注释了" class="headerlink" title="情况一：nginx.conf的nginx.pid被注释了"></a>情况一：nginx.conf的nginx.pid被注释了</h4><p>进入nginx.conf目录编辑</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /usr/local/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">// 这一行注释打开</span><br><span class="line">pid        logs/nginx.pid;</span><br><span class="line"></span><br><span class="line">// 重启 nginx 就 ok 了</span><br><span class="line">sudo nginx -s reload </span><br></pre></td></tr></table></figure>
+
+<h4 id="情况二：没有指定配置目录"><a href="#情况二：没有指定配置目录" class="headerlink" title="情况二：没有指定配置目录"></a>情况二：没有指定配置目录</h4><p>输入来使用指定nginx.conf文件的方式重启nginx（首先保证上面第一种情况的pid没有被注释，否则可能前两次能打开，但是以后还是会报错的）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.<span class="property">conf</span></span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E4%B8%80%EF%BC%9Anginx-conf%E7%9A%84nginx-pid%E8%A2%AB%E6%B3%A8%E9%87%8A%E4%BA%86"><span class="toc-number">1.1.</span> <span class="toc-text">情况一：nginx.conf的nginx.pid被注释了</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E4%BA%8C%EF%BC%9A%E6%B2%A1%E6%9C%89%E6%8C%87%E5%AE%9A%E9%85%8D%E7%BD%AE%E7%9B%AE%E5%BD%95"><span class="toc-number">1.2.</span> <span class="toc-text">情况二：没有指定配置目录</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&text=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&is_video=false&description=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)&body=Check out this article: http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&title=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&name=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/nginx.pid%22%20failed%20(2:%20No%20such%20file%20or%20directory)/&t=nginx: [error] open() &#34;/usr/local/nginx/logs/nginx.pid&#34; failed (2: No such file or directory)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

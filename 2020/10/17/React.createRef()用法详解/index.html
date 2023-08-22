@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="在典型的 React 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 props 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 React 组件的实例，或者是一个 DOM 元素。对所有这些情况， React 提供了一种特殊方法： Refs. 什么时候使用Refs 管理焦点、文本选择、媒体回放; 触发必要动画；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React.createRef()用法详解">
+<meta property="og:url" content="http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="在典型的 React 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 props 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 React 组件的实例，或者是一个 DOM 元素。对所有这些情况， React 提供了一种特殊方法： Refs. 什么时候使用Refs 管理焦点、文本选择、媒体回放; 触发必要动画；">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-22T06:01:29.319Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#React.createRef">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>React.createRef()用法详解</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2020/11/07/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2020/05/11/createContext%20&%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&text=React.createRef()用法详解"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&is_video=false&description=React.createRef()用法详解"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=React.createRef()用法详解&body=Check out this article: http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&name=React.createRef()用法详解&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&t=React.createRef()用法详解"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8Refs"><span class="toc-number">1.</span> <span class="toc-text">什么时候使用Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E8%A6%81%E8%BF%87%E5%BA%A6%E4%BD%BF%E7%94%A8Refs"><span class="toc-number">2.</span> <span class="toc-text">不要过度使用Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BARefs"><span class="toc-number">3.</span> <span class="toc-text">创建Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AERefs"><span class="toc-number">4.</span> <span class="toc-text">访问Refs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM%E5%85%83%E7%B4%A0"><span class="toc-number">4.1.</span> <span class="toc-text">DOM元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E7%BB%84%E4%BB%B6"><span class="toc-number">4.2.</span> <span class="toc-text">类组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6%EF%BC%88%E6%B2%A1%E6%9C%89%E7%94%A8%E7%9A%84%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">函数式组件（没有用的）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%91%E7%88%B6%E7%BB%84%E4%BB%B6%E6%9A%B4%E9%9C%B2DOM%E5%BC%95%E7%94%A8%EF%BC%88Refs%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">向父组件暴露DOM引用（Refs）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83Refs"><span class="toc-number">6.</span> <span class="toc-text">回调Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%9B%9E%E8%B0%83refs%E7%9A%84%E8%AD%A6%E5%91%8A"><span class="toc-number">7.</span> <span class="toc-text">关于回调refs的警告</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        React.createRef()用法详解
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-10-16T16:00:00.000Z" class="dt-published" itemprop="datePublished">2020-10-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/React-createRef/" rel="tag">#React.createRef</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>在典型的 <code>React</code> 数据流中，props是唯一的父组件与它们的子元素的通信方式。更改子元素，你需要使用新的 <code>props</code> 去重新渲染子元素。但是在一些情况下你现在典型数据流之外强制的更改元素。被更改的子元素可能是一个 <code>React</code> 组件的实例，或者是一个 <code>DOM</code> 元素。对所有这些情况， <code>React</code> 提供了一种特殊方法： <code>Refs</code>.</p>
+<h2 id="什么时候使用Refs"><a href="#什么时候使用Refs" class="headerlink" title="什么时候使用Refs"></a>什么时候使用Refs</h2><ul>
+<li>管理焦点、文本选择、媒体回放;</li>
+<li>触发必要动画；</li>
+<li>整合第三方DOM库;</li>
+</ul>
+<p>避免对任何可以声明式解决的问题使用 <code>Refs</code> ；（比如相对于暴露一个对话框组件的 <code>open()、close()</code> 方法，请使用 <code>isOpen prop</code>！）</p>
+<h2 id="不要过度使用Refs"><a href="#不要过度使用Refs" class="headerlink" title="不要过度使用Refs"></a>不要过度使用Refs</h2><p>你的第一个倾向可能是使用 <code>Refs</code> 去实现一些APP中的东西。在这种情况下，请停下来，仔细想想 <code>state</code> 应该存在的组件层次。经常地，我们都知道应该由更高的层次去拥有 <code>state</code> 。</p>
+<h2 id="创建Refs"><a href="#创建Refs" class="headerlink" title="创建Refs"></a>创建Refs</h2><p>可以通过 <code>React.createRef()</code> 创建 <code>Refs</code> 并通过 <code>ref</code> 属性联系到 <code>React</code> 组件。 <code>Refs</code> 通常当组件被创建时被分配给实例变量，这样它们就能在组件中被引用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyComponent</span> <span class="keyword">extends</span> <span class="title class_ inherited__">React.Component</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">        <span class="variable language_">super</span>(props);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">myRef</span> = <span class="title class_">React</span>.<span class="title function_">createRef</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ref</span>=<span class="string">&#123;this.myRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="访问Refs"><a href="#访问Refs" class="headerlink" title="访问Refs"></a>访问Refs</h2><p>当一个 <code>ref</code> 通过 <code>render</code> 放入一个元素中，一个对节点的引用可以通过 <code>ref</code> 的 <code>current</code> 属性得到；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> node = <span class="variable language_">this</span>.<span class="property">myRef</span>.<span class="property">current</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>ref</code> 的值根据节点类型的不同而不同：</p>
+<ul>
+<li>当 <code>ref</code> 属性用于HTML元素，在构造器中通过 <code>React.createRef()</code> 函数创建的ref接收底层DOM元素作为它的current属性；</li>
+<li>当 <code>ref</code> 属性用于传统的类组件，ref对象接收挂载好的组件实例作为它的current；</li>
+</ul>
+<p>下面是对应于不同ref的例子</p>
+<h3 id="DOM元素"><a href="#DOM元素" class="headerlink" title="DOM元素"></a>DOM元素</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CustomTextInput</span> <span class="keyword">extends</span> <span class="title class_ inherited__">React.Component</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>(props);</span><br><span class="line">    <span class="comment">// 创建一个ref去储存textInput DOM元素</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">textInput</span> = <span class="title class_">React</span>.<span class="title function_">createRef</span>();</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">focusTextInput</span> = <span class="variable language_">this</span>.<span class="property">focusTextInput</span>.<span class="title function_">bind</span>(<span class="variable language_">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">focusTextInput</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 很明显的，让text input获得焦点使用了原生的DOM API</span></span><br><span class="line">    <span class="comment">// 注意：我们通过current去获得DOM节点</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">textInput</span>.<span class="property">current</span>.<span class="title function_">focus</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 告诉React我们想要将&lt;input&gt;的ref和构造器中创建的textInput联系起来</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">type</span>=<span class="string">&quot;text&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">ref</span>=<span class="string">&#123;this.textInput&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">type</span>=<span class="string">&quot;button&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">value</span>=<span class="string">&quot;Focus the text input&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">onClick</span>=<span class="string">&#123;this.focusTextInput&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>React将会将会在组件挂载时将DOM元素分配给current属性，并且在组件被卸载时，将current属性重置为null。ref将会在<code>componentDidMount</code>和<code>componentDidUpdate</code>生命周期钩子前被更新</p>
+<h3 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h3><p>如果我们想要包装上面的<code>CustomTextInput</code>，模仿挂载后被点击。我们可以通过ref得到自定义的Input组件，手动调用它的focusTextInput函数。（注意！只有当<code>CustomTextInput</code>被声明为类的时候才有用！）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AutoFocusTextInput</span> <span class="keyword">extends</span> <span class="title class_ inherited__">React.Component</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>(props);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">textInput</span> = <span class="title class_">React</span>.<span class="title function_">createRef</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">componentDidMount</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">textInput</span>.<span class="property">current</span>.<span class="title function_">focusTextInput</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">CustomTextInput</span> <span class="attr">ref</span>=<span class="string">&#123;this.textInput&#125;</span> /&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数式组件（没有用的）"><a href="#函数式组件（没有用的）" class="headerlink" title="函数式组件（没有用的）"></a>函数式组件（没有用的）</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">MyFunctionalComponent</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">input</span> /&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Parent</span> <span class="keyword">extends</span> <span class="title class_ inherited__">React.Component</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>(props);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">textInput</span> = <span class="title class_">React</span>.<span class="title function_">createRef</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 这样没用！函数式组件根本就没有实例！</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">MyFunctionalComponent</span> <span class="attr">ref</span>=<span class="string">&#123;this.textInput&#125;</span> /&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，你可以在函数式组件中使用ref属性，就像你引用DOM元素和类组件一样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">CustomTextInput</span>(<span class="params">props</span>) &#123;</span><br><span class="line">  <span class="comment">// textInput 必须被声明在这里——ref才能适用于它</span></span><br><span class="line">  <span class="keyword">let</span> textInput = <span class="title class_">React</span>.<span class="title function_">createRef</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">handleClick</span>(<span class="params"></span>) &#123;</span><br><span class="line">    textInput.<span class="property">current</span>.<span class="title function_">focus</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">            <span class="attr">type</span>=<span class="string">&quot;text&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">            <span class="attr">ref</span>=<span class="string">&#123;textInput&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">            <span class="attr">type</span>=<span class="string">&quot;button&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">            <span class="attr">value</span>=<span class="string">&quot;Focus the text input&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">            <span class="attr">onClick</span>=<span class="string">&#123;handleClick&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="向父组件暴露DOM引用（Refs）"><a href="#向父组件暴露DOM引用（Refs）" class="headerlink" title="向父组件暴露DOM引用（Refs）"></a>向父组件暴露DOM引用（Refs）</h2><p>在很罕见的情况下，你也许想要从父组件访问到子元素的DOM节点。通常来说我们不建议这样做，因为这样破坏了组件的封装性，但是在某些情况下对于类似：触发聚焦、改变子元素DOM节点的大小、位置等情况非常有用。</p>
+<p>你可以向子组件增加ref（就像上面说的），但是这并不是一个完美的解决方案——你只会获得一个组件实例而不是DOM节点。更糟糕的是，它对函数式组件没用！</p>
+<p>如果你使用React 16.3或者更高的版本，我们建议你在这些情况下使用<code>ref forwarding，Ref fprwarding</code>让组件可以选择去暴露子组件的ref作为他们自己的。你可以在ref forwarding文档中找到更全面的例子——怎样暴露子元素的DOM节点给父元素。</p>
+<p>如果你使用React 16.2或者更低的版本，或者你需要比<code>ref forwarding</code>所能提供的更多的灵活性。你可以使用替代方法，并且显式的传入一个ref当做一个不同命名的prop。</p>
+<p>如果可能，我们不建议暴露DOM节点，但是在一些情况下还是非常有用的。注意，这种方法需要你去在子组件中增加一些代码，如果你完全没有对于子组件实现的控制，你最后的选择是使用<code>findDOMNode()</code>方法，当然，也只能这样了。</p>
+<h2 id="回调Refs"><a href="#回调Refs" class="headerlink" title="回调Refs"></a>回调Refs</h2><p>React同样支持另一种名为“回调refs”的方法去设置refs——它可以给我们对refs创建和销毁更细粒度的控制。</p>
+<p>放入一个函数，而不是一个由<code>createRef()</code>创建的ref属性。这个函数接受React组件实例、或者HTML DOM元素作为参数——可以被储存并且在其他地方被访问。</p>
+<p>下面的例子实现了一个通常的模式：使用ref回调储存一个DOM节点的应用在实例变量中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CustomTextInput</span> <span class="keyword">extends</span> <span class="title class_ inherited__">React.Component</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>(props);</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">textInput</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">setTextInputRef</span> = <span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">textInput</span> = element;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">focusTextInput</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 通过原生DOM API聚焦文本</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">textInput</span>) <span class="variable language_">this</span>.<span class="property">textInput</span>.<span class="title function_">focus</span>();</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">componentDidMount</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 在挂载时自动聚焦</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="title function_">focusTextInput</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 使用&#x27;ref&#x27;回调去在一个实例域中储存文本输入DOM元素的引用(比如, this.textInput).</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">type</span>=<span class="string">&quot;text&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">ref</span>=<span class="string">&#123;this.setTextInputRef&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">type</span>=<span class="string">&quot;button&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">value</span>=<span class="string">&quot;Focus the text input&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">onClick</span>=<span class="string">&#123;this.focusTextInput&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>React将会在组件挂载时使用DOM元素调用ref回调，在组件卸载时使用null调用ref回调。ref回调都会在<code>componentDidMount</code>或者<code>componentDidUpdate</code>生命周期钩子之前被调用。<br>你可以在组件之间传递回调refs，就像你可以对通过<code>React.createRef()</code>创建的对象refs一样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">CustomTextInput</span>(<span class="params">props</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">ref</span>=<span class="string">&#123;props.inputRef&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Parent</span> <span class="keyword">extends</span> <span class="title class_ inherited__">React.Component</span> &#123;</span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">CustomTextInput</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">inputRef</span>=<span class="string">&#123;el</span> =&gt;</span> this.inputElement = el&#125;</span></span><br><span class="line"><span class="language-xml">      /&gt;</span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，Parent组件将他的ref回调作为inputRef这个属性（props）传入<code>CustomTextInput</code>组件，接着<code>CustomTextInput</code>组件将同样的函数作为一个特殊的<code>ref</code>属性<code>（attribute）</code>传给<code>&lt;input&gt;</code>。从结果来看，<code>Parent</code>组件中的<code>this.inputElement</code>将会被放在与在<code>CustomTextInput</code>组件的<code>&lt;input&gt;</code>元素相关的DOM节点中。</p>
+<h2 id="关于回调refs的警告"><a href="#关于回调refs的警告" class="headerlink" title="关于回调refs的警告"></a>关于回调refs的警告</h2><p>如果ref回调被定义为一个行内函数，当组件更新时会被调用两次——第一次被null调用、而后被DOM元素调用。这是因为函数的新实例会在每次渲染的时候创建，所以React需要清除老的ref然后生成一个新的。你可以通过在class中定义一个绑定的ref回调方法避免这个问题，但是注意，这种问题在大多数情况下都没什么影响~</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8Refs"><span class="toc-number">1.</span> <span class="toc-text">什么时候使用Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E8%A6%81%E8%BF%87%E5%BA%A6%E4%BD%BF%E7%94%A8Refs"><span class="toc-number">2.</span> <span class="toc-text">不要过度使用Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BARefs"><span class="toc-number">3.</span> <span class="toc-text">创建Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AERefs"><span class="toc-number">4.</span> <span class="toc-text">访问Refs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM%E5%85%83%E7%B4%A0"><span class="toc-number">4.1.</span> <span class="toc-text">DOM元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E7%BB%84%E4%BB%B6"><span class="toc-number">4.2.</span> <span class="toc-text">类组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BB%84%E4%BB%B6%EF%BC%88%E6%B2%A1%E6%9C%89%E7%94%A8%E7%9A%84%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">函数式组件（没有用的）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%91%E7%88%B6%E7%BB%84%E4%BB%B6%E6%9A%B4%E9%9C%B2DOM%E5%BC%95%E7%94%A8%EF%BC%88Refs%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">向父组件暴露DOM引用（Refs）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83Refs"><span class="toc-number">6.</span> <span class="toc-text">回调Refs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%9B%9E%E8%B0%83refs%E7%9A%84%E8%AD%A6%E5%91%8A"><span class="toc-number">7.</span> <span class="toc-text">关于回调refs的警告</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&text=React.createRef()用法详解"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&is_video=false&description=React.createRef()用法详解"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=React.createRef()用法详解&body=Check out this article: http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&title=React.createRef()用法详解"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&name=React.createRef()用法详解&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/&t=React.createRef()用法详解"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

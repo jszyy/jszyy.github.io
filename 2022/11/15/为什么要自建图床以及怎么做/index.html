@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="写在前面我的博客从2020年年中至今，经历了一些变化的同时，抛弃了静态构建的开发方式。此前我的博客很长一段时间是使用第三方服务作为图床，但是由于第三方提供的服务并不可靠，导致博客文章很多配图丢失了。我意识到我需要一个稳定可靠的图床，所以开始用阿里云自建一个我自己的图床，目前已经稳定使用了大半年。 我起初以为很难，而且费用不低。但是在这半年，我每个月的 CDN 费用不高（当然这也因为访问量不高）。我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么要自建图床以及怎么做">
+<meta property="og:url" content="http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="写在前面我的博客从2020年年中至今，经历了一些变化的同时，抛弃了静态构建的开发方式。此前我的博客很长一段时间是使用第三方服务作为图床，但是由于第三方提供的服务并不可靠，导致博客文章很多配图丢失了。我意识到我需要一个稳定可靠的图床，所以开始用阿里云自建一个我自己的图床，目前已经稳定使用了大半年。 我起初以为很难，而且费用不低。但是在这半年，我每个月的 CDN 费用不高（当然这也因为访问量不高）。我">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static.zhangyuyin.com/mpDScy.jpg">
+<meta property="og:image" content="https://static.zhangyuyin.com/Refsb2.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/KC9Pgh.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/pDQshU.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/wsDwlP.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/V2hvh6.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/Gof2MZ.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/tctkkf.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/puOy7M.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/DpmF31.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/zbZgaQ.jpg">
+<meta property="og:image" content="https://static.zhangyuyin.com/7XhxRh.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/FPoNZI.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/yEmkPV.png">
+<meta property="og:image" content="https://static.zhangyuyin.com/UpicTest.gif">
+<meta property="article:published_time" content="2022-11-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-22T06:17:22.142Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static.zhangyuyin.com/mpDScy.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>为什么要自建图床以及怎么做</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/11/15/%E4%B8%80%E9%81%93%E9%98%BF%E9%87%8C%E7%AC%94%E8%AF%95%E9%A2%98/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/11/15/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&text=为什么要自建图床以及怎么做"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&is_video=false&description=为什么要自建图床以及怎么做"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=为什么要自建图床以及怎么做&body=Check out this article: http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&name=为什么要自建图床以及怎么做&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&t=为什么要自建图床以及怎么做"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%81%9A%E5%9B%BE%E5%BA%8A%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">云服务做图床的原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">步骤详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-OSS-Bucket"><span class="toc-number">3.1.</span> <span class="toc-text">创建一个 OSS Bucket</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-CDN-%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">创建 CDN 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%9F%9F%E5%90%8D%E7%9A%84-CNAME"><span class="toc-number">3.3.</span> <span class="toc-text">设置域名的 CNAME</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-HTTPS"><span class="toc-number">3.4.</span> <span class="toc-text">开启 HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E7%A7%81%E6%9C%89-Bucket-%E5%9B%9E%E6%BA%90"><span class="toc-number">3.5.</span> <span class="toc-text">开启私有 Bucket 回源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Refer-%E9%98%B2%E7%9B%97%E9%93%BE"><span class="toc-number">3.6.</span> <span class="toc-text">配置 Refer 防盗链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-uPic-%E6%96%B9%E4%BE%BF%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87"><span class="toc-number">3.7.</span> <span class="toc-text">使用 uPic 方便上传图片</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-uPic"><span class="toc-number">3.7.1.</span> <span class="toc-text">配置 uPic</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%BC%94%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">操作演示</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        为什么要自建图床以及怎么做
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-11-14T16:00:00.000Z" class="dt-published" itemprop="datePublished">2022-11-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>我的博客从2020年年中至今，经历了一些变化的同时，抛弃了静态构建的开发方式。此前我的博客很长一段时间是使用第三方服务作为图床，但是由于第三方提供的服务并不可靠，导致博客文章很多配图丢失了。我意识到我需要一个稳定可靠的图床，所以开始用阿里云自建一个我自己的图床，目前已经稳定使用了大半年。</p>
+<p>我起初以为很难，而且费用不低。但是在这半年，我每个月的 CDN 费用不高（当然这也因为访问量不高）。我自诩自己的博客虽不”强壮”，但也不至于荒废或者没什么人访问，所以拥有一个可控、稳定、便捷的图床工具意义重大。</p>
+<p>当然，虽然我用的是阿里云，但用到其它云服务都是一样的，你可以读完后价比三家再作选择。</p>
+<blockquote>
+<p>声明：本文和阿里云没有任何利益关系。</p>
+</blockquote>
+<h2 id="云服务做图床的原理"><a href="#云服务做图床的原理" class="headerlink" title="云服务做图床的原理"></a>云服务做图床的原理</h2><p><img src="https://static.zhangyuyin.com/mpDScy.jpg" alt="图床工作原理(来自网络)"></p>
+<p>云服务产品有很多，搭建图床只需要关注 OSS 和 CDN。 OSS 是对象存储服务，通俗来说就是用来存文件的。OSS 都有对应的域名，文件保存在 OSS 后，可以通过 URL 访问或下载。</p>
+<p>但是直接通过 OSS 下载的成本很高，价格十分昂贵，所以我们需要 CDN 来分发，节约成本。在阿里云，可以把 CDN 绑定到 OSS，通过 CDN 去访问这个文件时，如果是首次访问，CDN 会从 OSS 取得这个文件，这个过程叫「回源」。之后再访问会直接从 CDN 读取。</p>
+<h2 id="步骤详解"><a href="#步骤详解" class="headerlink" title="步骤详解"></a>步骤详解</h2><p>因为我自己用的是阿里云，所以以阿里云为例（此时默认你已经注册好帐号）。</p>
+<h3 id="创建一个-OSS-Bucket"><a href="#创建一个-OSS-Bucket" class="headerlink" title="创建一个 OSS Bucket"></a>创建一个 OSS Bucket</h3><p>一个 Bucket 相当于 OSS 中的一个存储空间，在 OSS 控制台 点击创建 Bucket：</p>
+<p>  <img src="https://static.zhangyuyin.com/Refsb2.png" alt="创建Bucket"></p>
+<p>填好 Bucket 名称和区域，其它选项按照默认即可。</p>
+<p>创建成功后，在 Bucket 的文件管理可以上传文件：</p>
+<p>  <img src="https://static.zhangyuyin.com/KC9Pgh.png" alt="上传文件到Bucket"></p>
+<p>查看上传文件的信息，你可以看到文件有 URL, 但由于在创建 Bucket 的时候，为了防止盗用，我们选的 Bucket 权限为私有，所以从 URL 其实无法访问这个文件：</p>
+<p><img src="https://static.zhangyuyin.com/pDQshU.png" alt="查看上传的文件"></p>
+<h3 id="创建-CDN-配置"><a href="#创建-CDN-配置" class="headerlink" title="创建 CDN 配置"></a>创建 CDN 配置</h3><p>在 CDN 控制台 进入域名管理，就可以开始配置 CDN 域名。</p>
+<p>所以，在创建 CDN 前，你需要买一个域名。这个域名可以随便买个便宜的不主流的，因为没人在意一个图床的域名。</p>
+<p>创建域名后，有一个要注意的地方，就是如果你需要国内加速，你的域名必须备案。备案其实是整个自建图床成本最高的一个环节。如果你的博客或者网站域名已经备案，那么可以直接用这个域名分配一个二级域名给 CDN 用。省去再备案的麻烦。</p>
+<p><img src="https://static.zhangyuyin.com/wsDwlP.png" alt="添加域名"></p>
+<p>比如我的域名是 yourname.com, 那么你的加速域名可以是 static.yourname.com。</p>
+<p>源站信息选「OSS域名」，选中之后会出现一个下拉选择，可以选中刚刚创建的 Bucket 源站：</p>
+<p><img src="https://static.zhangyuyin.com/V2hvh6.png" alt="oss源站信息"></p>
+<p>如果你的网站用 https, 端口选 443.</p>
+<p>如果你域名已经备案，就选全球或中国大陆。</p>
+<h3 id="设置域名的-CNAME"><a href="#设置域名的-CNAME" class="headerlink" title="设置域名的 CNAME"></a>设置域名的 CNAME</h3><p>创建完后，你需要把你域名的 CNAME 指定为提供的值。如果你域名解析也是用阿里云，可以查看<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/27144.html?spm=5176.11785003.0.0.6402142fn9IEPG">这篇文档</a>。</p>
+<p><img src="https://static.zhangyuyin.com/Gof2MZ.png" alt="CNAME"></p>
+<h3 id="开启-HTTPS"><a href="#开启-HTTPS" class="headerlink" title="开启 HTTPS"></a>开启 HTTPS</h3><p><img src="https://static.zhangyuyin.com/tctkkf.png" alt="开启 HTTPS"></p>
+<h3 id="开启私有-Bucket-回源"><a href="#开启私有-Bucket-回源" class="headerlink" title="开启私有 Bucket 回源"></a>开启私有 Bucket 回源</h3><p>因为前面在创建 Bucket 的时候权限设置为私有，所以需要给 CDN 开启私有 Bucket 回源的权限。</p>
+<p><img src="https://static.zhangyuyin.com/puOy7M.png" alt="开启私有 Bucket 回源"></p>
+<h3 id="配置-Refer-防盗链"><a href="#配置-Refer-防盗链" class="headerlink" title="配置 Refer 防盗链"></a>配置 Refer 防盗链</h3><p>CDN 防盗是有必要的，如果你的图片被别处盗用，会增加不必要的流量。所以推荐设置 Refer 防盗白名单，只对允许指定的域名访问：</p>
+<p><img src="https://static.zhangyuyin.com/DpmF31.png" alt="防盗链"></p>
+<h3 id="使用-uPic-方便上传图片"><a href="#使用-uPic-方便上传图片" class="headerlink" title="使用 uPic 方便上传图片"></a>使用 uPic 方便上传图片</h3><p>以上的准备都做完后，你已经拥有了一个图床。现在就需要一个方便的工具把图片上传到图床。如果你用 macOS, 我推荐开源的 <a target="_blank" rel="noopener" href="https://github.com/gee1k/uPic">uPic</a></p>
+<p><img src="https://static.zhangyuyin.com/zbZgaQ.jpg" alt="uPic演示"></p>
+<h4 id="配置-uPic"><a href="#配置-uPic" class="headerlink" title="配置 uPic"></a>配置 uPic</h4><p>添加阿里云 OSS 配置：</p>
+<p><img src="https://static.zhangyuyin.com/7XhxRh.png" alt="阿里云 OSS 配置"></p>
+<p>这里需要填 AccessKey 和 SecretKey：</p>
+<p><img src="https://static.zhangyuyin.com/FPoNZI.png" alt="这里需要填 AccessKey 和 SecretKey"></p>
+<p>你可以在 <a target="_blank" rel="noopener" href="https://ram.console.aliyun.com/users">RAM 控制台</a> 创建一个用户，然后创建 AccessKey.</p>
+<p>创建后给这个 AccessKey 授 AliyunOSSFullAccess 这个权限：</p>
+<p><img src="https://static.zhangyuyin.com/yEmkPV.png" alt="添加权限"></p>
+<h2 id="操作演示"><a href="#操作演示" class="headerlink" title="操作演示"></a>操作演示</h2><p>有了图床 + uPic 后，截图上传只需要一步就能搞定，使用也是极其方便：</p>
+<p><img src="https://static.zhangyuyin.com/UpicTest.gif" alt="演示效果"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%81%9A%E5%9B%BE%E5%BA%8A%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">云服务做图床的原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">步骤详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-OSS-Bucket"><span class="toc-number">3.1.</span> <span class="toc-text">创建一个 OSS Bucket</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-CDN-%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">创建 CDN 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%9F%9F%E5%90%8D%E7%9A%84-CNAME"><span class="toc-number">3.3.</span> <span class="toc-text">设置域名的 CNAME</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-HTTPS"><span class="toc-number">3.4.</span> <span class="toc-text">开启 HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E7%A7%81%E6%9C%89-Bucket-%E5%9B%9E%E6%BA%90"><span class="toc-number">3.5.</span> <span class="toc-text">开启私有 Bucket 回源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Refer-%E9%98%B2%E7%9B%97%E9%93%BE"><span class="toc-number">3.6.</span> <span class="toc-text">配置 Refer 防盗链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-uPic-%E6%96%B9%E4%BE%BF%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87"><span class="toc-number">3.7.</span> <span class="toc-text">使用 uPic 方便上传图片</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-uPic"><span class="toc-number">3.7.1.</span> <span class="toc-text">配置 uPic</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%BC%94%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">操作演示</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&text=为什么要自建图床以及怎么做"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&is_video=false&description=为什么要自建图床以及怎么做"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=为什么要自建图床以及怎么做&body=Check out this article: http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&title=为什么要自建图床以及怎么做"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&name=为什么要自建图床以及怎么做&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/&t=为什么要自建图床以及怎么做"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

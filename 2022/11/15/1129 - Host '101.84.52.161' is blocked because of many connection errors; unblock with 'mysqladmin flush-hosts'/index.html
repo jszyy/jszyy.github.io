@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="原因分析 该参数对本地登录及远程登录密码错误次数没有效果  对网络超时、连接超时以及telnet ip 3306操作有影响   1telnet ip 3306 #执行这个，然后ctrl+C断开，错误累计一次，因此可以用这个方式去测试最大错误次数。   参数查看：  1show variables like &amp;#x27;%max_connect_errors%&amp;#x27;   错误累计次数查看：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;">
+<meta property="og:url" content="http://example.com/2022/11/15/1129%20-%20Host%20'101.84.52.161'%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20'mysqladmin%20flush-hosts'/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="原因分析 该参数对本地登录及远程登录密码错误次数没有效果  对网络超时、连接超时以及telnet ip 3306操作有影响   1telnet ip 3306 #执行这个，然后ctrl+C断开，错误累计一次，因此可以用这个方式去测试最大错误次数。   参数查看：  1show variables like &amp;#x27;%max_connect_errors%&amp;#x27;   错误累计次数查看：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-22T06:14:25.405Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/11/15/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/11/15/ES2020%EF%BC%9A%20%E5%8F%AF%E9%80%89%E9%93%BE%20%22?.%22%20/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&text=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&is_video=false&description=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;&body=Check out this article: http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&name=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&t=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">原因分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">解决方法：</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-11-14T16:00:00.000Z" class="dt-published" itemprop="datePublished">2022-11-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ol>
+<li><p>该参数对本地登录及远程登录密码错误次数没有效果</p>
+</li>
+<li><p>对网络超时、连接超时以及telnet ip 3306操作有影响</p>
+</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet ip <span class="number">3306</span> #执行这个，然后ctrl+C断开，错误累计一次，因此可以用这个方式去测试最大错误次数。</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>参数查看：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like <span class="string">&#x27;%max_connect_errors%&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>错误累计次数查看：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * <span class="keyword">from</span> performance_schema.<span class="property">host_cache</span> # 表字段sum_connect_errors值</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><p>当sum_connect_errors这个值大于max_connect_errors，则出现HOST is blocked错误</p>
+</li>
+<li><p>同一个ip地址短时间内登录失败次数超过max_connect_errors值才会出现HOST is blocked</p>
+</li>
+<li><p>用该ip成功登录一次，则清零</p>
+</li>
+</ol>
+<h2 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h2><ol>
+<li><p>调大max_connect_errors参数，越大越好</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set <span class="variable language_">global</span> max_connect_errors=<span class="number">1000000</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行命令</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p flush-hosts</span><br></pre></td></tr></table></figure>
+<p>这种方法不好，因为会清空host_cache表，导致其他服务器客户端都要重新DSN解析。</p>
+</li>
+<li><p>将设为0，本质上就是禁掉host cache内存区域的使用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set gloabl host_cache_size=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在my.cnf里面添加skip-name-resolve参数，禁止使用DNS解析。 弊端：客户端不能用机器名连接，只能用IP地址。</p>
+</li>
+<li><p>在my.cnf里面添加skip-networking参数，关闭TCP&#x2F;IP连接方式。因为只有远程连接这个参数才起作用。</p>
+</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">原因分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">解决方法：</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&text=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&is_video=false&description=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;&body=Check out this article: http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&title=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&name=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/1129%20-%20Host%20&#39;101.84.52.161&#39;%20is%20blocked%20because%20of%20many%20connection%20errors;%20unblock%20with%20&#39;mysqladmin%20flush-hosts&#39;/&t=1129 - Host &#39;101.84.52.161&#39; is blocked because of many connection errors; unblock with &#39;mysqladmin flush-hosts&#39;"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
