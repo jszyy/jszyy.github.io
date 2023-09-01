@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="…使用指南安装1npm install -g ksend  设置默认发送邮箱，格式: 邮箱地址:密码1ksend --from yourname@qq.com:yourpassword  推送如下示例，推送 test.pdf 至 &amp;#x79;&amp;#x6f;&amp;#x75;&amp;#114;&amp;#107;&amp;#x69;&amp;#110;&amp;#100;&amp;#108;&amp;#x65;&amp;#x6e;&amp;#97;&amp;#x6d;&amp;#101;&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ksend—使用命令行推送个人文档到kindle">
+<meta property="og:url" content="http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="…使用指南安装1npm install -g ksend  设置默认发送邮箱，格式: 邮箱地址:密码1ksend --from yourname@qq.com:yourpassword  推送如下示例，推送 test.pdf 至 &amp;#x79;&amp;#x6f;&amp;#x75;&amp;#114;&amp;#107;&amp;#x69;&amp;#110;&amp;#100;&amp;#108;&amp;#x65;&amp;#x6e;&amp;#97;&amp;#x6d;&amp;#101;&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-09-01T05:46:18.105Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ksend—使用命令行推送个人文档到kindle</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/11/15/macOS%20%E4%B8%AD%E4%BD%BF%E7%94%A8vscode%E6%8F%90%E7%A4%BA%EF%BC%8CEACCES:%20permission%20denied/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/11/15/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A3%81%E7%9B%98%E6%BB%A1%E4%BA%86%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&text=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&is_video=false&description=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ksend—使用命令行推送个人文档到kindle&body=Check out this article: http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&name=ksend—使用命令行推送个人文档到kindle&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&t=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E2%80%A6"><span class="toc-number">1.</span> <span class="toc-text">…</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97"><span class="toc-number">1.1.</span> <span class="toc-text">使用指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E5%8F%91%E9%80%81%E9%82%AE%E7%AE%B1%EF%BC%8C%E6%A0%BC%E5%BC%8F-%E9%82%AE%E7%AE%B1%E5%9C%B0%E5%9D%80-%E5%AF%86%E7%A0%81"><span class="toc-number">1.1.2.</span> <span class="toc-text">设置默认发送邮箱，格式: 邮箱地址:密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E9%80%81"><span class="toc-number">1.1.3.</span> <span class="toc-text">推送</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E6%8E%A5%E6%94%B6%E9%82%AE%E7%AE%B1"><span class="toc-number">1.2.</span> <span class="toc-text">设置默认接收邮箱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%B8%AE%E5%8A%A9%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">查看帮助：</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ksend—使用命令行推送个人文档到kindle
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-11-14T16:00:00.000Z" class="dt-published" itemprop="datePublished">2022-11-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="…"><a href="#…" class="headerlink" title="…"></a>…</h1><h2 id="使用指南"><a href="#使用指南" class="headerlink" title="使用指南"></a>使用指南</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g ksend</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置默认发送邮箱，格式-邮箱地址-密码"><a href="#设置默认发送邮箱，格式-邮箱地址-密码" class="headerlink" title="设置默认发送邮箱，格式: 邮箱地址:密码"></a>设置默认发送邮箱，格式: 邮箱地址:密码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ksend --<span class="keyword">from</span> yourname@qq.<span class="property">com</span>:yourpassword</span><br></pre></td></tr></table></figure>
+
+<h3 id="推送"><a href="#推送" class="headerlink" title="推送"></a>推送</h3><p>如下示例，推送 test.pdf 至 <a href="mailto:&#x79;&#x6f;&#x75;&#114;&#107;&#x69;&#110;&#100;&#108;&#x65;&#x6e;&#97;&#x6d;&#101;&#x40;&#x6b;&#x69;&#x6e;&#100;&#x6c;&#101;&#46;&#99;&#x6e;">&#x79;&#x6f;&#x75;&#114;&#107;&#x69;&#110;&#100;&#108;&#x65;&#x6e;&#97;&#x6d;&#101;&#x40;&#x6b;&#x69;&#x6e;&#100;&#x6c;&#101;&#46;&#99;&#x6e;</a> 这个kindle接收邮箱：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ksend -m yourkindlename@kindle.<span class="property">cn</span> test.<span class="property">pdf</span></span><br></pre></td></tr></table></figure>
+
+<p>以上命令，参数 -m 表示接收邮箱。自此，完成推送。</p>
+<h2 id="设置默认接收邮箱"><a href="#设置默认接收邮箱" class="headerlink" title="设置默认接收邮箱"></a>设置默认接收邮箱</h2><p>如果脚得每次都要敲 -m 接收邮箱 麻烦，可以设置默认接收邮箱：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ksend --to hanan@kindle.<span class="property">cn</span></span><br></pre></td></tr></table></figure>
+
+<p>这样，以后只需要如下命令即可推送：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ksend a.<span class="property">pdf</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以同时推送多个文档：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ksend a.<span class="property">pdf</span> b.<span class="property">pdf</span> ../img/photo.<span class="property">jpg</span> /<span class="title class_">Users</span>/hanan/book/ooxx.<span class="property">txt</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="查看帮助："><a href="#查看帮助：" class="headerlink" title="查看帮助："></a>查看帮助：</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ksend --help</span><br></pre></td></tr></table></figure>
+
+<p><b>ps: 记得把发送邮箱添加到您的kindle已认可的发件人电子邮箱列表哦</b></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E2%80%A6"><span class="toc-number">1.</span> <span class="toc-text">…</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97"><span class="toc-number">1.1.</span> <span class="toc-text">使用指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E5%8F%91%E9%80%81%E9%82%AE%E7%AE%B1%EF%BC%8C%E6%A0%BC%E5%BC%8F-%E9%82%AE%E7%AE%B1%E5%9C%B0%E5%9D%80-%E5%AF%86%E7%A0%81"><span class="toc-number">1.1.2.</span> <span class="toc-text">设置默认发送邮箱，格式: 邮箱地址:密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E9%80%81"><span class="toc-number">1.1.3.</span> <span class="toc-text">推送</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E6%8E%A5%E6%94%B6%E9%82%AE%E7%AE%B1"><span class="toc-number">1.2.</span> <span class="toc-text">设置默认接收邮箱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%B8%AE%E5%8A%A9%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">查看帮助：</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&text=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&is_video=false&description=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ksend—使用命令行推送个人文档到kindle&body=Check out this article: http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&title=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&name=ksend—使用命令行推送个人文档到kindle&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/11/15/ksend%E2%80%94%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8E%A8%E9%80%81%E4%B8%AA%E4%BA%BA%E6%96%87%E6%A1%A3%E5%88%B0kindle/&t=ksend—使用命令行推送个人文档到kindle"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
