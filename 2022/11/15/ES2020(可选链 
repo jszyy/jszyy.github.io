@@ -84,7 +84,7 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" aria-label="上一篇" href="/2022/12/23/%E7%81%AB%E7%88%86%E5%85%A8%E7%BD%91%E7%9A%84%20Evil.js%20%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="上一篇" href="/2022/11/15/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" aria-label="下一篇" href="/2022/11/15/Flex%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
