@@ -4,7 +4,32 @@
   
     
     <entry>
-      <title>火爆全网的 Evil.js 源码解读</title>
+      <title>如何消除异步的传染性</title>
+      <link href="/2023/12/26/%E5%A6%82%E4%BD%95%E6%B6%88%E9%99%A4%E5%BC%82%E6%AD%A5%E7%9A%84%E4%BC%A0%E6%9F%93%E6%80%A7/"/>
+      <url>/2023/12/26/%E5%A6%82%E4%BD%95%E6%B6%88%E9%99%A4%E5%BC%82%E6%AD%A5%E7%9A%84%E4%BC%A0%E6%9F%93%E6%80%A7/</url>
+      
+        <content type="html"><![CDATA[<h3 id="什么是异步传染性？"><a href="#什么是异步传染性？" class="headerlink" title="什么是异步传染性？"></a>什么是异步传染性？</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  封装了一个ajax请求</span></span><br><span class="line"><span class="comment">//  内部使用了await，所以函数也要标记为async</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">doRequest</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">//  fetech请求是异步，所以要用await</span></span><br><span class="line">    <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://jsonplaceholder.typicode.com/todos/1&#x27;</span>).<span class="title function_">then</span>(<span class="function">(<span class="params">resp</span>) =&gt;</span> resp.<span class="title function_">json</span>())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// m1调用了doRequest函数，doRequest是async函数，所以也得标记async</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">m1</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> <span class="title function_">doRequest</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// m2调用了m1 函数，m1是async函数，所以也得标记async</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">m2</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> <span class="title function_">m1</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// m3调用了m2函数，m2是async函数，所以也得标记async</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">m3</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> <span class="title function_">m2</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li><p>fetch这个节点是异步的造成了连锁反应</p></li><li><p>一个节点发生了异步，这个节点的所有调用链路全部都得异步</p></li><li><p>函数式编程的场景，m1、m2、m3就不是纯函数了，全部变成了副作用</p></li></ul><h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><ul><li><p>去掉所有的async await，改成同步调用</p></li><li><p>直接返回结果（ps: 异步的怎么会马上、立刻、直接返回结果呢？）</p></li></ul><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">doRequest</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://jsonplaceholder.typicode.com/todos/1&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">m1</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">doRequest</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">m2</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">m1</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">m3</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">m2</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">main</span>(<span class="params"></span>) &#123;</span><br><span class="line"><span class="keyword">const</span> res = <span class="title function_">m3</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(res);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><h3 id="怎么消除异步？"><a href="#怎么消除异步？" class="headerlink" title="怎么消除异步？"></a>怎么消除异步？</h3><ul><li><p>异步肯定不能马上、立刻、直接返回结果</p></li><li><p>只有报错这一条路</p></li><li><p>把promise作为异常抛出</p></li></ul><p><img src="https://static.zhangyuyin.com/lxmta6.png" alt="消除异步流程"></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">doRequest</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://jsonplaceholder.typicode.com/todos/1&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">m1</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">doRequest</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">m2</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">m1</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">m3</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">m2</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">main</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> res = <span class="title function_">m3</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(res);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">run</span>(<span class="params">func</span>) &#123;</span><br><span class="line">    <span class="comment">// 缓存</span></span><br><span class="line">    <span class="keyword">let</span> cache = [];</span><br><span class="line">    <span class="comment">// 请求索引</span></span><br><span class="line">    <span class="keyword">let</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 原生fetch</span></span><br><span class="line">    <span class="keyword">let</span> _originFetch = <span class="variable language_">window</span>.<span class="property">fetch</span>;</span><br><span class="line">    <span class="comment">// 劫持fetch函数-代理原生fetch</span></span><br><span class="line">    <span class="comment">// 新fetch的核心功能： 1. 发送请求 2.报错</span></span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">fetch</span> = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (cache[i]) &#123;</span><br><span class="line">            <span class="keyword">if</span> (cache[i].<span class="property">status</span> === <span class="string">&#x27;fullfilled&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> cache[i].<span class="property">data</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cache[i].<span class="property">status</span> === <span class="string">&#x27;rejected&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> cache[i].<span class="property">err</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> result = &#123;</span><br><span class="line">            <span class="attr">status</span>: <span class="string">&#x27;pending&#x27;</span>,</span><br><span class="line">            <span class="attr">data</span>: <span class="literal">null</span>,</span><br><span class="line">            <span class="attr">err</span>: <span class="literal">null</span>,</span><br><span class="line">        &#125;</span><br><span class="line">        cache[i++] = result;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 发送异步请求</span></span><br><span class="line">        <span class="keyword">const</span> promise = <span class="title function_">_originFetch</span>(...args)</span><br><span class="line">            .<span class="title function_">then</span>(<span class="function"><span class="params">resp</span> =&gt;</span> resp.<span class="title function_">json</span>())</span><br><span class="line">            .<span class="title function_">then</span>(<span class="function"><span class="params">resp</span> =&gt;</span> &#123;</span><br><span class="line">                result.<span class="property">status</span> = <span class="string">&#x27;fullfilled&#x27;</span>;</span><br><span class="line">                result.<span class="property">data</span> = resp;</span><br><span class="line">            &#125;, <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">                result.<span class="property">status</span> = <span class="string">&#x27;rejected&#x27;</span>;</span><br><span class="line">                result.<span class="property">err</span> = err;</span><br><span class="line">            &#125;);</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 马上报错， 让函数强制执行完毕，不用等异步回来才往下执行</span></span><br><span class="line">        <span class="comment">// 把原生fetch的promise作为错误直接抛出去，让fetch马上结束</span></span><br><span class="line">        <span class="keyword">throw</span> promise;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 劫持原生fetch函数报错后，就会try-catch住</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 运行传入的函数</span></span><br><span class="line">        <span class="title function_">func</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="keyword">if</span> (err <span class="keyword">instanceof</span> <span class="title class_">Promise</span>) &#123;</span><br><span class="line">            <span class="keyword">const</span> <span class="title function_">reRun</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">                <span class="comment">// index 置零</span></span><br><span class="line">                i = <span class="number">0</span>;</span><br><span class="line">                <span class="comment">// 重新发起请求</span></span><br><span class="line">                <span class="title function_">func</span>()</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 异步请求成功或者失败都重新执行原来的函数</span></span><br><span class="line">            err.<span class="title function_">then</span>(reRun, reRun);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">run</span>(main);</span><br></pre></td></tr></table></figure><h3 id="React中的应用"><a href="#React中的应用" class="headerlink" title="React中的应用"></a>React中的应用</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> userResource = <span class="keyword">get</span><span class="title function_">UserResource</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">ProfilePage</span> () &#123;</span><br><span class="line"><span class="keyword">return</span>  (</span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">Suspense</span> <span class="attr">fallback</span>=<span class="string">&#123;</span>&lt;<span class="attr">h1</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">h1</span>&gt;</span>&#125;&gt;</span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">ProfileDetails</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;/<span class="name">Suspense</span>&gt;</span></span></span><br><span class="line">)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">ProfileDetails</span> () &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// 直接throw一个Promise则一直处于loading状态</span></span><br><span class="line"><span class="comment">// throw new Promise();</span></span><br><span class="line"><span class="keyword">const</span> user = userResource.<span class="title function_">read</span>();</span><br><span class="line"><span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;user.name&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li><p>Suspense里面子组件ProfileDetails的状态，请求中就显示loading，返回结果后就显示用户详情</p></li><li><p>React中ProfileDetails组件没有返回Promise，就是一个普通的组件</p></li><li><p>1会打印两次</p></li><li><p>和上面的原理一样，先执行ProfileDetails，会打印第一次，直接throw一个promoise的异常</p></li><li><p>成功后继续再执行一次，然后打印第二次</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Posts </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>每个人都能用点正则表达式</title>
       <link href="/2023/12/21/%E6%AF%8F%E4%B8%AA%E4%BA%BA%E9%83%BD%E8%83%BD%E7%94%A8%E7%82%B9%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
       <url>/2023/12/21/%E6%AF%8F%E4%B8%AA%E4%BA%BA%E9%83%BD%E8%83%BD%E7%94%A8%E7%82%B9%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
       
@@ -40,7 +65,7 @@
       
       <categories>
           
-          <category> Talk </category>
+          <category> Posts </category>
           
       </categories>
       
@@ -67,7 +92,7 @@
       
       <categories>
           
-          <category> Talk </category>
+          <category> Posts </category>
           
       </categories>
       
@@ -262,6 +287,33 @@
     
     
     <entry>
+      <title>工作中总结的经验(2022)</title>
+      <link href="/2022/11/15/talk/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E6%80%BB%E7%BB%93%E7%9A%84%E7%BB%8F%E9%AA%8C(2022)/"/>
+      <url>/2022/11/15/talk/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E6%80%BB%E7%BB%93%E7%9A%84%E7%BB%8F%E9%AA%8C(2022)/</url>
+      
+        <content type="html"><![CDATA[<h3 id="保持一颗解决问题的心"><a href="#保持一颗解决问题的心" class="headerlink" title="保持一颗解决问题的心"></a>保持一颗解决问题的心</h3><p>按照我的观察，那些在工作中用技术取胜的人们共同点都在于他们能保持一颗解决问题的心。他们可以率先想到一种更优的手段解决存在的问题(一般是效率问题)。他们不是嗅觉特别灵敏或者技术特别强，而是当他们遇到了问题，不是把它作为抱怨的话题，而是开始思考这个问题为什么没人解决、应该怎么解决，然后把它实现出来。这种心态在职场上特别稀缺。</p><p>上一份工作的时候做一个图文排版的需求, 设计师会设计一些模板，然后交给我来实现。当时我们有很多模板，为了测试这些模板实现在不同的手机屏幕大小会有什么问题，我们要花特别多的精力。可以想象测试的数量 &#x3D; 模板数量 * 屏幕尺寸的数量。后来我用 puppeteer 写了个自动生成不同屏幕和模板的截图，直接交给设计师一个一个地看。节省了大量的时间。这个事情没什么技术含量，但它解决了很重要的问题。</p><p>工作中需要解决的问题不仅仅在代码上，也有可能出现在非技术问题上。工作中我会偶尔倍非技术同事聊天，了解他们的工作。因为我常常觉得影响项目前进的原因不一定出在我们用了不适合的技术或者不够「先进」的技术。了解非技术同事的工作流程让我大有收获，我会发现他们有一些工作是可以通过写一段程序把原本的工作量做到指数级的下降，而通常非技术同事是很难察觉到的。</p><p>这样的例子特别多。有次我和一个运营同事聊天，我们当时在开发一个站点内容的管理后台，他们常常用这个后台捞一些内容做分析。聊天的时候了解到他们有一部份的工作就是在上面按条件查询一些内容，再一条条地粘贴到 excel 里面，他说这常常要花一下午。后来我帮她做了一个一键导出成 excel 的功能。</p><p>她觉得这很不可思议，但这在技术的角度来说太简单了。我也因此了解到，对于不是做技术的人来说，他们很难察觉到哪一些事情是可以用技术解决的，所以我们不能希望他们主动地提出一个需求，只能我们作为掌握技术的人主动地去了解他们。</p><h3 id="了解你的用户"><a href="#了解你的用户" class="headerlink" title="了解你的用户"></a>了解你的用户</h3><p>我自认为自己还算是一个有那么一些产品思维的程序员，因为经常也会写一些自己的小产品。但在刚出来工作的时候，我在工作中太沉迷于技术本身。把心思都放在了诸如怎么重构，怎么改进构建速度之类的问题。直到我被问了一个我至今印象深刻的问题：你有了解你的用户是怎么用你在做的这个东西吗？</p><p>这个问题是我从来没有想过的。我想，如果能和他们聊一聊，可能也会有意想不到的收获。或许他们会报怨这个后台的加载速度很慢，我们就可以着手解决加载速度的问题，而不是和同事纠结在用哪种前端状态管理库这种无聊事情上。用户并不关心我们用的是 MobX 还是 Redux.</p><h3 id="不要拿自己的尺子去度量别人"><a href="#不要拿自己的尺子去度量别人" class="headerlink" title="不要拿自己的尺子去度量别人"></a>不要拿自己的尺子去度量别人</h3><p>我刚出来工作犯的最大的错误之一就是拿自己的尺子去度量别人。写程序对我来说是人生中最大的兴趣(至少目前依然是)，我把几乎所有的时间都花在了技术上。当时我天真地认为所有程序员都应该像我这样，对待技术也应该有一种理想主义，我在互联网上结交的技术朋友都是这样的。所以我曾对我的同事特别苛刻，甚至对那些把写程序只当成工作的人嗤之以鼻。现在回想起来，这是非常错误的想法。每个人有每个人的追求，技术也只是多个兴趣爱好的其中一种。在当时别人的眼里我可能是个「怪人」，甚至有点「装逼」。</p><h3 id="保持学习、be-open-mind"><a href="#保持学习、be-open-mind" class="headerlink" title="保持学习、be open-mind"></a>保持学习、be open-mind</h3><p>保持学习一直是保持自身含金量以及和同行拉开差距最重要的一点。</p><h3 id="想清楚，再下手写代码"><a href="#想清楚，再下手写代码" class="headerlink" title="想清楚，再下手写代码"></a>想清楚，再下手写代码</h3><p>基于对编程的热爱，我写代码的速度算是比较快了。技术范围内的很多东西想实现，对我来说基本是纯粹的堆代码。导致我非常容易不经过多的思考就开始动手写。我为此吃了不少亏，常常写到一半发现一些没有想到过的问题，导致需要重新设计，重新改写。我的一位前老板很了解我，他也是个多年经验的程序员了。有一次我们在讨论一个新东西，他对我说，「不要着急，想清楚了再写」。这句话我一直记在心里。后来每次动手写代码之前，我都会把整个流程的设计先思考清楚，避免了很多不必要的重写。</p><h3 id="理解前人写的「烂代码」"><a href="#理解前人写的「烂代码」" class="headerlink" title="理解前人写的「烂代码」"></a>理解前人写的「烂代码」</h3><p>这里的「理解」不是指理解烂代码的逻辑，而是理解为什么会写成烂代码。我经常会听到同事报怨他看到的旧代码写得如何烂，但是实际上很多烂代码产生的原因不是因为技术不行，而是受限于技术的发展和业务的复杂性。随着自己写的代码越来越多，就越能理解这些「烂代码」的存在。看出来了烂代码，也不要着急去重构，这些代码很有可能藏着一些你不知道的特殊业务需求。如果你不需要碰这些代码，那就尽量别碰。</p><h3 id="在技术和工作之间找到平衡点"><a href="#在技术和工作之间找到平衡点" class="headerlink" title="在技术和工作之间找到平衡点"></a>在技术和工作之间找到平衡点</h3><p>在刚出来工作的前几年，我特别陶醉在把自己学到的新东西试图用在工作中。我的想法是，只有我把这个技术用到实际的工作中，我才算学习了这个技术。</p><p>其实这个想法是不对的，学习技术并不一定要求你把他用到工作中。工作就是工作，学习就是学习。工作的内容是为了业务服务的。我曾经因为把一个我刚学习到的库用在业务中，因为一些我不知道的坑导致业务进度出了点问题。曾遭到批评：业务不是你的试验田。</p><p>能把学习到的技术运用到自己的工作中当然是最好的，但这是可遇不可求的事。但是这不代表没有用在工作中，就等于没有真正学习到这个技术。我认为很多人对技术学习有错误的理解，对我来说，学习技术的精髓在于理解这个技术的 Why, What, How. 和能不能用到工作中没有太大的关系。</p><p>举个例子，我在刚接触到 Redux 的时候，我去学习它，除了了解它怎么用以外，我特别关心的是，Redux 的哲学是什么？是什么启发了 Redux 的作者创造了 Redux? 他和别的库有什么不同？顺着这些问题，我就会了解更多的东西，即使我现在几乎不会把 Redux 用在工作中，但我依然记得在学习这个库的时候，我学习到的不仅仅是 Redux 本身，还有它背后的更多东西。我可能很快就会忘掉 Redux 的 API, 但那又如何，那些它背后的知识才是最有价值的，是不会被忘掉的。</p><p>而工作则相当于是一个真实的场景，是在你学习新的技术的时候，帮助你进行实际思考的场景。你需要有意识地去想，这个技术如果用到我的工作中，它是否适合？它能解决什么问题？它为什么适合？它为什么不适合。当你在学习新技术的时候，结合这个技术，多思考这些问题，这才是真正的学习。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> #Javascript </tag>
+            
+            <tag> #总结 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Antd DatePicker季度选择器组件Q1Q1修改一季度二季度方法</title>
       <link href="/2022/11/14/Antd%20DatePicker%E5%AD%A3%E5%BA%A6%E9%80%89%E6%8B%A9%E5%99%A8%E7%BB%84%E4%BB%B6Q1Q1%E4%BF%AE%E6%94%B9%E4%B8%80%E5%AD%A3%E5%BA%A6%E4%BA%8C%E5%AD%A3%E5%BA%A6%E6%96%B9%E6%B3%95/"/>
       <url>/2022/11/14/Antd%20DatePicker%E5%AD%A3%E5%BA%A6%E9%80%89%E6%8B%A9%E5%99%A8%E7%BB%84%E4%BB%B6Q1Q1%E4%BF%AE%E6%94%B9%E4%B8%80%E5%AD%A3%E5%BA%A6%E4%BA%8C%E5%AD%A3%E5%BA%A6%E6%96%B9%E6%B3%95/</url>
@@ -343,6 +395,108 @@
     
     
     <entry>
+      <title>为什么现在亲戚越来越不亲了</title>
+      <link href="/2022/10/27/talk/%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E5%9C%A8%E4%BA%B2%E6%88%9A%E8%B6%8A%E6%9D%A5%E8%B6%8A%E4%B8%8D%E4%BA%B2%E4%BA%86/"/>
+      <url>/2022/10/27/talk/%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E5%9C%A8%E4%BA%B2%E6%88%9A%E8%B6%8A%E6%9D%A5%E8%B6%8A%E4%B8%8D%E4%BA%B2%E4%BA%86/</url>
+      
+        <content type="html"><![CDATA[<p><strong>一帮老去的人试图用年轻一代为代价维护自己的认知，而严重阻碍了年轻一代构建新形势亲戚关系的机会。</strong> 就这么简单。</p><p>上一代人身处的时代不同，还没有计划生育的束缚家庭规模，再加上经济还没有起步之前感受过“人数就是力量”的童年印记，所以对大家族的美好幻境依然是存在的。春节的时候热热闹闹，可能是他们为数不多的美好回忆；兄弟姐们之间相互提携互相帮助，可能是他们印刻在记忆深处的处事逻辑。</p><p>但是这一切都随着经济发展和计划生育烟消云散了。无奈上一辈依然固执的，试图维护他们已经成型的固有认知，殊不知，这是要讲实力的。我观察过一些亲戚走动依然密切的家族，这些家族里面的年轻人本其实并不反感走动，这样的大家族具有一些共同的特点：要么是一超多强，要么是几大巨头。几大巨头比较好理解，各自都在自己的领域混出了名堂，有的人经商，有的人走体制，有的人社会地位高。拿出来都能独当一面，相互之间若即若离的帮扶一把的可能性是存在的，那亲戚之间自然很铁。另外对下一代，几个巨头一起照拂，我给你讲点有成功路径作为依照的经验，我给你推荐一个实习，我帮你打个招呼，我给你解决一下信息差。加上一个大家都知道的代际传承问题，几个巨头下面分头孵化几个小巨头，相互之间又开启了新的循环。这种家庭，你说亲不亲？一超多强：理解起来也比较容易。一个混的好的，带着自己的兄弟姐们一起混，我的企业核心位子要自己人，你帮我盯一盯；我在大城市混体制，提携一下你去一个小地方体制去闯，十几年几十年下来也站稳了脚跟。这种家庭，亲戚之间走动自然也会多，一边是靠着照拂，一边是需要家里人来帮自己做大做强，也好理解。这样说虽然显得很功利，但这就是残酷的现实。</p><p>那最容易出问题的家族是什么样的呢？还是说难听一点，一群弱鸡。既然没办法往外打增量，那就只有互啄。哪怕是上一代心心念念的古代大家族模式，如果都是一群弱鸡，也同样是一地鸡毛，只是史书上这帮人根本不会留下印记而已。幸存者偏差：一份老一辈房子的归属，一次老人在物质上的偏心，都会引发强烈的家族内耗。上一代都互相之间使袢子，砸啤酒瓶子，然后希望下一代相互多走动，这不是搞笑么。本质上，还是太弱太穷。可惜很多上一代的人认识不到这一点，反而自我感觉不错。一问，都是统一说法：我们嘛，比上不足比下有余，还行。谦虚中带着莫名其妙的炫耀和自豪。尤其是随着经济的增长，给上一代带来了很多幻觉，觉得自己豪横了。其实只是吃到了时代溢出的红利而已，身份地位并没有变化。开了个普通的车，住了个普通的房，坐在办公室里面吹空调，就以为自己逆天改命了？本质上和当年钢铁厂里面的汉子和纺织厂里的妹子都是一样的，别人好歹当年还有个铁饭碗的盼头。这种诡异的“普信“，让上一代更加强化了自己的认知，觉得自己掌握了时代真理。而且，下一代其实是有机会构建适合自己一代的亲戚关系的。这是在一个原子化、城市化、个体化的新时代，对新型亲戚关系的探索。没那么亲，也没那么远，松紧有度，各自舒服。</p><p>我们这一代的亲戚关系由于独生子女政策的原因，要么是堂兄弟姐妹，要么是表兄弟姐们。天然就隔了一层。上一代硬要做个表面工程，一心要把堂的表的变成亲的，这又是在搞笑，又是抢按头的价值输出。关键是这价值输出他们自己都不信。如果有机会，让他们自己想一想，哪怕是他们那一代，也同样是亲兄弟姐妹走动的多，堂兄妹表兄妹走动的少。再隔远一点的自然就断掉了。现在不是战乱年代，不会出现大量非正常死亡的情况了，尤其是建国以后，已经至少四代人了。那这四代人开枝散叶后聚在一起，会是多么庞大的群体，上一代心中应该是有数的，邓巴数早就超过了吧。但是他们童年时期见识的，成长过程里面交往的，也就是那么十几、几十个亲戚而已。归根到底，哪怕是古代大家族，一代里面能支棱起来的也就那么些个。这些支棱起来下一代，不用人劝都会自然都会走近抱团。不论是为了抵御风险还是强强联合，甚至单纯的就是因为生活历程、职场路径、消费水平相近而有的聊，这都是很自然的驱动。<br>时代变化了，不说好也不说坏，有些观念只是很自然的过时了而已。这时候硬来抵御，硬要保留自己想要的结果，还是那句话，是要看实力的。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> #亲情 </tag>
+            
+            <tag> #瞎说 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>随想-在上海的第四个年头</title>
+      <link href="/2022/07/09/talk/%E9%9A%8F%E6%83%B3-%E5%9C%A8%E4%B8%8A%E6%B5%B7%E7%9A%84%E7%AC%AC%E5%9B%9B%E4%B8%AA%E5%B9%B4%E5%A4%B4/"/>
+      <url>/2022/07/09/talk/%E9%9A%8F%E6%83%B3-%E5%9C%A8%E4%B8%8A%E6%B5%B7%E7%9A%84%E7%AC%AC%E5%9B%9B%E4%B8%AA%E5%B9%B4%E5%A4%B4/</url>
+      
+        <content type="html"><![CDATA[<p><strong>相对于外地的那些城市，上海的欺骗性更大。</strong></p><h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>为什么呢，上海现在是可以给你落户的，很多外企也在上海，工作机会多多，表面上看是这样，实际上大多数人也只看到了表面而已。</p><p>对于劳动法的执行，因为上海外企多，当然老外也是比较遵守中国法律的，所以五险一金是按照劳动法来交的，当然，不排除现在有很多外企已经了解你中国的那一套，因为自然有中国人为老外来节省成本，所以往往也会按照最低的来交，但是表面上也是交五险一金的。</p><p>臭名昭著的996上海也有，上海这边，你如果去举报，可能他们会来查一下，不去举报，劳动监察队一般不会来管，拼多多就在上海，前不久刚猝死了个女孩，996的典型，上海996的公司很多，集中在私营企业里。</p><p><strong>再来说上海的所谓工作机会和发展机会</strong></p><h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2><p>工作有，薪水不高，上海有高薪的行业，集中在IT和金融等少数几个行业里，其它绝大多数行业收入都只几千块而已，据说送快递的上万，我没送过快递，我不知道有没有，但是又有人跟我说送快递能拿到上万的人都在天堂里，他们的钱在银行里。</p><p>上海是没有发展机会的，为什么，这边就是外企和民营为主，外企有玻璃顶，不可能让你升上去，民营你们自己知道的，民营老板在上海的口碑都很差，吸血鬼一样的存在<br>那么为什么说上海的欺骗性更大呢，因为上海现在给你落户，给你户口，因为上海知道，你早晚得回你的原籍去，所谓的落户所谓的户口就是借给你用用而已，当然，你原生家庭超级有钱那是另外一回事。</p><p>上海这座城市的定位就是赚钱的城市，有人要在这里弄个户口落户了，如果你原生家庭不是特别好，你本人没足够的资产的话，我觉得你这种做法是很搞笑的。</p><p>因为上海很多是外企，因为在外企中是有玻璃顶的，你是升不上去的，这意味着35岁以后你可以滚了，不然在外企里你会很难受，看着一批批的新人进来，压力是非常大的，但是如果你毅然滚出去了，那么基本上你直接退休了，因为上海是年龄歧视很严重的地方，只怪大家都要来上海，所以上海可以挑挑拣拣，你35岁以后失业基本上等于直接退休。</p><p>民营企业你能忍得下去算你本事大，很多上海人听到民营企业是避而远之的，能不去民营就不去民营，因为民营总会在某些方面来恶心你一下的，在民营无论你干多少年都没什么出息的。</p><p>至于上海的国企之类，薪水不高的，你大概房租付完后就剩下吃饭的钱，一个月基本月光。</p><p><strong>所以这就是上海的欺骗性，因为你35岁以后不得不考虑回老家</strong></p><h2 id="-2"><a href="#-2" class="headerlink" title=""></a></h2><p>你在上海连个房子都买不起，不过有一点，你回老家后，看病还是得回上海来的，因为你是上海户口，医保没法用，所以你看，最后你肯定是要回原籍的。</p><p>上海聪明的地方在于，他们吸走了你的青春，吸走了你的金钱，然后把你一脚踢走，就算你真的在上海有了一套自己的房子定居下来了，那又怎么样，在上海这种高物价的城市里，你不得不四处奔波来维持你的生活，而你老家的同学，可能生活超你百倍都不止<br>前面有人说了一堆上海遵守劳动法啦，法律健全啦，这些都是扯淡，有人的地方就有江湖，都是一样的，只不过上海没有别的地方那么激进，这边喜欢玩阴的。</p><p>至于所谓的文化氛围啦，契约精神啦，这些跟你又有什么关系，你在上海要做的事情就是养活你自己，所谓的文化就是你能在手机上看看电子书而已</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>做这个世界的生产者</title>
+      <link href="/2022/05/04/talk/%E5%81%9A%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E7%9A%84%E7%94%9F%E4%BA%A7%E8%80%85/"/>
+      <url>/2022/05/04/talk/%E5%81%9A%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E7%9A%84%E7%94%9F%E4%BA%A7%E8%80%85/</url>
+      
+        <content type="html"><![CDATA[<p>偶尔看到这篇名叫 <a href="https://blog.tjcx.me/p/consume-less-create-more">Consume less, create more </a>的文章，是作者从「消费者」转变为「生产者」的心路历程。他每天在巴士上面用 iPhone 写点什么，最终写出了这篇文章。</p><p>我从懂事开始就一直觉得自己在这个世界上与众不同，觉得自己的出生一定是背负了某个特殊的使命。后来发现原来每个人年轻的时候都是这么想的，随着年纪渐长，大多数人开始接受自己只是个普通人的事实。我也不例外。</p><p>但唯一没有变过的是我没有因为意识到了自己的平凡而停止了试图变得不平凡。其中的一个表现就是我希望在这个世界上，我是作为一个生产者存在的，而不只是一个消费者。</p><p>写博客、编程都是我的生产，即使我写的博客没有让我成为几十万粉丝的 KOL，我写的代码没有几万的 star，唱的歌的观看数只是几百，我还是保持生产，因为对于这个世界，能让我有那么一点与众不同的是我的生产，而不是我的消费。</p><p>我讨厌抖音，不是因为它的内容，是因为它默默地把人驯化成了贪婪的信息消费者。如果我什么都不创造，那么我每天看论坛、新闻和别人每天刷抖音没有任何区别。</p><p>这个世界的每个人都是消费者，但不是每个人都是生产者。如果你也希望为这个世界留下点什么，就去创造，别担心你创造的是不是垃圾，只要创造了，是一定会有收获的。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>农村的葬礼有必要搞的那么复杂吗</title>
+      <link href="/2022/03/03/talk/%E5%86%9C%E6%9D%91%E7%9A%84%E8%91%AC%E7%A4%BC%E6%9C%89%E5%BF%85%E8%A6%81%E6%90%9E%E7%9A%84%E9%82%A3%E4%B9%88%E5%A4%8D%E6%9D%82%E5%90%97/"/>
+      <url>/2022/03/03/talk/%E5%86%9C%E6%9D%91%E7%9A%84%E8%91%AC%E7%A4%BC%E6%9C%89%E5%BF%85%E8%A6%81%E6%90%9E%E7%9A%84%E9%82%A3%E4%B9%88%E5%A4%8D%E6%9D%82%E5%90%97/</url>
+      
+        <content type="html"><![CDATA[<p>任何事情都有涉及到利益的互换，在农村，就是人力财力的交换。每个人都会在心中盘算一番支出收益，力求收支平衡。</p><p>喜事可以多次举办，如果获利超过支出，主人天然有多办的倾向。这时候，客人就会倾向于不去，必须主人三请四接，方才不情不愿的去，即使去了，虽然嘴上说着沾了喜气，心里也是不大开心的。</p><p>而丧事就不同了，丧事一个人一般情况下就只会举办一次，这一次就是把死者生前的利益债务进行清算。每个人都必然有一次，而且伴随着巨大的利益转移。这时候，每个听到消息的家族都必须派人去。因为无论恩怨情仇，人已经去了，如果你不去，那就是代表你要把这种反面情绪传递到下一代，而参加葬礼，就代表这些负面的东西已经随着别人的离去而消失了。</p><p>由于丧事的唯一性，就天然保证了丧事的公平性。</p><p>所有能去的人就必须去还体现在丧事对人力的大量需求。因为农村丧礼是非常浪费人力的，挖墓葬室，挪动棺材都必须精壮劳动力。尤其是上杠抬棺人，必须村中最精壮劳动力，而且身材相仿之人，凑够八个是很不容易的。要保证人力资源，帮闲的人就越多越好，出于互换心理，都必须闻声而至。</p><p>有趣的是，葬礼是基于人力的互换，但财力互换是基于和喜事一样原则，如果你之前和对方没有利益来往，或者不欠人情，那就是可以不用送礼上人情的。</p><p>同样的道理，丧事你只要不在那几个关键场合凑到主人面前笑出声来，其他时候客人干什么是无所谓的，因为都是来进行人力互换的，没有直接的人情关系。主人是不大能从人情世故上指责客人破坏气氛的，更何况开心也有冲喜之意。但这时候主人要求办事，是不能随便拒绝的，因为这就是不拿工资的打工人，主人事实上已经支付了隐形的报酬，就必须拿出干活的态度来。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>eggjs 链接本地 MySql 时报错：Client does not support authentication protocol requested by server;</title>
       <link href="/2021/12/27/eggjs%20%E9%93%BE%E6%8E%A5%E6%9C%AC%E5%9C%B0%20MySql%20%E6%97%B6%E6%8A%A5%E9%94%99%EF%BC%9AClient%20does%20not%20support%20authentication%20protocol%20requested%20by%20server;/"/>
       <url>/2021/12/27/eggjs%20%E9%93%BE%E6%8E%A5%E6%9C%AC%E5%9C%B0%20MySql%20%E6%97%B6%E6%8A%A5%E9%94%99%EF%BC%9AClient%20does%20not%20support%20authentication%20protocol%20requested%20by%20server;/</url>
@@ -368,6 +522,31 @@
     
     
     <entry>
+      <title>对当下年轻人选择躺平的思考</title>
+      <link href="/2021/12/27/talk/%E5%AF%B9%E5%BD%93%E4%B8%8B%E5%B9%B4%E8%BD%BB%E4%BA%BA%E9%80%89%E6%8B%A9%E8%BA%BA%E5%B9%B3%E7%9A%84%E6%80%9D%E8%80%83/"/>
+      <url>/2021/12/27/talk/%E5%AF%B9%E5%BD%93%E4%B8%8B%E5%B9%B4%E8%BD%BB%E4%BA%BA%E9%80%89%E6%8B%A9%E8%BA%BA%E5%B9%B3%E7%9A%84%E6%80%9D%E8%80%83/</url>
+      
+        <content type="html"><![CDATA[<p>在中国，真正阻止你做自己想做的事情的主要问题并不是没钱，真正的困难是害怕周围人对你的评价。考试考不好有什么可怕的？下次再考就行了，实在考不好，就说明自己不是学习这块料，那找点别的事情干也行啊。事实上，你怕的不是考试考的差，你怕的是父母老师失望，你怕的是他们对你的批评。同理，找不到对象有什么可怕？赚不着钱有什么可怕的？事业失败，离职有什么可怕的？你甚至害怕去做自己想做的事情，因为你做你想做的事情，很可能让其他人不满意，你可能不想成家生孩子，但是其他人会说，不孝有三，无后为大。你可能想去诗和远方，但其他人会说，你的父母尚在苟且，你有什么资格去诗和远方？你可能想换工作，想换伴侣，想干这干那，但你不敢。这些事情本身并不可怕，你害怕的是被其他人认为是不负责任的，不孝的。你害怕的事情多了，自然就活的累了。</p><p>造成这种现象的主要原因，是儒家文化。在儒家文化中，人不是为自己而活的，而是为父母，为家人，为社会而活的，甚至可以说，人是为自己的社会评价而活的，所以，儒家文化圈的中日韩，人相对活的要复杂和辛苦一些。在其他国家，社会评价对人生意义的影响要低得多，你只要不伤害其他人，想干什么就干什么，穷有穷的活法，富有富的活法。他人对你的期待和要求要少的多，来自外部的压力也小的多，更大程度上你是为自己而活的。</p><p>其实大部分人只要打定了这辈子不买房，不谈恋爱，不结婚，不生孩子，不内卷，找个轻松的工作，一个月挣4,5K，日子都能过的很舒服，而外界怎么看你其实并不重要。大多数人痛苦的根源都在于，一直在被社会的“标准”所绑架。社会要求男人必须要买车买房，不然没资格去结婚。社会要求女人要“要瘦要好看”，不在30岁之前结婚你就不是“正常人”。一旦接受了这些标准，并且又达不到之后，你会很容易变得痛苦。而达到社会要求的“标准”，会让你得到外界的认可，但也必然会给你更多的枷锁。想一想是谁在脑海里给你“植入了这些错误的观念”，再想一想有没有必要非得达到这些所谓的“优秀的标准”。接受那些外界“优秀的标准”越多，又达不到的时候，人可能就会越痛苦。</p><p>人，只要能做到活在当下，做自己喜欢做的事情，那他就可以活的简单，想的简单，如果你总是操心未来，那就活着累了。做到活在当下的必要条件是你必须把自己的想法和自己的感受放在第一位。如果你在意自己对别人的影响和别人对你的评价，你就不可能做到活在当下。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>React Hook 实现通用选择搜索组件</title>
       <link href="/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/"/>
       <url>/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/</url>
@@ -378,6 +557,31 @@
       <categories>
           
           <category> Posts </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>工作后，前端工作难在哪里</title>
+      <link href="/2021/10/14/talk/%E5%B7%A5%E4%BD%9C%E5%90%8E%EF%BC%8C%E5%89%8D%E7%AB%AF%E5%B7%A5%E4%BD%9C%E9%9A%BE%E5%9C%A8%E5%93%AA%E9%87%8C/"/>
+      <url>/2021/10/14/talk/%E5%B7%A5%E4%BD%9C%E5%90%8E%EF%BC%8C%E5%89%8D%E7%AB%AF%E5%B7%A5%E4%BD%9C%E9%9A%BE%E5%9C%A8%E5%93%AA%E9%87%8C/</url>
+      
+        <content type="html"><![CDATA[<p>前端的工作难度在于，多数工作经验都是无效工作经验，无法让自身能力得到提升，需要自主刻意的进行提升。</p><ul><li><p>开发工具的熟练度无法沉淀，jquery 到 backbone 到 angular 到 vue&#x2F;react，yui 到 grunt 到 gulp 到 webpack 到 rollup，seajs、requirejs 到后来的 CMD、ESM，express 到 koa 到 egg 到 nest，主流的生产工具一直在演变，一路扔一路学。</p></li><li><p>技术方向无法通过工作中的业务开发经验加深深度，web 页面是前端，可视化（3D）也是前端，音视频也是前端，小程序、react-native 也是前端，nodejs 也是前端，每个单拎出来都是一个大领域。</p></li><li><p>职业路线不清晰，前端的参与度在公司整体架构中还是属于前台 UI 层里的一小块，传统软开的从新手到架构师或者从开发者到职业经理人(manager)的职业路线不适合前端，对于前端工程师大多数都是在走一步算一步，没有清晰职业发展规划也无法规划。</p></li><li><p>涉及技术太广，编程语言设计模式算法数据结构这些编程基础能力要懂，网络要懂，http、ssl协议要熟悉，浏览器渲染要熟悉，基础的性能调优要懂，各种框架类库要懂，网络安全要懂一些，SEO 要懂一些，前端工程化的测试打包部署监控要懂一些，web 服务器、nodejs 要懂一些，数据库要懂，图片、字体、动效要懂一些，3D、可视化、物理引擎要懂一些，这些看似割裂的技术又互有联系，但每一块拎出来又是一个大技术领域，而且这些不是专家高级才要懂的，是每一个初级前端也都要点上的技能点，只不过不用过深的了解，但是很容易学着学着就走火入魔了其。</p></li></ul><p>其实，前端也挺容易的，平平无奇切图仔。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
           
       </categories>
       
@@ -478,6 +682,31 @@
       <categories>
           
           <category> Posts </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>携号转网体验(联通转电信)</title>
+      <link href="/2021/07/02/talk/%E6%90%BA%E5%8F%B7%E8%BD%AC%E7%BD%91%E4%BD%93%E9%AA%8C(%E8%81%94%E9%80%9A%E8%BD%AC%E7%94%B5%E4%BF%A1)/"/>
+      <url>/2021/07/02/talk/%E6%90%BA%E5%8F%B7%E8%BD%AC%E7%BD%91%E4%BD%93%E9%AA%8C(%E8%81%94%E9%80%9A%E8%BD%AC%E7%94%B5%E4%BF%A1)/</url>
+      
+        <content type="html"><![CDATA[<p>因为不堪当时各种鱼龙混杂的套餐市场，4年前选择了自认为比较“省心”的联通“蚂蚁小宝卡”套餐，具体套餐内容这里不作赘述。</p><p>后来因为工作场地原因，联通手机信号实在是苦不堪言，移动数据流量更是让人抓狂。其中有个情况我觉得有必要说一下，正式因为联通信号差的原因，手机频繁“显示尊敬的用户，欢迎您使用中国联通业务！”这样的弹窗，个人认为实在是丑陋之极，也着实影响了正常使用。</p><h2 id="第一步：查询是否具备携号转网条件"><a href="#第一步：查询是否具备携号转网条件" class="headerlink" title="第一步：查询是否具备携号转网条件"></a>第一步：查询是否具备携号转网条件</h2><p>通过短信可以查询当前号码是否满足携转条件：电信 &#x2F; 移动 &#x2F; 联通用户使用本机发送短信 <code>CXXZ#姓名#证件号码</code> 到 10001&#x2F;10086&#x2F;10010；</p><p>没想到的是，自从使用这个手机号以来从未办理过任何套餐，但是却有一个“新网龄回馈语音活动”，而且到期时间是2024年3月31日。随后致电联通客服，查询到是手机号当地营业厅办理的一个优惠套餐，其中种种就不再细说，而后向客服表达携号转网诉求后成功取消该套餐，随后又进行了一次查询，就提示满足条件了。</p><h2 id="第二步：确定转入的运营商"><a href="#第二步：确定转入的运营商" class="headerlink" title="第二步：确定转入的运营商"></a>第二步：确定转入的运营商</h2><p>我选择了电信，没有特殊原因，仅仅是因为移动联通在公司环境下的表现属实差强人意。</p><h2 id="第三步：提交申请"><a href="#第三步：提交申请" class="headerlink" title="第三步：提交申请"></a>第三步：提交申请</h2><p>我是通过手机APP电信营业厅进行的操作，直接搜索携号转网，然后进行确认转入资格确认，套餐选择就可以进行订单提交。这里让我进行了20元的预存，不太明白其中含义。</p><h2 id="第四步：号卡激活"><a href="#第四步：号卡激活" class="headerlink" title="第四步：号卡激活"></a>第四步：号卡激活</h2><p>从发起申请到拿到新卡只隔了一天时间，这个效率还是挺认可的。过程也很方便，从快递小哥手里签收之后，需要使用原卡进行授权码查询，<code>SQXZ#姓名#身份证号</code>发送到对应的运营商，就可以获取到一个6位随机携出授权码，需要注意的是，有效期为一个小时。</p><p>然后进入转入运营商的APP端进行携号入网激活，简单验证成功后耐心等待就可以，激活过程大概20分钟就能办理结束。</p><h2 id="使用体验"><a href="#使用体验" class="headerlink" title="使用体验"></a>使用体验</h2><p>目前使用了一个星期，暂时没遇到什么问题，关于网上吐槽的验证码接收问题，测试了几个常用的门户也都正常，信号也没有异常，使用上来说暂时没遇到任何问题。</p><h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p>整个过程只持续了大概30个小时（头一天的周五早上10点，第二天下午3点左右结束），除了联通方面莫名奇妙卡下多了一个合约套餐之外，没有遇到困难，算是比较顺利。</p><h2 id="关于退费"><a href="#关于退费" class="headerlink" title="关于退费"></a>关于退费</h2><p>由于携号转网之前，号码在原运营商还余有预存话费，退费过程却有些复杂。<br>携号转网退费必须本人携带有效证件前往号码归属地的营业厅办理，办理前需要咨询营业厅是否能够办理（本人跑了两个营业厅），退费办理流程并不复杂，不需要额外操作，但是需要注意的是，充值赠送活动赠送的话费等福利不会退还。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
           
       </categories>
       
@@ -893,6 +1122,31 @@
     
     
     <entry>
+      <title>做一名合格的前端工程师</title>
+      <link href="/2020/11/07/talk/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88/"/>
+      <url>/2020/11/07/talk/%E5%81%9A%E4%B8%80%E5%90%8D%E5%90%88%E6%A0%BC%E7%9A%84%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88/</url>
+      
+        <content type="html"><![CDATA[<h1 id="…"><a href="#…" class="headerlink" title="…"></a>…</h1><p>作为一名程序员, 在工作当中或者说在我们职业生涯当中，都会犯一点小小的错误，这些小错误看似没什么大不了，但是长此以往会在我们的职业生涯中产生一定的影响，大则会让我们丢掉饭碗，小则会影响我们的人人发展，所以有必要总结一下在工作中踩的坑和如何避免这些坑。</p><h2 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h2><p>当前git是使用度最高的版本管理工具，就以git为例</p><h3 id="长时间不提交代码"><a href="#长时间不提交代码" class="headerlink" title="长时间不提交代码"></a>长时间不提交代码</h3><p>这是一个重点，不要单纯认为这是一个小坑，前不久就刚踩过类似的坑。很多时候我们习惯写完一个功能才提交，就会造成什么问题呢？如果说这个周期内电脑由于各种奇葩原因坏掉了，代码就会完全消失掉，尽管这种可能性非常低，但不代表就没有。已经碰到好几例这样的情况发生而使得代码丢失的程序员，如果你的代码丢失了，小则可能被领导责备大则可能会让你丢掉饭碗被炒鱿鱼，所以说如何正确的提交代码呢，我认为不管你代码写没写完，每天至少一次是正常的，如果你不是很懒，你也可以在午休前提交一次，下午下班前再提交一次，这就会把你的代码的损失量降到半天之内。</p><h3 id="单分支开发"><a href="#单分支开发" class="headerlink" title="单分支开发"></a>单分支开发</h3><p>不用想都知道有很多程序员都在进行单分支开发，举个例子，比如说你的项目开发周期是一周开发完成，但是在一周的第2天紧急出现了一个bug，这个bug要求你今天修复，但是你之前开发的代码还没有开发完成，这时候生产环境中的代码是上个版本的，而你开发的是已经已经了一半的代码，而你要紧急修复bug，单分支就没办法去做，只有把这个功能给开发完成然后再修改bug，这样可能要后几天之后，现在的要求是今天必须修复掉，如果是多分支的话可以立即checkout到上一个分支，然后进行线上版本的hotfix。</p><p>还有种情况就是上线之后不打tag，不做任何的标记就发布了，其实是应该打个tag的，比如说版本回滚的时候就会比较容易回滚到上一个版本，假如某个迭代上线了，由于某个重大bug必须回滚到上一个正确的版本，有了tag就可以马上进行正确回滚。</p><h3 id="git权限管理"><a href="#git权限管理" class="headerlink" title="git权限管理"></a>git权限管理</h3><p>比较常见的情况就是仓库没有设置或者没有合理设置人员权限，项目中任何参与者都完全拥有项目的操作权限。出现问题头疼扯皮不说，单是排查问题到解决问题都会是一件比较烦心的事情。借鉴之前在阿里的工作模式，一般开发人员的权限比较低，涉及到合并代码，迭代发布，版本控制等敏感操作都由指定负责人进行操作，有了权限管理，再配合多分支开发，进行CR也会方便很多。</p><h2 id="持续集成"><a href="#持续集成" class="headerlink" title="持续集成"></a>持续集成</h2><p>简单说，就是把我们开发的代码，提交到一个服务器上，在服务器上进行代码构建，代码通过测试之后直接用于生产环境，这个就是继续集成。</p><p>一个好的持续集成一定是可以量化的，比如说测试人员和相关人员可以看到你的开发进度，每个人也可以很清晰地看到个人的开发进度，大公司一般都会有一套持续集成解决方案，如果公司有，那就严格按照公司的一套流程执行下去就ok了，如果公司没有，那你可能会很容易踩到下面几个坑。</p><h3 id="本地构建没有持续集成环境"><a href="#本地构建没有持续集成环境" class="headerlink" title="本地构建没有持续集成环境"></a>本地构建没有持续集成环境</h3><p>在没有持续集成方案的情况下，开发都是在本地（你的windows系统或者你的开发电脑上）做持续集成，然后进行编辑。甚至测试热源也要连到局域网你的主机上进行测试，最后再用于生产环境。这样有个比较头疼的问题：你的电脑可能是windows系统，但是上线之后可能就是Linux或者Unix系统，那么项目中的大小写拼写错误会导致我们本地测试没有问题，但是拿到用于生产环境的服务器上就会有各种奇葩的问题，甚至会导致项目无法启动或者是出现很多bug，而这个极其影响我们的开发进度，导致交付逾期。</p><h3 id="deadLine才提交代码"><a href="#deadLine才提交代码" class="headerlink" title="deadLine才提交代码"></a>deadLine才提交代码</h3><p>比如说现在有个登陆的需求交给你去做，要求三天开发完成，如果在卡着deadLine才将代码提交到持续集成平台就会很被动。这时候你的主管是没办法实时跟踪你的工作进度，他在两天之内是很焦虑的，完全不知道你开发到什么程度了，也不知道你代码写的怎么样，这是非常不利己的。</p><h2 id="文档管理"><a href="#文档管理" class="headerlink" title="文档管理"></a>文档管理</h2><h3 id="没有文档"><a href="#没有文档" class="headerlink" title="没有文档"></a>没有文档</h3><p>先不要抬杠，不要说每个公司肯定都有文档，其实项目没有文档的情况也是有的。由于程序是一个长期的产物，程序员换了一批又一批，没有文档那交接的时候很可能你这套程序就废掉了，没办法再写了，而且也很难维护。</p><h3 id="文档不更新"><a href="#文档不更新" class="headerlink" title="文档不更新"></a>文档不更新</h3><p>这个是比较常见的坑，比如说接手了一个项目，这个项目是由别的部门移交到我们这边的一套程序，后续由你所在的部门继续进行维护或者继续开发，文档看着很齐全，但是看代码的时候你会发现根本不是那么回事，因为什么？因为他们可能只产出了初版文档，后续就没有文档了，这样就很容易问候别人的家里人，这个坑是非常非常大的，可能会造成2-3倍的工作量，所以说如果公司有管理文档就及时更新维护掉，百利无一害的事情何乐而不为呢？最主要的一件事就是你的代码&#x2F;程序更新了，那么你的文档应该也是跟着更新的。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>React.createRef()用法详解</title>
       <link href="/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/"/>
       <url>/2020/10/17/React.createRef()%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
@@ -910,6 +1164,56 @@
         <tags>
             
             <tag> #React.createRef </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>闲话终日有，不听自然无</title>
+      <link href="/2020/10/03/talk/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/"/>
+      <url>/2020/10/03/talk/%E9%97%B2%E8%AF%9D%E7%BB%88%E6%97%A5%E6%9C%89%EF%BC%8C%E4%B8%8D%E5%90%AC%E8%87%AA%E7%84%B6%E6%97%A0/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>在网络这个匿名的背景中，人内心深处的种种幽暗的情绪都会被释放，人们会特别的习惯于好辩，会放纵自己无知的热情。</p></blockquote><hr><blockquote><p>我们都知道无知者无畏，一个知识越贫乏的人，越是拥有一种莫名奇怪的勇气和一种莫名奇怪的自豪感。因为知识越贫乏，他所相信的东西就越绝对，因为他根本就没有听说过与此相对立的观点，当你遇到一个网络喷子，当他不断地使用一些标语式的词汇对你进行攻击，其实没有必要和他辩论的。</p></blockquote><hr><blockquote><p>一个标语话思维的人，他已经缺乏了自己独立思考的能力，所以你有必要和一个傻子去论证吗？</p></blockquote><hr><blockquote><p>不要试图和没有独立思维能力的人争辩，因为他会把你拉到和他同样低的水平，然后用丰富的经验打败你，但凡有一丝不爽，你都输了。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>什么是内卷</title>
+      <link href="/2020/09/19/talk/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/"/>
+      <url>/2020/09/19/talk/%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%8D%B7/</url>
+      
+        <content type="html"><![CDATA[<h3 id="什么是内卷"><a href="#什么是内卷" class="headerlink" title="什么是内卷"></a>什么是内卷</h3><ul><li><p>追女生，为了更好地表示心意，一个男人钻石恒永远一颗永流传了，其他人不得不跟着钻石永久传，所有人都花了更多的钱，只有卖钻石的赚了。</p></li><li><p>抢火车票，一个人先用抢票软件，逼得其他人也用抢票软件，因为票没有变多，最后大家都回到了起跑线，但是开发抢票软件的赚了。</p></li><li><p>孩子上学，一个孩子上辅导班，逼得大家都去上辅导班，最后排名还是没变，但开辅导班的赚了。</p></li><li><p>本来大家都是工作8小时，有人开始加班，最后逼得所有人都加班，所有人挣得还是那点钱，但是老板的3系换5系了。</p></li></ul><p><strong>内卷是啥，就是大家都损失了，只有一小撮人赚了。</strong></p><p><strong>内卷就是人口过剩。内卷就是无法带来质变的量变。</strong></p><h3 id="如何走出内卷"><a href="#如何走出内卷" class="headerlink" title="如何走出内卷"></a>如何走出内卷</h3><h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><blockquote><p>“华盛顿不是一个生活的地方。这里房租高，这里吃的差，这里的灰尘令人作呕，这里的道德令人厌恶。<br>去西部吧，年轻人。去西部，并和国家一起成长。”——纽约论坛报，1865年。</p></blockquote><h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><blockquote><p>“现在则相反，除粮食外，每天每人只有五分的油盐柴菜钱，还是难乎为继。<br>仅仅发油盐柴菜钱，每月也需现洋万元以上，全靠打土豪供给。现在全军五千人的冬衣，有了棉花，还缺少布。<br>这样冷了，许多士兵还是穿两层单衣。好在苦惯了，而且什么人都是一样苦，从军长到伙夫，除粮食外一律吃五分钱的伙食。发零用钱，两角即一律两角，四角即一律四角。因此士兵也不怨恨什么人。”<br>——毛选《井冈山的斗争》</p></blockquote><p>So，要么多一点，要么均一点，其实就这么简单。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
             
         </tags>
       
@@ -978,6 +1282,31 @@
       <categories>
           
           <category> Posts </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> # </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>一个人走得快，一群人走得远</title>
+      <link href="/2020/06/13/talk/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%EF%BC%8C%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/"/>
+      <url>/2020/06/13/talk/%E4%B8%80%E4%B8%AA%E4%BA%BA%E8%B5%B0%E5%BE%97%E5%BF%AB%EF%BC%8C%E4%B8%80%E7%BE%A4%E4%BA%BA%E8%B5%B0%E5%BE%97%E8%BF%9C/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>这个世界既不黑也不白，而是一道精致的灰。世界不存在绝对的黑或白，就像事情无绝对的对与错，很多事情是没办法完全用对错来决定的，有时候必须要从不同角度看问题，从不同角度看会发现不一样的看法和观点，所以大概可以这么说，我们看到的世界是经过自我加工或是他人加工呈现的世界模样，我们看到的永远不会是最真实的，全面的，所以被称作精致的灰吧</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Talk </category>
           
       </categories>
       
