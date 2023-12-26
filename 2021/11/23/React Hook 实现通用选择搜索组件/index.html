@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="是否在业务中写很多的符合业务的搜索组件。但是其根本就是换个请求的 API 或者是 使用的获取字段，也或者是进行搜索的字段名称不一致。 react hook 其实很大的好处是把原来的无状态组件，用hook 这一特性勾入需要的状态值。这样在我们组件开发的时候带来的很多的便利性。 下面我们看下如何去实现这个组件。先上代码 12345678910111213141516171819202122232425">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Hook 实现通用选择搜索组件">
+<meta property="og:url" content="http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="是否在业务中写很多的符合业务的搜索组件。但是其根本就是换个请求的 API 或者是 使用的获取字段，也或者是进行搜索的字段名称不一致。 react hook 其实很大的好处是把原来的无状态组件，用hook 这一特性勾入需要的状态值。这样在我们组件开发的时候带来的很多的便利性。 下面我们看下如何去实现这个组件。先上代码 12345678910111213141516171819202122232425">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:35:23.469Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>React Hook 实现通用选择搜索组件</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2021/12/27/eggjs%20%E9%93%BE%E6%8E%A5%E6%9C%AC%E5%9C%B0%20MySql%20%E6%97%B6%E6%8A%A5%E9%94%99%EF%BC%9AClient%20does%20not%20support%20authentication%20protocol%20requested%20by%20server;/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2021/08/27/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&text=React Hook 实现通用选择搜索组件"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&is_video=false&description=React Hook 实现通用选择搜索组件"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=React Hook 实现通用选择搜索组件&body=Check out this article: http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&name=React Hook 实现通用选择搜索组件&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&t=React Hook 实现通用选择搜索组件"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        React Hook 实现通用选择搜索组件
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-11-22T16:00:00.000Z" class="dt-published" itemprop="datePublished">2021-11-23</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>是否在业务中写很多的符合业务的搜索组件。但是其根本就是换个请求的 API 或者是 使用的获取字段，也或者是进行搜索的字段名称不一致。</p>
+<p>react hook 其实很大的好处是把原来的无状态组件，用hook 这一特性勾入需要的状态值。这样在我们组件开发的时候带来的很多的便利性。</p>
+<p>下面我们看下如何去实现这个组件。先上代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Select</span>, <span class="title class_">Spin</span>, <span class="title class_">Empty</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;antd&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> debounce <span class="keyword">from</span> <span class="string">&#x27;lodash/debounce&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useRequest &#125; <span class="keyword">from</span> <span class="string">&#x27;ahooks&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> queryString <span class="keyword">from</span> <span class="string">&#x27;query-string&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> ** 常用的搜索组件参数解释(都是非必须)</span></span><br><span class="line"><span class="comment"> ** 1.searchUrl 搜索url</span></span><br><span class="line"><span class="comment"> ** 2.searchParam 追加在每次请求后的搜索参数</span></span><br><span class="line"><span class="comment"> ** 3.labelRender 可自定义label 的展示</span></span><br><span class="line"><span class="comment"> ** 4.optionLabelProp 可自定义搜索的依据。</span></span><br><span class="line"><span class="comment"> ** 5.querySearch 搜索字段</span></span><br><span class="line"><span class="comment"> ** 6.useDataField 用到接口返回的 data 数据下的某个字段</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (&#123;</span><br><span class="line">  searchParam = &#123;&#125;,</span><br><span class="line">  searchUrl = <span class="string">&#x27;/api/v2/projects/searching&#x27;</span>,</span><br><span class="line">  labelRender,</span><br><span class="line">  querySearch = <span class="string">&#x27;search&#x27;</span>,</span><br><span class="line">  useDataField = <span class="string">&#x27;content&#x27;</span>,</span><br><span class="line">  ...props</span><br><span class="line">&#125;) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> [fetching, setFetching] = <span class="title function_">useState</span>(<span class="literal">false</span>);</span><br><span class="line">  <span class="keyword">const</span> [dataSource, setDataSource] = <span class="title function_">useState</span>([]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> &#123; run &#125; = <span class="title function_">useRequest</span>(</span><br><span class="line">    <span class="function">(<span class="params">params</span>) =&gt;</span> (&#123;</span><br><span class="line">      <span class="attr">url</span>: <span class="string">`<span class="subst">$&#123;searchUrl&#125;</span>?<span class="subst">$&#123;params&#125;</span>`</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">manual</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  );</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">fetchSearchData</span>(<span class="params">op</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> param = queryString.<span class="title function_">stringify</span>(</span><br><span class="line">      &#123;</span><br><span class="line">        ...searchParam,</span><br><span class="line">        ...op,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">skipNull</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">skipEmptyString</span>: <span class="literal">true</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    );</span><br><span class="line">    <span class="title function_">setFetching</span>(<span class="literal">true</span>);</span><br><span class="line">    <span class="title function_">setDataSource</span>([]);</span><br><span class="line">    <span class="keyword">const</span> data = <span class="keyword">await</span> <span class="title function_">run</span>(param);</span><br><span class="line">    <span class="keyword">const</span> mapArr = data[useDataField] || data;</span><br><span class="line">    <span class="keyword">const</span> result = mapArr.<span class="title function_">map</span>(<span class="function">(<span class="params">p</span>) =&gt;</span> (&#123;</span><br><span class="line">      <span class="attr">label</span>: labelRender || p.<span class="property">name</span>,</span><br><span class="line">      <span class="attr">value</span>: p.<span class="property">id</span> || p.<span class="property">name</span>,</span><br><span class="line">      <span class="attr">key</span>: p.<span class="property">id</span> || p.<span class="property">name</span>,</span><br><span class="line">      <span class="attr">name</span>: p.<span class="property">name</span>,</span><br><span class="line">      <span class="comment">// item: p</span></span><br><span class="line">    &#125;));</span><br><span class="line">    <span class="title function_">setFetching</span>(<span class="literal">false</span>);</span><br><span class="line">    <span class="title function_">setDataSource</span>(result);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> handleSearch = <span class="title function_">debounce</span>(<span class="function">(<span class="params">name</span>) =&gt;</span> <span class="title function_">fetchSearchData</span>(&#123; [querySearch]: name &#125;), <span class="number">500</span>);</span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">handleFocus</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="title function_">fetchSearchData</span>(&#123;</span><br><span class="line">      [querySearch]: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">Select</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">labelInValue</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">placeholder</span>=<span class="string">&quot;请输入项目名称&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">notFoundContent</span>=<span class="string">&#123;fetching</span> ? &lt;<span class="attr">Spin</span> <span class="attr">size</span>=<span class="string">&quot;small&quot;</span> /&gt;</span> : <span class="tag">&lt;<span class="name">Empty</span> /&gt;</span>&#125;</span></span><br><span class="line"><span class="language-xml">      filterOption=&#123;false&#125;</span></span><br><span class="line"><span class="language-xml">      optionLabelProp=&quot;name&quot;</span></span><br><span class="line"><span class="language-xml">      onSearch=&#123;handleSearch&#125;</span></span><br><span class="line"><span class="language-xml">      onFocus=&#123;handleFocus&#125;</span></span><br><span class="line"><span class="language-xml">      showSearch</span></span><br><span class="line"><span class="language-xml">      options=&#123;dataSource&#125;</span></span><br><span class="line"><span class="language-xml">      &#123;...props&#125;</span></span><br><span class="line"><span class="language-xml">    /&gt;</span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上面的我都在代码里面有解释，这种自带 debounce ，带有常驻初始化参数，搞定 90% 已上的搜索组件哪里能有。要用的即可直接复制。。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&text=React Hook 实现通用选择搜索组件"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&is_video=false&description=React Hook 实现通用选择搜索组件"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=React Hook 实现通用选择搜索组件&body=Check out this article: http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&title=React Hook 实现通用选择搜索组件"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&name=React Hook 实现通用选择搜索组件&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/11/23/React%20Hook%20%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E9%80%89%E6%8B%A9%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/&t=React Hook 实现通用选择搜索组件"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

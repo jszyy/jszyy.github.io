@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="下载安装iTerm2这里不放图了，默认已经安装好了。 添加Profiles第一步：点击左上角 iTerm2 第二步： 切换到Profiles标签 第三步： 点击+号添加 第四步： 设置Name 第五步 切换Command，并输入expect ~&#x2F;.ssh&#x2F;xxx 其中 expect ~&#x2F;.ssh&#x2F;xxx 后面的 xxx 由自定义文件的名称  第六部 在访达中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MacOS iTerm2使用pem文件登录服务器">
+<meta property="og:url" content="http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="下载安装iTerm2这里不放图了，默认已经安装好了。 添加Profiles第一步：点击左上角 iTerm2 第二步： 切换到Profiles标签 第三步： 点击+号添加 第四步： 设置Name 第五步 切换Command，并输入expect ~&#x2F;.ssh&#x2F;xxx 其中 expect ~&#x2F;.ssh&#x2F;xxx 后面的 xxx 由自定义文件的名称  第六部 在访达中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-01.png?versionId=CAEQDhiBgMCgxZTo0xciIDg3ZmUwMGEzNWJmOTQ3M2E5YWMyNGIyNTBiNDdmODg3">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-02.png?versionId=CAEQDhiBgIDzxpTo0xciIGM0MThlZDNkOTE0ODQyY2JiNmQzNGNmMzE3OTNhNTAy">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-03.png?versionId=CAEQDhiBgID2yZTo0xciIDM2NWY3NjY3NzQ4ZDRmYWE4ZDA0Zjg5NGVlYzcyNDBl">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-04.png?versionId=CAEQDhiBgICQxJTo0xciIGQ1NjA4ZTkwMmZhMjRlN2Q4MWU5Y2QxNTBkMmQzNWZk">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-05.png?versionId=CAEQDhiBgIDqxpTo0xciIDQ1MGFmY2Q1ODY5ZTQxNjliNTNkN2U5MTg4YzE3YjE4">
+<meta property="article:published_time" content="2021-07-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:33:54.805Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-01.png?versionId=CAEQDhiBgMCgxZTo0xciIDg3ZmUwMGEzNWJmOTQ3M2E5YWMyNGIyNTBiNDdmODg3">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>MacOS iTerm2使用pem文件登录服务器</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2021/08/27/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%BB%BA%E5%9B%BE%E5%BA%8A%E4%BB%A5%E5%8F%8A%E6%80%8E%E4%B9%88%E5%81%9A/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2021/07/05/dotenv:%20Permission%20denied'/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&text=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&is_video=false&description=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MacOS iTerm2使用pem文件登录服务器&body=Check out this article: http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&name=MacOS iTerm2使用pem文件登录服务器&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&t=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85iTerm2"><span class="toc-number">1.</span> <span class="toc-text">下载安装iTerm2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0Profiles"><span class="toc-number">2.</span> <span class="toc-text">添加Profiles</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">注意：</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        MacOS iTerm2使用pem文件登录服务器
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-07-05T16:00:00.000Z" class="dt-published" itemprop="datePublished">2021-07-06</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="下载安装iTerm2"><a href="#下载安装iTerm2" class="headerlink" title="下载安装iTerm2"></a>下载安装iTerm2</h2><p>这里不放图了，默认已经安装好了。</p>
+<h2 id="添加Profiles"><a href="#添加Profiles" class="headerlink" title="添加Profiles"></a>添加Profiles</h2><p>第一步：点击左上角 iTerm2</p>
+<p>第二步： 切换到Profiles标签</p>
+<p>第三步： 点击+号添加</p>
+<p>第四步： 设置Name</p>
+<p>第五步 切换Command，并输入expect ~&#x2F;.ssh&#x2F;xxx</p>
+<p>其中 expect ~&#x2F;.ssh&#x2F;xxx 后面的 xxx 由自定义文件的名称</p>
+<p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-01.png?versionId=CAEQDhiBgMCgxZTo0xciIDg3ZmUwMGEzNWJmOTQ3M2E5YWMyNGIyNTBiNDdmODg3" alt="iterm2-01.png"></p>
+<p>第六部 在访达中选择: 前往 -&gt; 前往文件夹 -&gt; 输入 <code>~/.ssh/</code></p>
+<p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-02.png?versionId=CAEQDhiBgIDzxpTo0xciIGM0MThlZDNkOTE0ODQyY2JiNmQzNGNmMzE3OTNhNTAy" alt="iterm2-0.png"></p>
+<p>第七步 创建文件xxx，并输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">set user 用户名 </span><br><span class="line">set host ip地址 </span><br><span class="line">set password ~/.ssh/xx.pem </span><br><span class="line">spawn ssh -i $password $user@$host </span><br><span class="line"> </span><br><span class="line">interact </span><br><span class="line">expect eof</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-03.png?versionId=CAEQDhiBgID2yZTo0xciIDM2NWY3NjY3NzQ4ZDRmYWE4ZDA0Zjg5NGVlYzcyNDBl" alt="iterm2-03.png"></p>
+<p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-04.png?versionId=CAEQDhiBgICQxJTo0xciIGQ1NjA4ZTkwMmZhMjRlN2Q4MWU5Y2QxNTBkMmQzNWZk" alt="iterm2-04.png"></p>
+<p>第八步： 保存退出</p>
+<p>第九步： 使用</p>
+<p>打开 iTerm2 ， 点击 profiles ，或者使用快捷键command + o，选择之前创建的 profiles 选择，双击就可以了</p>
+<p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/iterm2/iterm2-05.png?versionId=CAEQDhiBgIDqxpTo0xciIDQ1MGFmY2Q1ODY5ZTQxNjliNTNkN2U5MTg4YzE3YjE4" alt="iterm2-05.png"></p>
+<h2 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h2><p>先可以使用pem文件直接登录下，检查pem文件的权限对不，很多时候会报权限太大的问题，修改一下就行：</p>
+<p><code>sudo chmod 600 yourkey.pem</code></p>
+<p>这样就可以了。</p>
+<p>这么配置，连接就很容易了。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85iTerm2"><span class="toc-number">1.</span> <span class="toc-text">下载安装iTerm2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0Profiles"><span class="toc-number">2.</span> <span class="toc-text">添加Profiles</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">注意：</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&text=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&is_video=false&description=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MacOS iTerm2使用pem文件登录服务器&body=Check out this article: http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&title=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&name=MacOS iTerm2使用pem文件登录服务器&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/07/06/MacOS%20iTerm2%E4%BD%BF%E7%94%A8pem%E6%96%87%E4%BB%B6%E7%99%BB%E5%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8/&t=MacOS iTerm2使用pem文件登录服务器"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

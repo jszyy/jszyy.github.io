@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="防嵌套网页比如，最出名的clickhacking就是使用iframe来 拦截click事件。因为iframe享有着click的最优先权，当有人在伪造的主页中进行点击的话，如果点在iframe上，则会默认是在操作iframe的页面。 所以，钓鱼网站就是使用这个技术，通过诱导用户进行点击，比如，设计一个”妹妹寂寞了”等之类的网页，诱导用户点击，但实际结果，你看到的不是”妹妹”,而是被恶意微博吸粉。 所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web前端安全之iframe">
+<meta property="og:url" content="http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="防嵌套网页比如，最出名的clickhacking就是使用iframe来 拦截click事件。因为iframe享有着click的最优先权，当有人在伪造的主页中进行点击的话，如果点在iframe上，则会默认是在操作iframe的页面。 所以，钓鱼网站就是使用这个技术，通过诱导用户进行点击，比如，设计一个”妹妹寂寞了”等之类的网页，诱导用户点击，但实际结果，你看到的不是”妹妹”,而是被恶意微博吸粉。 所">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:27:09.576Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Web前端安全之iframe</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2021/03/07/macOS%20%E4%B8%AD%E4%BD%BF%E7%94%A8vscode%E6%8F%90%E7%A4%BA%EF%BC%8CEACCES:%20permission%20denied/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2021/02/24/TypeScript%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&text=Web前端安全之iframe"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&is_video=false&description=Web前端安全之iframe"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Web前端安全之iframe&body=Check out this article: http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&name=Web前端安全之iframe&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&t=Web前端安全之iframe"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%B5%8C%E5%A5%97%E7%BD%91%E9%A1%B5"><span class="toc-number">1.</span> <span class="toc-text">防嵌套网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X-Frame-Options"><span class="toc-number">2.</span> <span class="toc-text">X-Frame-Options</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSP%E4%B9%8B%E9%A1%B5%E9%9D%A2%E9%98%B2%E6%8A%A4"><span class="toc-number">3.</span> <span class="toc-text">CSP之页面防护</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sandbox"><span class="toc-number">4.</span> <span class="toc-text">sandbox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#resolve-iframe%E8%B7%A8%E5%9F%9F"><span class="toc-number">5.</span> <span class="toc-text">resolve iframe跨域</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Web前端安全之iframe
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-03-01T16:00:00.000Z" class="dt-published" itemprop="datePublished">2021-03-02</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="防嵌套网页"><a href="#防嵌套网页" class="headerlink" title="防嵌套网页"></a>防嵌套网页</h2><p>比如，最出名的clickhacking就是使用iframe来 拦截click事件。因为iframe享有着click的最优先权，当有人在伪造的主页中进行点击的话，如果点在iframe上，则会默认是在操作iframe的页面。 所以，钓鱼网站就是使用这个技术，通过诱导用户进行点击，比如，设计一个”妹妹寂寞了”等之类的网页，诱导用户点击，但实际结果，你看到的不是”妹妹”,而是被恶意微博吸粉。</p>
+<p>所以，为了防止网站被钓鱼，可以使用window.top来防止你的网页被iframe.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//iframe2.html</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable language_">window</span> != <span class="variable language_">window</span>.<span class="property">top</span>)&#123;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">top</span>.<span class="property">location</span>.<span class="property">href</span> = correctURL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的主要用途是限定你的网页不能嵌套在任意网页内。如果你想引用同域的框架的话，可以判断域名。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (top.<span class="property">location</span>.<span class="property">host</span> != <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">host</span>) &#123;</span><br><span class="line">　　top.<span class="property">location</span>.<span class="property">href</span> = <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，如果你网页不同域名的话，上述就会报错。<br>所以，这里可以使用try…catch…进行错误捕获。如果发生错误，则说明不同域，表示你的页面被盗用了。可能有些浏览器这样写是不会报错，所以需要降级处理。<br>这时候再进行跳转即可.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">　　top.<span class="property">location</span>.<span class="property">hostname</span>;  <span class="comment">//检测是否出错</span></span><br><span class="line">　　<span class="comment">//如果没有出错，则降级处理</span></span><br><span class="line">　　<span class="keyword">if</span> (top.<span class="property">location</span>.<span class="property">hostname</span> != <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">hostname</span>) &#123; </span><br><span class="line">　　　　top.<span class="property">location</span>.<span class="property">href</span> =<span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line">　　&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span>(e)&#123;</span><br><span class="line">　　top.<span class="property">location</span>.<span class="property">href</span> = <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这只是浏览器端，对iframe页面的权限做出相关的设置。 我们还可以在服务器上，对使用iframe的权限进行设置.</p>
+<h2 id="X-Frame-Options"><a href="#X-Frame-Options" class="headerlink" title="X-Frame-Options"></a>X-Frame-Options</h2><p>X-Frame-Options是一个相应头，主要是描述服务器的网页资源的iframe权限。目前的支持度是IE8+(已经很好了啊喂)有3个选项:</p>
+<blockquote>
+<p>DENY：当前页面不能被嵌套iframe里，即便是在相同域名的页面中嵌套也不允许,也不允许网页中有嵌套iframe;</p>
+</blockquote>
+<blockquote>
+<p>SAMEORIGIN：iframe页面的地址只能为同源域名下的页面</p>
+</blockquote>
+<blockquote>
+<p>ALLOW-FROM：可以在指定的origin url的iframe中加载</p>
+</blockquote>
+<ol>
+<li>X-Frame-Options: DENY</li>
+<li>拒绝任何iframe的嵌套请求</li>
+<li>X-Frame-Options: SAMEORIGIN</li>
+<li>只允许同源请求，例如网页为 foo.com&#x2F;123.php，則 foo.com 底下的所有网页可以嵌入此网页，但是 foo.com 以外的网页不能嵌入</li>
+<li>X-Frame-Options: ALLOW-FROM <a target="_blank" rel="noopener" href="http://s3131212.com/">http://s3131212.com</a></li>
+<li>只允许指定网页的iframe请求，不过兼容性较差Chrome不支持</li>
+</ol>
+<p>X-Frame-Options其实就是将前端js对iframe的把控交给服务器来进行处理。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//js</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable language_">window</span> != <span class="variable language_">window</span>.<span class="property">top</span>)&#123;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">top</span>.<span class="property">location</span>.<span class="property">href</span> = <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//等价于</span></span><br><span class="line">X-<span class="title class_">Frame</span>-<span class="title class_">Options</span>: <span class="variable constant_">DENY</span></span><br><span class="line"><span class="comment">//js</span></span><br><span class="line"><span class="keyword">if</span> (top.<span class="property">location</span>.<span class="property">hostname</span> != <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">hostname</span>) &#123; </span><br><span class="line">　　　　top.<span class="property">location</span>.<span class="property">href</span> =<span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//等价于</span></span><br><span class="line">X-<span class="title class_">Frame</span>-<span class="title class_">Options</span>: <span class="variable constant_">SAMEORIGIN</span></span><br></pre></td></tr></table></figure>
+
+<p>该属性是对页面的iframe进行一个主要限制，不过，涉及iframe的header可不止这一个，另外还有一个Content Security Policy, 他同样也可以对iframe进行限制，而且，他应该是以后网页安全防护的主流。</p>
+<h2 id="CSP之页面防护"><a href="#CSP之页面防护" class="headerlink" title="CSP之页面防护"></a>CSP之页面防护</h2><p>和X-Frames-Options一样，都需要在服务器端设置好相关的Header. CSP 的作用， 真的是太大了，他能够极大的防止你的页面被XSS攻击，而且可以制定js,css,img等相关资源的origin，防止被恶意注入。不过他的兼容性，也是渣的一逼。目前支持Edge12+ 以及 IE10+。<br>而且目前市面上，流行的是3种CSP头，以及各种浏览器的兼容性</p>
+<p>使用主要是在后端服务器上配置，在前端，我们可以观察Response Header 里是否有这样的一个Header: <code>Content-Security-Policy: default-src &#39;self&#39;</code>, 这就表明，你的网页是启用CSP的。通常我们可以在CSP后配置各种指定资源路径，有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">default-src,</span><br><span class="line">script-src,</span><br><span class="line">style-src,</span><br><span class="line">img-src,</span><br><span class="line">connect-src,</span><br><span class="line">font-src,</span><br><span class="line">object-src,</span><br><span class="line">media-src,</span><br><span class="line">sandbox,</span><br><span class="line">child-src,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>如果你未指定的话，则是使用default-src规定的加载策略.<br>默认配置就是同域: default-src “self”.<br>这里和iframe有一点瓜葛的就是 child-src 和 sandbox.</p>
+<p>child-src就是用来指定iframe的有效加载路径。其实和X-Frame-Options中配置allow-origin是一个道理。不过,allow-origin 没有得到厂商们的支持。<br>而，sandbox其实就和iframe的sandbox属性（下文介绍）,是一样一样的，他可以规定来源能够带有什么权限.<br>来个demo:</p>
+<p><code>Content-Security-Policy: child-src &#39;self&#39; http://example.com; sandbox allow-forms allow-same-origin</code></p>
+<p>此时，iframe的src就只能加载同域和example.com页面。 最后再补充一点: 使用CSP 能够很好的防止XSS攻击，原理就是CSP会默认escape掉内联样式和脚本，以及eval执行。但是，你可以使用srcipt-src进行降低限制.</p>
+<p><code>Content-Security-Policy: script-src &#39;unsafe-inline&#39;</code></p>
+<p>如果想更深入的了解CSP,可以参阅:CSP,中文CSP,H5rock之CSP<br>ok, 上面基本上就是防止自己页面被嵌套而做的一些安全防护工作。 当然，我们面临的安全问题还有一个，就是当iframe别人的页面时，我们需要对其进行安全设限，虽然，跨域时iframe的安全性会大很多，但是，互联网是没有安全的地方。在以前，我们会进行各种trick来防止自己的页面被污染，现在h5提供的一个新属性sandbox可以很好的解决这个问题。</p>
+<h2 id="sandbox"><a href="#sandbox" class="headerlink" title="sandbox"></a>sandbox</h2><p>sandbox就是用来给指定iframe设置一个沙盒模型限制iframe的更多权限.<br>sandbox是h5的一个新属性,IE10+支持(md~).<br>启用方式就是使用sandbox属性:</p>
+<p><code>&lt;iframe sandbox src=&quot;...&quot;&gt;&lt;/iframe&gt;</code></p>
+<p>这样会对iframe页面进行一系列的限制:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">. script脚本不能执行</span><br><span class="line">. 不能发送ajax请求</span><br><span class="line">. 不能使用本地存储，即localStorage,cookie等</span><br><span class="line">. 不能创建新的弹窗和window</span><br><span class="line">. 不能发送表单</span><br><span class="line">. 不能加载额外插件比如flash等</span><br></pre></td></tr></table></figure>
+
+<p>看到这里，我也是醉了。 好好的一个iframe，你这样是不是有点过分了。 不过，你可以放宽一点权限。在sandbox里面进行一些简单设置</p>
+<p><code>&lt;iframe sandbox=&quot;allow-same-origin&quot; src=&quot;...&quot;&gt;&lt;/iframe&gt;</code></p>
+<p>常用的配置项有:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">allow-forms	允许进行提交表单</span><br><span class="line">allow-scripts	运行执行脚本</span><br><span class="line">allow-same-origin	允许同域请求,比如ajax,storage</span><br><span class="line">allow-top-navigation	允许iframe能够主导window.top进行页面跳转</span><br><span class="line">allow-popups	允许iframe中弹出新窗口,比如,window.open,target=&quot;_blank&quot;</span><br><span class="line">allow-pointer-lock	在iframe中可以锁定鼠标，主要和鼠标锁定有关</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以通过在sandbox里，添加允许进行的权限.</p>
+<p><code>&lt;iframe sandbox=&quot;allow-forms allow-same-origin allow-scripts&quot; src=&quot;...&quot;&gt;&lt;/iframe&gt;</code></p>
+<p>这样，就可以保证js脚本的执行，但是禁止iframe里的javascript执行top.location &#x3D; self.location。<br>哎，其实，iframe的安全问题还是超级有的。比如location劫持，Refers检查等。 不过目前而言，知道怎么简单的做一些安全措施就over了，白帽子们会帮我们测试的。</p>
+<h2 id="resolve-iframe跨域"><a href="#resolve-iframe跨域" class="headerlink" title="resolve iframe跨域"></a>resolve iframe跨域</h2><p>iframe就是一个隔离沙盒，相当于我们在一个页面内可以操控很多个标签页一样。如果踩坑的童鞋应该知道，iframe的解决跨域也是很有套套的。<br>首先我们需要明确什么是跨域。<br>浏览器判断你跨没跨域，主要根据两个点。 一个是你网页的协议(protocol)，一个就是你的host是否相同，即，就是url的首部:</p>
+<p><code>window.location.protocol +window.location.host</code></p>
+<p>需要强调的是，url首部必须一样，比如:二级域名或者IP地址，都算是跨域.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//域名和域名对应ip, 跨域</span><br><span class="line">http://www.a.com/a.js</span><br><span class="line">http://70.32.92.74/b.js</span><br><span class="line">//统一域名，不同二级域名。 跨域</span><br><span class="line">http://www.a.com/a.js</span><br><span class="line">http://a.com/b.js</span><br></pre></td></tr></table></figure>
+
+<p>对于第二种方式的跨域（主域相同而子域不同）,可以使用iframe进行解决。<br>在两个不同子域下(某一方使用iframe嵌套在另一方)，<br>即:<br>http: &#x2F;&#x2F;<a target="_blank" rel="noopener" href="http://www.foo.com/a.html%E5%92%8Chttp">www.foo.com/a.html和http</a>: &#x2F;&#x2F;script.foo.com&#x2F;b.html<br>两个文件中分别加上document.domain &#x3D; ‘foo.com’,指定相同的主域，然后,两个文档就可以进行交互。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//b.html是以iframe的形式嵌套在a.html中</span><br><span class="line">//www.foo.com上的a.html</span><br><span class="line">document.domain = &#x27;foo.com&#x27;;</span><br><span class="line">var ifr = document.createElement(&#x27;iframe&#x27;);</span><br><span class="line">ifr.src = &#x27;http://script.foo.com/b.html&#x27;;</span><br><span class="line">ifr.style.display = &#x27;none&#x27;;</span><br><span class="line">document.body.appendChild(ifr);</span><br><span class="line">ifr.onload = function()&#123;</span><br><span class="line">    var doc = ifr.contentDocument || ifr.contentWindow.document;</span><br><span class="line">    // 在这里操纵b.html</span><br><span class="line">    alert(doc.getElementsByTagName(&quot;h1&quot;)[0].childNodes[0].nodeValue);</span><br><span class="line">&#125;;</span><br><span class="line">//script.foo.com上的b.html</span><br><span class="line">document.domain = &#x27;foo.com&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下document.domain 是指window.location.hostname. 你可以手动更改，但是最多只能设置为主域名。 通常，主域名就是指不带www的hostname, 比如: foo.com , baidu.com 。 如果，带上www或者其他的前缀，就是二级域名或者多级域名。通过上述设置，相同的domain之后，就可以进行同域的相关操作。另外还可以使用iframe和location.hash，不过由于技术out了，这里就不做介绍了。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%B5%8C%E5%A5%97%E7%BD%91%E9%A1%B5"><span class="toc-number">1.</span> <span class="toc-text">防嵌套网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X-Frame-Options"><span class="toc-number">2.</span> <span class="toc-text">X-Frame-Options</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSP%E4%B9%8B%E9%A1%B5%E9%9D%A2%E9%98%B2%E6%8A%A4"><span class="toc-number">3.</span> <span class="toc-text">CSP之页面防护</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sandbox"><span class="toc-number">4.</span> <span class="toc-text">sandbox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#resolve-iframe%E8%B7%A8%E5%9F%9F"><span class="toc-number">5.</span> <span class="toc-text">resolve iframe跨域</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&text=Web前端安全之iframe"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&is_video=false&description=Web前端安全之iframe"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Web前端安全之iframe&body=Check out this article: http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&title=Web前端安全之iframe"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&name=Web前端安全之iframe&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/03/02/Web%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E4%B9%8Biframe/&t=Web前端安全之iframe"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

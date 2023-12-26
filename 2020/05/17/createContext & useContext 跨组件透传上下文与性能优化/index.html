@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、React.createContext API 文档地址：https:&#x2F;&#x2F;zh-hans.reactjs.org&#x2F;docs&#x2F;context.html#reactcreatecontext  从 API 名字就可以看出， createContext 能够创建一个 React 的 上下文（context），然后订阅了这个上下文的组件中，可以拿到上下文中提供的数据或者其他信息。基本的使用方法： 1c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="createContext &amp; useContext 跨组件透传上下文与性能优化">
+<meta property="og:url" content="http://example.com/2020/05/17/createContext%20&%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="一、React.createContext API 文档地址：https:&#x2F;&#x2F;zh-hans.reactjs.org&#x2F;docs&#x2F;context.html#reactcreatecontext  从 API 名字就可以看出， createContext 能够创建一个 React 的 上下文（context），然后订阅了这个上下文的组件中，可以拿到上下文中提供的数据或者其他信息。基本的使用方法： 1c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(1).gif?versionId=CAEQDhiCgIDZ96bo0xciIDFkODI3NDliNjY1MDRhNjZiNmJhYzE2MTExYjUwNDk0">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(2).gif?versionId=CAEQDhiBgMDU96bo0xciIGE4MDc2MTI2NDZhMTQ3ZWY5NTdhYmEwYjA0MzM0MTFm">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(3).gif?versionId=CAEQDhiBgMDY96bo0xciIDIzZTg5YjE0MGNhODRlMDI4ZTVmNjdiZGE1MTE1NTkx">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(4).gif?vuseContext(4).gifersionId=CAEQDhiBgID696bo0xciIDM4MTJkYTUxMmQyYzRkMDk4Y2UxNDRkNGJmYWYwZTEx">
+<meta property="article:published_time" content="2020-05-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:20:59.879Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(1).gif?versionId=CAEQDhiCgIDZ96bo0xciIDFkODI3NDliNjY1MDRhNjZiNmJhYzE2MTExYjUwNDk0">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>createContext &amp; useContext 跨组件透传上下文与性能优化</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2020/06/12/VSCode%E9%85%8D%E5%90%88ESLint%E8%87%AA%E5%8A%A8%E4%BF%AE%E5%A4%8D%E6%A0%BC%E5%BC%8F%E5%8C%96(React)/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2020/05/08/Flex%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&text=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&is_video=false&description=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=createContext &amp; useContext 跨组件透传上下文与性能优化&body=Check out this article: http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&name=createContext &amp; useContext 跨组件透传上下文与性能优化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&t=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81React-createContext"><span class="toc-number">1.</span> <span class="toc-text">一、React.createContext</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8-useContext-%E8%8E%B7%E5%8F%96%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">二、使用 useContext 获取上下文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81createContext-%E5%92%8C-useContext-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95%E5%85%B1%E4%BA%AB"><span class="toc-number">3.</span> <span class="toc-text">三、createContext 和 useContext 结合使用实现方法共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81context-manager-js"><span class="toc-number">3.1.</span> <span class="toc-text">1、context-manager.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%88%B6%E7%BB%84%E4%BB%B6-Provider-%E6%8F%90%E4%BE%9B%E4%B8%8A%E4%B8%8B%E6%96%87-value"><span class="toc-number">3.2.</span> <span class="toc-text">2、父组件 Provider 提供上下文 value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%AD%90%E7%BB%84%E4%BB%B6-useContext-%E8%A7%A3%E6%9E%90%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">3.3.</span> <span class="toc-text">3、子组件 useContext 解析上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E6%95%88%E6%9E%9C"><span class="toc-number">3.4.</span> <span class="toc-text">4、效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-React-memo"><span class="toc-number">3.5.</span> <span class="toc-text">5、为什么使用 React.memo()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BD%BF%E7%94%A8-useReducer-%E5%87%8F%E5%B0%91-Context-%E7%9A%84%E5%A4%8D%E6%9D%82%E7%A8%8B%E5%BA%A6"><span class="toc-number">4.</span> <span class="toc-text">四、使用 useReducer 减少 Context 的复杂程度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B0%86-state-%E4%B9%9F%E9%80%9A%E8%BF%87-Context-%E4%BC%A0%E9%80%92%E7%BB%99%E5%AD%90%E7%BB%84%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">五、将 state 也通过 Context 传递给子组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%88%B6%E7%BB%84%E4%BB%B6"><span class="toc-number">5.1.</span> <span class="toc-text">1、父组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%AD%90%E7%BB%84%E4%BB%B6%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E7%88%B6%E7%BB%84%E4%BB%B6%E7%9A%84-state"><span class="toc-number">5.2.</span> <span class="toc-text">2、子组件直接使用父组件的 state</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%95%88%E6%9E%9C"><span class="toc-number">5.3.</span> <span class="toc-text">3、效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E7%88%B6%E7%BB%84%E4%BB%B6-state-%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-number">5.4.</span> <span class="toc-text">4、直接使用父组件 state 带来的性能问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%BD%BF%E7%94%A8-useMemo-%E8%A7%A3%E5%86%B3-state-Context-%E9%80%8F%E4%BC%A0%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">六、使用 useMemo() 解决 state Context 透传的性能问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E4%BD%BF%E7%94%A8-useMemo-%E4%BC%98%E5%8C%96%E5%AD%90%E7%BB%84%E4%BB%B6%E6%B8%B2%E6%9F%93"><span class="toc-number">6.1.</span> <span class="toc-text">1、使用 useMemo 优化子组件渲染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E4%BC%98%E5%8C%96%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="toc-number">6.2.</span> <span class="toc-text">2、优化后的效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">6.3.</span> <span class="toc-text"></span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        createContext &amp; useContext 跨组件透传上下文与性能优化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-05-16T16:00:00.000Z" class="dt-published" itemprop="datePublished">2020-05-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="一、React-createContext"><a href="#一、React-createContext" class="headerlink" title="一、React.createContext"></a>一、React.createContext</h2><blockquote>
+<p>API 文档地址：<a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/docs/context.html#reactcreatecontext">https://zh-hans.reactjs.org/docs/context.html#reactcreatecontext</a></p>
+</blockquote>
+<p>从 API 名字就可以看出， createContext 能够创建一个 React 的 上下文（context），然后订阅了这个上下文的组件中，可以拿到上下文中提供的数据或者其他信息。<br>基本的使用方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">MyContext</span> = <span class="title class_">React</span>.<span class="title function_">createContext</span>(defaultValue)</span><br></pre></td></tr></table></figure>
+
+<p>其中 defaultValue 是传入的默认值。</p>
+<p>如果要使用创建的上下文，需要通过 <code>Context.Provider</code> 最外层包装组件，并且需要显示的通过 <code>&lt;MyContext.Provider value=&#123;&#123;xx:xx&#125;&#125;&gt;</code> 的方式传入 value，指定 context 要对外暴露的信息。</p>
+<p>子组件在匹配过程中只会匹配最新的 <code>Provider</code>，也就是说如果有下面三个组件：<code>ContextA.Provider-&gt;A-&gt;ContexB.Provider-&gt;B-&gt;C</code></p>
+<p>如果 <code>ContextA</code> 和 <code>ContextB</code> 提供了相同的方法，则 C 组件只会选择 <code>ContextB</code> 提供的方法。</p>
+<p>为什么要默认值？</p>
+<p>如果匹配不到最新的 <code>Provider</code> 则会使用默认值，默认值一般只有在对组件进行单元测试（组件并未嵌入到父组件中）的时候，比较有用。</p>
+<h2 id="二、使用-useContext-获取上下文"><a href="#二、使用-useContext-获取上下文" class="headerlink" title="二、使用 useContext 获取上下文"></a>二、使用 useContext 获取上下文</h2><blockquote>
+<p>useContext 文档地址：<a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/docs/hooks-reference.html#usecontext">https://zh-hans.reactjs.org/docs/hooks-reference.html#usecontext</a></p>
+</blockquote>
+<p>通过 <code>React.createContext</code> 创建出来的上下文，在子组件中可以通过 <code>useContext</code> 这个 <code>Hook</code> 获取 <code>Provider</code> 提供的内容</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;funcName&#125; = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br></pre></td></tr></table></figure>
+
+<p>从上面代码可以发现， <code>useContext</code> 需要将 <code>MyContext</code> 这个 <code>Context</code> 实例传入，不是字符串，就是实例本身。</p>
+<p>这种用法会存在一个比较尴尬的地方，父子组件不在一个目录中，如何共享 <code>MyContext</code> 这个 <code>Context</code> 实例呢？</p>
+<p>一般这种情况下，我会通过 <code>Context Manager</code> 统一管理上下文的实例，然后通过 <code>export</code> 将实例导出，在子组件中在将实例 <code>import</code> 进来。</p>
+<h2 id="三、createContext-和-useContext-结合使用实现方法共享"><a href="#三、createContext-和-useContext-结合使用实现方法共享" class="headerlink" title="三、createContext 和 useContext 结合使用实现方法共享"></a>三、createContext 和 useContext 结合使用实现方法共享</h2><p>举个实际的例子：子组件中修改父组件的 <code>state</code></p>
+<p>一般的做法是将父组件的方法比如 <code>setXXX</code> 通过 <code>props</code> 的方式传给子组件，而一旦子组件多层级的话，就要层层透传。</p>
+<p>使用 <code>Context</code> 的方式则可以免去这种层层透传</p>
+<h3 id="1、context-manager-js"><a href="#1、context-manager-js" class="headerlink" title="1、context-manager.js"></a>1、context-manager.js</h3><p>创建一个上下文管理的组件，用来统一导出 <code>Context</code> 实例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title class_">MyContext</span> = <span class="title class_">React</span>.<span class="title function_">createContext</span>(<span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、父组件-Provider-提供上下文-value"><a href="#2、父组件-Provider-提供上下文-value" class="headerlink" title="2、父组件 Provider 提供上下文 value"></a>2、父组件 Provider 提供上下文 value</h3><p>下面代码中，父组件引入了实例，并且通过 <code>MyContext.Provider</code> 将父组件包装，并且通过 <code>Provider.value</code> 将方法提供出去。</p>
+<p>下面的实例提供了三个 <code>state</code> 操作方法：</p>
+<ul>
+<li>setStep</li>
+<li>setCount</li>
+<li>setNumber</li>
+</ul>
+<p>以及一个副作用方法：</p>
+<ul>
+<li>fetchData</li>
+</ul>
+<p>子组件 <code>Child</code> 接受的 <code>props</code> 只有三个 <code>state</code> 的值 <code>step/number/count</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Child</span> <span class="keyword">from</span> <span class="string">&#x27;./Child&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">fetchData</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            <span class="title function_">resolve</span>(<span class="number">1</span>);</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [step, setStep] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">const</span> [count, setCount] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">const</span> [number, setNumber] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">MyContext.Provider</span> <span class="attr">value</span>=<span class="string">&#123;&#123;</span> <span class="attr">setStep</span>, <span class="attr">setCount</span>, <span class="attr">setNumber</span>, <span class="attr">fetchData</span> &#125;&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">Child</span> <span class="attr">step</span>=<span class="string">&#123;step&#125;</span> <span class="attr">number</span>=<span class="string">&#123;number&#125;</span> <span class="attr">count</span>=<span class="string">&#123;count&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">MyContext.Provider</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、子组件-useContext-解析上下文"><a href="#3、子组件-useContext-解析上下文" class="headerlink" title="3、子组件 useContext 解析上下文"></a>3、子组件 useContext 解析上下文</h3><p>下面是子组件，相同的，也需要从 <code>context-manager</code> 中引入 <code>MyContext</code> 这个实例，然后才能通过  <code>const &#123; setStep, setNumber, setCount, fetchData &#125; = useContext(MyContext);</code> 解析出上下文中的方法，在子组件中则可以直接使用这些方法，修改父组件的 <code>state</code>.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useContext, useEffect, memo &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">memo</span>(<span class="function">(<span class="params">props = &#123;&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; setStep, setNumber, setCount, fetchData &#125; = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">fetchData</span>().<span class="title function_">then</span>(<span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`FETCH DATA: <span class="subst">$&#123;res&#125;</span>`</span>);</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;, []);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>step is : &#123;props.step&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>number is : &#123;props.number&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>count is : &#123;props.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; setStep(props.step + 1) &#125;&#125;&gt;step ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; setNumber(props.number + 1) &#125;&#125;&gt;number ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; setCount(props.step + props.number) &#125;&#125;&gt;number + step<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、效果"><a href="#4、效果" class="headerlink" title="4、效果"></a>4、效果</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(1).gif?versionId=CAEQDhiCgIDZ96bo0xciIDFkODI3NDliNjY1MDRhNjZiNmJhYzE2MTExYjUwNDk0" alt="useContext(1).gif"></p>
+<p>可以发现，在子组件中点击按钮，直接调用 <code>Context</code> 透传过来的方法，可以修改父组件的 <code>state</code>，子组件则会重新渲染。</p>
+<p><strong>这种方式显式的避免了多级 props 的层层透传问题，虽然 Demo 只有一级 子组件，即使存在多级子组件也可以直接修改</strong></p>
+<h3 id="5、为什么使用-React-memo"><a href="#5、为什么使用-React-memo" class="headerlink" title="5、为什么使用 React.memo()"></a>5、为什么使用 React.memo()</h3><p>上面子组件 <code>Child</code> 中，使用了 <code>memo</code> 包装子组件，这样做的原因是：</p>
+<ul>
+<li><strong>调用了 useContext 的组件总会在 context 值变化时重新渲染</strong></li>
+</ul>
+<p>如果我们的 <code>Context</code> 会经常变化，那对子组件来讲会多次触发 <code>re-render</code>，通过 <code>React.memo()</code> 可以很好的管理子组件的性能问题</p>
+<h2 id="四、使用-useReducer-减少-Context-的复杂程度"><a href="#四、使用-useReducer-减少-Context-的复杂程度" class="headerlink" title="四、使用 useReducer 减少 Context 的复杂程度"></a>四、使用 useReducer 减少 Context 的复杂程度</h2><p>上面的示例虽然实现了多级组件方法共享，但是暴露出一个问题：所有的方法都放在了 <code>Context.Provider.value</code> 属性中传递，必然造成整个 <code>Context Provider</code> 提供的方法越来越多，也会臃肿。</p>
+<p> <code>&lt;MyContext.Provider value=&#123;&#123; setStep, setCount, setNumber, fetchData &#125;&#125; /&gt;</code> 里面的方法可能越来越多</p>
+<p>而向 <code>setStep</code>、<code>setCount</code>、<code>setNumber</code> 这三个方法，是可以通过 <code>useReducer</code> 包装，并且通过 <code>dispatch</code> 触发的，因此修改一下父组件：</p>
+<p>下面的父组件与之前不同地方只是去掉了 <code>setXXX</code> 这些设置 <code>state</code> 的方法，并且在 <code>Provider value</code>中，只传入了 <code>value=&#123;&#123;dispatch&#125;&#125;</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Child</span> <span class="keyword">from</span> <span class="string">&#x27;./Child&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initState = &#123; <span class="attr">count</span>: <span class="number">0</span>, <span class="attr">step</span>: <span class="number">0</span>, <span class="attr">number</span>: <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">reducer</span> = (<span class="params">state, action</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.<span class="property">type</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;stepInc&#x27;</span>: <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, state, &#123; <span class="attr">step</span>: state.<span class="property">step</span> + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;numberInc&#x27;</span>: <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, state, &#123; <span class="attr">number</span>: state.<span class="property">number</span> + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;count&#x27;</span>: <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, state, &#123; <span class="attr">count</span>: state.<span class="property">step</span> + state.<span class="property">number</span> &#125;);</span><br><span class="line">        <span class="attr">default</span>: <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [state, dispatch] = <span class="title function_">useReducer</span>(reducer, initState);</span><br><span class="line">    <span class="keyword">const</span> &#123; step, number, count &#125; = state;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">MyContext.Provider</span> <span class="attr">value</span>=<span class="string">&#123;&#123;</span> <span class="attr">dispatch</span> &#125;&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">Child</span> <span class="attr">step</span>=<span class="string">&#123;step&#125;</span> <span class="attr">number</span>=<span class="string">&#123;number&#125;</span> <span class="attr">count</span>=<span class="string">&#123;count&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">MyContext.Provider</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此此时子组件只需要拿到 <code>dispatch</code> 即可修改父组件的 <code>state</code>:</p>
+<blockquote>
+<p>子组件唯一的不同就是点击事件执行的是 <code>dispatch</code>.</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useContext, memo &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">memo</span>(<span class="function">(<span class="params">props = &#123;&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; dispatch &#125; = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>step is : &#123;props.step&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>number is : &#123;props.number&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>count is : &#123;props.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;stepInc&#x27; &#125;) &#125;&#125;&gt;step ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;numberInc&#x27; &#125;) &#125;&#125;&gt;number ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;count&#x27; &#125;) &#125;&#125;&gt;number + step<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：<br><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(2).gif?versionId=CAEQDhiBgMDU96bo0xciIGE4MDc2MTI2NDZhMTQ3ZWY5NTdhYmEwYjA0MzM0MTFm" alt="useContext(2).gif"></p>
+<h2 id="五、将-state-也通过-Context-传递给子组件"><a href="#五、将-state-也通过-Context-传递给子组件" class="headerlink" title="五、将 state 也通过 Context 传递给子组件"></a>五、将 state 也通过 Context 传递给子组件</h2><p>上面的所有示例中，子组件获取父组件的 <code>state</code> 还是通过 <code>props</code> ，多级子组件又会存在层层嵌套</p>
+<p>如果将整个 <code>state</code> 通过 <code>Context</code> 传入就无需层层组件的 <code>props</code> 传递（如果不需要整个 <code>state</code> ，可以只将某几个 <code>state</code> 给 <code>Provider</code> ）</p>
+<h3 id="1、父组件"><a href="#1、父组件" class="headerlink" title="1、父组件"></a>1、父组件</h3><p>父组件的变化只是将 <code>state</code> 也给了 <code>Provider</code> ，然后去掉了 <code>Child</code> 组件的 <code>props</code> 透传</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Child</span> <span class="keyword">from</span> <span class="string">&#x27;./Child&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initState = &#123; <span class="attr">count</span>: <span class="number">0</span>, <span class="attr">step</span>: <span class="number">0</span>, <span class="attr">number</span>: <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">reducer</span> = (<span class="params">state, action</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.<span class="property">type</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;stepInc&#x27;</span>: <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, state, &#123; <span class="attr">step</span>: state.<span class="property">step</span> + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;numberInc&#x27;</span>: <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, state, &#123; <span class="attr">number</span>: state.<span class="property">number</span> + <span class="number">1</span> &#125;);</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;count&#x27;</span>: <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, state, &#123; <span class="attr">count</span>: state.<span class="property">step</span> + state.<span class="property">number</span> &#125;);</span><br><span class="line">        <span class="attr">default</span>: <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [state, dispatch] = <span class="title function_">useReducer</span>(reducer, initState);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">MyContext.Provider</span> <span class="attr">value</span>=<span class="string">&#123;&#123;</span> <span class="attr">state</span>, <span class="attr">dispatch</span> &#125;&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;stepInc&#x27; &#125;) &#125;&#125;&gt;parent step ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">Child</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">MyContext.Provider</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、子组件直接使用父组件的-state"><a href="#2、子组件直接使用父组件的-state" class="headerlink" title="2、子组件直接使用父组件的 state"></a>2、子组件直接使用父组件的 state</h3><p>下面代码中可以看出，原来的 <code>props.number</code> 都变成了 <code>state.number</code></p>
+<ul>
+<li><strong>注意：在 return 内部我写了一个 console</strong></li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useContext, memo &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">memo</span>(<span class="function">(<span class="params">props = &#123;&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; state, dispatch &#125; = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            &#123;console.log(&#x27;[Child] RE-RENDER&#x27;)&#125;</span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>step is : &#123;state.step&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>number is : &#123;state.number&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>count is : &#123;state.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;stepInc&#x27; &#125;) &#125;&#125;&gt;step ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;numberInc&#x27; &#125;) &#125;&#125;&gt;number ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;count&#x27; &#125;) &#125;&#125;&gt;number + step<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、效果"><a href="#3、效果" class="headerlink" title="3、效果"></a>3、效果</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(3).gif?versionId=CAEQDhiBgMDY96bo0xciIDIzZTg5YjE0MGNhODRlMDI4ZTVmNjdiZGE1MTE1NTkx" alt="useContext(3).gif"></p>
+<h3 id="4、直接使用父组件-state-带来的性能问题"><a href="#4、直接使用父组件-state-带来的性能问题" class="headerlink" title="4、直接使用父组件 state 带来的性能问题"></a>4、直接使用父组件 state 带来的性能问题</h3><p>注意看上面的动图，在点击子组件的 <code>【number + step】</code> 按钮的时候，虽然 <code>count</code> 的值没有发生任何变化，但是一直触发 <code>re-render</code>，即使子组件是通过 <code>React.memo</code> 包装过的。</p>
+<p>出现这个问题原因是 <code>React.memo</code> 只会对 <code>props</code> 进行浅比较，而通过 <code>Context</code> 我们直接将 <code>state</code> 注入到了组件内部，因此 <code>state</code> 的变化必然会触发 re-render，整个 <code>state</code> 变化是绕过了 <code>memo</code><br>}}</p>
+<h2 id="六、使用-useMemo-解决-state-Context-透传的性能问题"><a href="#六、使用-useMemo-解决-state-Context-透传的性能问题" class="headerlink" title="六、使用 useMemo() 解决 state Context 透传的性能问题"></a>六、使用 useMemo() 解决 state Context 透传的性能问题</h2><p>既然 <code>React.memo()</code> 无法拦截注入到 <code>Context</code> 的 <code>state</code> 的变化，那就需要我们在组件内部进行更细粒度的性能优化，这个时候可以使用 <code>useMemo()</code></p>
+<h3 id="1、使用-useMemo-优化子组件渲染"><a href="#1、使用-useMemo-优化子组件渲染" class="headerlink" title="1、使用 useMemo 优化子组件渲染"></a>1、使用 useMemo 优化子组件渲染</h3><p>下面是对子组件的改造，去掉了 <code>React.memo</code>，在 <code>return</code> 内部通过 <code>useMemo()</code> 包装，并且声明了所有依赖项：（包括：step&#x2F;number&#x2F;count&#x2F;dispatch）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useContext, useMemo &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MyContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./context-manager&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (props = &#123;&#125;) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; state, dispatch &#125; = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;[Child] RE-RENDER&#x27;</span>);</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>step is : &#123;state.step&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>number is : &#123;state.number&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>count is : &#123;state.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;stepInc&#x27; &#125;) &#125;&#125;&gt;step ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;numberInc&#x27; &#125;) &#125;&#125;&gt;number ++<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123; dispatch(&#123; type: &#x27;count&#x27; &#125;) &#125;&#125;&gt;number + step<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        )</span><br><span class="line">    &#125;, [state.<span class="property">count</span>, state.<span class="property">number</span>, state.<span class="property">step</span>, dispatch]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2、优化后的效果"><a href="#2、优化后的效果" class="headerlink" title="2、优化后的效果"></a>2、优化后的效果</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/useContext_detail/useContext(4).gif?vuseContext(4).gifersionId=CAEQDhiBgID696bo0xciIDM4MTJkYTUxMmQyYzRkMDk4Y2UxNDRkNGJmYWYwZTEx"></p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><p>从上面效果可以发现，当 <code>number+step=count</code> 不变的时候，是不会触发 <code>return</code> 中 <code>DOM</code> 的重新渲染的</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81React-createContext"><span class="toc-number">1.</span> <span class="toc-text">一、React.createContext</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8-useContext-%E8%8E%B7%E5%8F%96%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">二、使用 useContext 获取上下文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81createContext-%E5%92%8C-useContext-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95%E5%85%B1%E4%BA%AB"><span class="toc-number">3.</span> <span class="toc-text">三、createContext 和 useContext 结合使用实现方法共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81context-manager-js"><span class="toc-number">3.1.</span> <span class="toc-text">1、context-manager.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%88%B6%E7%BB%84%E4%BB%B6-Provider-%E6%8F%90%E4%BE%9B%E4%B8%8A%E4%B8%8B%E6%96%87-value"><span class="toc-number">3.2.</span> <span class="toc-text">2、父组件 Provider 提供上下文 value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%AD%90%E7%BB%84%E4%BB%B6-useContext-%E8%A7%A3%E6%9E%90%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">3.3.</span> <span class="toc-text">3、子组件 useContext 解析上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E6%95%88%E6%9E%9C"><span class="toc-number">3.4.</span> <span class="toc-text">4、效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-React-memo"><span class="toc-number">3.5.</span> <span class="toc-text">5、为什么使用 React.memo()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BD%BF%E7%94%A8-useReducer-%E5%87%8F%E5%B0%91-Context-%E7%9A%84%E5%A4%8D%E6%9D%82%E7%A8%8B%E5%BA%A6"><span class="toc-number">4.</span> <span class="toc-text">四、使用 useReducer 减少 Context 的复杂程度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B0%86-state-%E4%B9%9F%E9%80%9A%E8%BF%87-Context-%E4%BC%A0%E9%80%92%E7%BB%99%E5%AD%90%E7%BB%84%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">五、将 state 也通过 Context 传递给子组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%88%B6%E7%BB%84%E4%BB%B6"><span class="toc-number">5.1.</span> <span class="toc-text">1、父组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%AD%90%E7%BB%84%E4%BB%B6%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E7%88%B6%E7%BB%84%E4%BB%B6%E7%9A%84-state"><span class="toc-number">5.2.</span> <span class="toc-text">2、子组件直接使用父组件的 state</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%95%88%E6%9E%9C"><span class="toc-number">5.3.</span> <span class="toc-text">3、效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E7%88%B6%E7%BB%84%E4%BB%B6-state-%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-number">5.4.</span> <span class="toc-text">4、直接使用父组件 state 带来的性能问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%BD%BF%E7%94%A8-useMemo-%E8%A7%A3%E5%86%B3-state-Context-%E9%80%8F%E4%BC%A0%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">六、使用 useMemo() 解决 state Context 透传的性能问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E4%BD%BF%E7%94%A8-useMemo-%E4%BC%98%E5%8C%96%E5%AD%90%E7%BB%84%E4%BB%B6%E6%B8%B2%E6%9F%93"><span class="toc-number">6.1.</span> <span class="toc-text">1、使用 useMemo 优化子组件渲染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E4%BC%98%E5%8C%96%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="toc-number">6.2.</span> <span class="toc-text">2、优化后的效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">6.3.</span> <span class="toc-text"></span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&text=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&is_video=false&description=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=createContext &amp; useContext 跨组件透传上下文与性能优化&body=Check out this article: http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&title=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&name=createContext &amp; useContext 跨组件透传上下文与性能优化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/05/17/createContext%20&amp;%20useContext%20%E8%B7%A8%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/&t=createContext &amp; useContext 跨组件透传上下文与性能优化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

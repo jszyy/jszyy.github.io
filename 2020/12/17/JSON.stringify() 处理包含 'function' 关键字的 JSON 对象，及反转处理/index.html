@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="…问题描述业务场景中，需要对一个类似于下面这样的对象做处理。因为将要序列化成一个JSON字符串的值包含有 function 关键字，导致结果和预期出现了一些差异： 12345678const pageJson&#x3D;&amp;#123;  addTime: &quot;20201118&quot;,  id: &quot;20201118&quot;,  articleName: &quot;测试文章标题&amp;qu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理">
+<meta property="og:url" content="http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20'function'%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="…问题描述业务场景中，需要对一个类似于下面这样的对象做处理。因为将要序列化成一个JSON字符串的值包含有 function 关键字，导致结果和预期出现了一些差异： 12345678const pageJson&#x3D;&amp;#123;  addTime: &quot;20201118&quot;,  id: &quot;20201118&quot;,  articleName: &quot;测试文章标题&amp;qu">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:23:40.227Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2021/02/24/TypeScript%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2020/12/16/%E4%BB%8E0%E5%BC%80%E5%A7%8B%EF%BC%8C%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2web%E5%BA%94%E7%94%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&text=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&is_video=false&description=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理&body=Check out this article: http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&name=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&t=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E2%80%A6"><span class="toc-number">1.</span> <span class="toc-text">…</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E8%BD%AC"><span class="toc-number">1.3.</span> <span class="toc-text">反转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSON-stringify-%E8%A7%A3%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">JSON.stringify() 解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-JSON-stringify-%E7%BB%93%E5%90%88-localStorage-%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.5.</span> <span class="toc-text">使用 JSON.stringify 结合 localStorage 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-16T16:00:00.000Z" class="dt-published" itemprop="datePublished">2020-12-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="…"><a href="#…" class="headerlink" title="…"></a>…</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>业务场景中，需要对一个类似于下面这样的对象做处理。因为将要序列化成一个JSON字符串的值包含有 <code>function</code> 关键字，导致结果和预期出现了一些差异：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pageJson=&#123;</span><br><span class="line">  <span class="attr">addTime</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">id</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">articleName</span>: <span class="string">&quot;测试文章标题&quot;</span>,</span><br><span class="line">  <span class="attr">handleClick</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">12321</span>)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(pageJson))</span><br><span class="line"><span class="comment">// &quot;&#123;\&quot;addTime\&quot;:\&quot;20201118\&quot;,\&quot;id\&quot;:\&quot;20201118\&quot;,\&quot;articleName\&quot;:\&quot;测试文章标题\&quot;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>很明显的可以看到 <code>handleClick: function()&#123;console.log(12321)&#125;</code> 这条数据并没有被有效解析。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><blockquote>
+<p>JSON.stringify() 方法将一个 <code>Javascript</code> 对象或值转换为 JSON 字符串，如果指定了一个 <code>replacer</code> 函数， 则可以选择性地替换值，或者指定地 <code>replace</code> 是数组，则可以选择性地仅包含数组指定地属性。</p>
+</blockquote>
+<p>MDN 地解释中提到，可以指定一个 <code>replace</code> 函数，来选择性地替换值，是不是就可以通过这个函数，处理 <code>function</code> 关键字呢？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pageJson=&#123;</span><br><span class="line">  <span class="attr">addTime</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">id</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">articleName</span>: <span class="string">&quot;测试文章标题&quot;</span>,</span><br><span class="line">  <span class="attr">handleClick</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">12321</span>)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> str = <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(pageJson, <span class="keyword">function</span>(<span class="params">key, value</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> value + <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(str)</span><br><span class="line"><span class="comment">// &quot;&#123;\&quot;addTime\&quot;:\&quot;20201118\&quot;,\&quot;id\&quot;:\&quot;20201118\&quot;,\&quot;articleName\&quot;:\&quot;测试文章标题\&quot;,\&quot;handleClick\&quot;:\&quot;function()&#123;window.runnerWindow.proxyConsole.log(12321)&#125;\&quot;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>其实此时解析已经成功了，之所以 <code>console.log</code> 被解析成了 <code>window.runnerWindow.proxyConsole.log</code> 是因为 <code>this</code> 指向的问题，不在这里赘述。</p>
+<h2 id="反转"><a href="#反转" class="headerlink" title="反转"></a>反转</h2><p>字符串化的结果并不能直接提供给我们使用。比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pageJson=&#123;</span><br><span class="line">  <span class="attr">addTime</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">id</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">articleName</span>: <span class="string">&quot;测试文章标题&quot;</span>,</span><br><span class="line">  <span class="attr">handleClick</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">12321</span>)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> parseStr = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(pageJson, <span class="keyword">function</span>(<span class="params">key, value</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> value + <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value;</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(parseStr )</span><br><span class="line"><span class="comment">// &#123;</span></span><br><span class="line"><span class="comment">//   addTime: &quot;20201118&quot;,</span></span><br><span class="line"><span class="comment">//   articleName: &quot;测试文章标题&quot;,</span></span><br><span class="line"><span class="comment">//   handleClick: &quot;function()&#123;window.runnerWindow.proxyConsole.log(12321)&#125;&quot;,</span></span><br><span class="line"><span class="comment">//   id: &quot;20201118&quot;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure>
+<p>此时 <code>handleClick</code> 的值是一个字符串，这显然不是我们想要的结果，此时就需要使用 <code>eval()</code> 方法进行处理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pageJson=&#123;</span><br><span class="line">  <span class="attr">addTime</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">id</span>: <span class="string">&quot;20201118&quot;</span>,</span><br><span class="line">  <span class="attr">articleName</span>: <span class="string">&quot;测试文章标题&quot;</span>,</span><br><span class="line">  <span class="attr">handleClick</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">12321</span>)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> json= <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(pageJson, <span class="keyword">function</span>(<span class="params">key, value</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> value + <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value;</span><br><span class="line">&#125;),</span><br><span class="line"><span class="comment">// 同样利用第二个函数进行处理</span></span><br><span class="line"><span class="function">(<span class="params">key, value</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (value.<span class="property">indexOf</span> &amp;&amp; value.<span class="title function_">indexOf</span>(<span class="string">&#x27;function&#x27;</span>) &gt; -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">eval</span>(<span class="string">&quot;(function()&#123;return &quot;</span> + value + <span class="string">&quot; &#125;)()&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value; </span><br><span class="line">&#125;)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(json)</span><br><span class="line"></span><br><span class="line"><span class="comment">//  &#123;</span></span><br><span class="line"><span class="comment">//    addTime: &quot;20201118&quot;,</span></span><br><span class="line"><span class="comment">//    articleName: &quot;测试文章标题&quot;,</span></span><br><span class="line"><span class="comment">//    handleClick: function()&#123;window.runnerWindow.proxyConsole.log(12321)&#125;,</span></span><br><span class="line"><span class="comment">//    id: &quot;20201118&quot;</span></span><br><span class="line"><span class="comment">//  &#125;</span></span><br></pre></td></tr></table></figure>
+<p>这样反转后的 <code>handleClick</code> 就能够正常调用并使用了。</p>
+<h2 id="JSON-stringify-解析"><a href="#JSON-stringify-解析" class="headerlink" title="JSON.stringify() 解析"></a>JSON.stringify() 解析</h2><p>JSON.stringify() 可以接收3个参数 <code>value</code>，<code>replacer</code>，<code>space</code>。</p>
+<ul>
+<li><code>value</code> ：将要序列化成一个 JSON 字符串的值。</li>
+<li><code>replace</code> ：可选参数，可以是一个函数或者是一个数组。</li>
+</ul>
+<p>作为函数，它有两个参数，key 和 value，它们都会被序列化。作为函数时，在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；如果是 <code>null</code> 或未提供，则对象所有的属性都会被序列化。<b>需要注意：</b>不能用 <code>replace</code> 方法，从数组中移除值(<code>values</code>)，如果返回 <code>undefined</code> 或者一个函数，将会被 <code>null</code> 取代。</p>
+<ul>
+<li><code>space</code> ：可选参数，用来控制结果字符串里面的间距，指定缩进用的空白字符串，用于美化输出。</li>
+</ul>
+<p>如果参数是个数字，它代表有多少的空格，上限为 10。数字值若小于 1，则意味着没有空格。如果参数为字符串(当字符串长度超过10个字母，取其前10个字母)，该字符串将被作为空格；如果该参数为 null 或没有提供，将没有空格。</p>
+<h2 id="使用-JSON-stringify-结合-localStorage-的例子"><a href="#使用-JSON-stringify-结合-localStorage-的例子" class="headerlink" title="使用 JSON.stringify 结合 localStorage 的例子"></a>使用 JSON.stringify 结合 localStorage 的例子</h2><p> 一些时候，你想存储用户创建的一个对象，并且，即使在浏览器被关闭后仍能恢复该对象。下面的例子是 <code>JSON.stringify</code> 适用于这种情形的一个样板：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个示例数据</span></span><br><span class="line"><span class="keyword">var</span> session = &#123;</span><br><span class="line">    <span class="string">&#x27;screens&#x27;</span> : [],</span><br><span class="line">    <span class="string">&#x27;state&#x27;</span> : <span class="literal">true</span></span><br><span class="line">&#125;;</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenA&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">450</span>, <span class="string">&quot;height&quot;</span>:<span class="number">250</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenB&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">650</span>, <span class="string">&quot;height&quot;</span>:<span class="number">350</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenC&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">750</span>, <span class="string">&quot;height&quot;</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenD&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">250</span>, <span class="string">&quot;height&quot;</span>:<span class="number">60</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenE&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">390</span>, <span class="string">&quot;height&quot;</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenF&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">1240</span>, <span class="string">&quot;height&quot;</span>:<span class="number">650</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 JSON.stringify 转换为 JSON 字符串</span></span><br><span class="line"><span class="comment">// 然后使用 localStorage 保存在 session 名称里</span></span><br><span class="line"><span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;session&#x27;</span>, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(session));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后是如何转换通过 JSON.stringify 生成的字符串，该字符串以 JSON 格式保存在 localStorage 里</span></span><br><span class="line"><span class="keyword">var</span> restoredSession = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(<span class="string">&#x27;session&#x27;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在 restoredSession 包含了保存在 localStorage 里的对象</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(restoredSession);</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>JSON.stringify() 作为 JavaScript 标准内置对象 JSON 的一个 Api，发挥的作用很重要，可以应对大部分场景下的数据字符串化处理，也可以对数据格式做缩进优化，使得阅读更直观，甚至可以搭配 JSON.parse 完成 “深拷贝”，但是使用时还是有些地方需要小心处理。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E2%80%A6"><span class="toc-number">1.</span> <span class="toc-text">…</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E8%BD%AC"><span class="toc-number">1.3.</span> <span class="toc-text">反转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSON-stringify-%E8%A7%A3%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">JSON.stringify() 解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-JSON-stringify-%E7%BB%93%E5%90%88-localStorage-%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.5.</span> <span class="toc-text">使用 JSON.stringify 结合 localStorage 的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&text=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&is_video=false&description=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理&body=Check out this article: http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&title=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&name=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/12/17/JSON.stringify()%20%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%20&#39;function&#39;%20%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%20JSON%20%E5%AF%B9%E8%B1%A1%EF%BC%8C%E5%8F%8A%E5%8F%8D%E8%BD%AC%E5%A4%84%E7%90%86/&t=JSON.stringify() 处理包含 &#39;function&#39; 关键字的 JSON 对象，及反转处理"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

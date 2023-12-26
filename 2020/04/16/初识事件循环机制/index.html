@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、事件循环基础由于JavaScript是一种单线程的编程语言，因此JavaScript中的所有任务都需要排队依次完成。但这样的设计明显会有很大的一个问题，那就是如果碰到一个需要耗费很多的时间完成的事件时，很有可能会造成线程的阻塞问题。因此，JavaScript的开发者就将所有的任务分为两种来解决这种问题：  同步任务（在主线程中只有前面的代码执行完毕后，后面的才能执行） 异步任务（从主线程提出，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识事件循环机制">
+<meta property="og:url" content="http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="一、事件循环基础由于JavaScript是一种单线程的编程语言，因此JavaScript中的所有任务都需要排队依次完成。但这样的设计明显会有很大的一个问题，那就是如果碰到一个需要耗费很多的时间完成的事件时，很有可能会造成线程的阻塞问题。因此，JavaScript的开发者就将所有的任务分为两种来解决这种问题：  同步任务（在主线程中只有前面的代码执行完毕后，后面的才能执行） 异步任务（从主线程提出，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jszyy-pan.oss-cn-shanghai.aliyuncs.com/images-blog/Event_cycle_mechanism/img01.jpg">
+<meta property="article:published_time" content="2020-04-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:19:03.301Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jszyy-pan.oss-cn-shanghai.aliyuncs.com/images-blog/Event_cycle_mechanism/img01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>初识事件循环机制</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2020/04/22/%E6%89%8B%E5%86%99%E5%B8%B8%E7%94%A8%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89hooks/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2020/04/12/Redux%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&text=初识事件循环机制"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&is_video=false&description=初识事件循环机制"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=初识事件循环机制&body=Check out this article: http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&name=初识事件循环机制&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&t=初识事件循环机制"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">一、事件循环基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%B7%B1%E5%85%A5%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="toc-number">2.</span> <span class="toc-text">二、深入事件循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%B8%B2%E6%9F%93"><span class="toc-number">3.</span> <span class="toc-text">三、事件循环与渲染</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">参考资料：</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        初识事件循环机制
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-04-15T16:00:00.000Z" class="dt-published" itemprop="datePublished">2020-04-16</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="一、事件循环基础"><a href="#一、事件循环基础" class="headerlink" title="一、事件循环基础"></a>一、事件循环基础</h2><p>由于JavaScript是一种单线程的编程语言，因此JavaScript中的所有任务都需要排队依次完成。但这样的设计明显会有很大的一个问题，那就是如果碰到一个需要耗费很多的时间完成的事件时，很有可能会造成线程的阻塞问题。因此，JavaScript的开发者就将所有的任务分为两种来解决这种问题：</p>
+<ul>
+<li>同步任务（在主线程中只有前面的代码执行完毕后，后面的才能执行）</li>
+<li>异步任务（从主线程提出，进入任务队列执行，等执行完毕后通知主线程，这个异步任务可以执行了，才会进入主线程执行）</li>
+</ul>
+<p>如图所示：<br><img src="https://jszyy-pan.oss-cn-shanghai.aliyuncs.com/images-blog/Event_cycle_mechanism/img01.jpg" alt="img01"></p>
+<p>因此总的来说，JavaScript的执行机制主要是以下三步：</p>
+<p>所有同步任务都在主线程上执行，形成一个执行栈（execution context stack）。<br>主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。<br>一旦主线程的栈中的所有同步任务执行完毕，系统就会读取任务队列，选择需要首先执行的任务然后执行。<br>而在此过程中，主线程要做的就是从任务队列中去实践，执行事件，执行完毕，再取事件，再执行事件…这样不断取事件，执行事件的循环机制就叫做事件循环机制。（需要注意的的是当任务队列为空时，就会等待直到任务队列变成非空。）</p>
+<p>其基本的逻辑如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (queue.<span class="title function_">waitForMessage</span>()) &#123;</span><br><span class="line">  queue.<span class="title function_">processNextMessage</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>详情也可以看我的这篇文章：</p>
+<blockquote>
+<p>JavaScript异步编程基础()</p>
+</blockquote>
+<h2 id="二、深入事件循环"><a href="#二、深入事件循环" class="headerlink" title="二、深入事件循环"></a>二、深入事件循环</h2><p>上面这种认识也是我最初学习JavaScript所有的认识，但随着自己的学习的不断深入，我开始意识到了这里面的东西没有我所想的这么简单。</p>
+<p>首先我们来看一段代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;script start&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;setTimeout1&#x27;</span>);</span><br><span class="line">&#125;, <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line"><span class="title class_">Promise</span>.<span class="title function_">resolve</span>().<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;promise1&#x27;</span>);</span><br><span class="line">&#125;).<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;promise2&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;setTimeout2&#x27;</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;script end&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">//script start</span></span><br><span class="line"><span class="comment">//script end</span></span><br><span class="line"><span class="comment">//promise1</span></span><br><span class="line"><span class="comment">//promise2</span></span><br><span class="line"><span class="comment">//setTimeout2</span></span><br><span class="line"><span class="comment">//setTimeout1</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到，Promise都在setTimeout前面执行了，这是为什么呢？</p>
+<p>我们要知道的是事件循环并不仅仅只有事件队列，而是具有至少两个队列，除了事件，还要保持浏览器执行的其他操作，而这些操作也被任务，并且分为两类：macrotask（宏任务）和microtask（微任务），在ECMAScript中，microtask称为jobs，macrotask称为task。</p>
+<p>那它们到底有什么区别呢？</p>
+<ul>
+<li>macrotask（宏任务），可以理解是每次执行栈执行的代码就是一个宏任务。主要包括创建主文档对象、解析 HTML、执行主线（或全局）JavaScript 代码，更改当前 URL 以及各种事件，如页面加载、输入、网络事件和定时器事件。从浏览器的角度来看，宏任务代表一个个离散的、独立工作单元。运行完任务后，浏览器可以继续其他调度，如重新渲染页面的 UI 或执行垃圾回收。</li>
+<li>microtask（微任务）是更小的任务。微任务更新应用程序的状态，但必须在浏览器任务继续执行其他任务之前执行，浏览器任务包括重新渲染页面的UI。微任务的案例包括 promise 回调函数、DOM 发生变化等。微任务需要尽可能快地、通过异步方式执行，同时不能产生全新的微任务。微任务使得我们能够在重新渲染UI之前执行指定的行为，避免不必要的UI重绘，UI重绘会使应用程序的状态不连续。</li>
+</ul>
+<blockquote>
+<p>需要的值的是，ECMAScript 规范没有提到事件循环。不过，事件循环在 HTML 规范中有详细说明，里面也讨论了宏任务和微任务的概<br>念。ECMAScript 规范提到了处理 promise 回调<a target="_blank" rel="noopener" href="http://mng.bz/fOlK">http://mng.bz/fOlK</a>的功能（类似于微<br>任务）。虽然只有 HTML 规范中定义了事件循环，但其他环境（如 Node.js）也都在使用它。</p>
+</blockquote>
+<p>也就是说事件循环的实现至少应该包含有一个用于红事件的队列和一个用于微事件的队列。这使得事件循环能够根据任务类型进行优先处理。</p>
+<p>总结起来也就是以下几步：</p>
+<ol>
+<li>执行一个宏任务（栈中没有就从事件队列中获取）</li>
+<li>执行过程中如果遇到微任务，就将它添加到微任务的任务队列中</li>
+<li>宏任务执行完毕后，立即执行当前微任务队列中的所有微任务（依次执行）</li>
+<li>当前宏任务执行完毕，开始检查渲染，然后GUI线程接管渲染</li>
+<li>渲染完毕后，JS线程继续接管，开始下一个宏任务（从事件队列中获取）</li>
+</ol>
+<p>也正是由于上述的规则，在上面的那段代码中，首先会执行主代码块这个宏事件，然后再将微事件Promise执行，最后再去执行第二个宏事件setTimeout。</p>
+<h2 id="三、事件循环与渲染"><a href="#三、事件循环与渲染" class="headerlink" title="三、事件循环与渲染"></a>三、事件循环与渲染</h2><p>前面我们提到，微事件会在宏事件与页面渲染之间执行，那么是事件循环与页面渲染到底存在着怎样的联系呢？</p>
+<p>首先我们要知道的是浏览器通常会尝试每秒渲染60次页面，从而达到每秒60帧的数组。而60fps通常是检验体验是否平滑流畅的标准，比方在动画里——这意味着浏览器会尝试在 16ms 内渲染一帧。需要注意上图的的“更新渲染”是如何发生为何<br>事件循环内的，因为在页面渲染时，任何任务都无法再进行修改。这些设计和<br>原则都意味着，如果想要实现平滑流畅的应用，我们是没有太多时间浪费在处<br>理单个事件循环任务的。因此，在理想情况下，单个任务和该任务附属的所有微任务，都应在 16ms 内完成。</p>
+<p>因此出于这种考虑，可能会出现以下的三种情况：</p>
+<ol>
+<li>在另一个 16ms 结束前，事件循环执行到“是否需要进行渲染”的决策环节。因为更新 UI 是一个复杂的操作，所以如果没有显式地指定需要页面渲染，浏览器可能不会选择在当前的循环中执行 UI 渲染操作。</li>
+<li>在最后一次渲染完成后大约 16ms，时间循环执行到“是否需要进行渲染”的决策环节。在这种情况下，浏览器会进行 UI 更新，以便用户能够感受到顺畅的应用体验。</li>
+<li>执行下一个任务（和相关的所有微任务）耗时超过 16ms。在这种情况下，浏览器将无法以目标帧率重新渲染页面，且 UI 无法被更新。如果任务代码的执行不耗费过多的时间（不超过几百毫秒），这时的延迟甚至可能察觉不到，尤其当页面中没有太多的操作时。反之，如果耗时过多，或者页面上运行有动画时，用户可能会察觉到网络卡顿而不响应。在极端的情况下，如果任务的执行超过几秒，用户的浏览器将会提示“无响应脚本”的恼人信息。</li>
+</ol>
+<h2 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h2><p>《JavaScript忍者秘籍第二版》</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">一、事件循环基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%B7%B1%E5%85%A5%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="toc-number">2.</span> <span class="toc-text">二、深入事件循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%B8%B2%E6%9F%93"><span class="toc-number">3.</span> <span class="toc-text">三、事件循环与渲染</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">参考资料：</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&text=初识事件循环机制"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&is_video=false&description=初识事件循环机制"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=初识事件循环机制&body=Check out this article: http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&title=初识事件循环机制"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&name=初识事件循环机制&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/04/16/%E5%88%9D%E8%AF%86%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E6%9C%BA%E5%88%B6/&t=初识事件循环机制"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

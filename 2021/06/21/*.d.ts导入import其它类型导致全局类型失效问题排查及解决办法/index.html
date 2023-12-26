@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="…通常我们在定义 ts 类型声明时，在 .d.ts 文件中使用 declare 关键字就能正常使用。这基本可以满足全局常量或者一些简单的类型定义。但是不排除更为复杂的使用条件，比如在某个模块中使用其他模块声明的类型，如果在 .d.ts 文件中使用了 import 或者 require 等方式引入了其他模块，那么 ts 就会将其视为一个模块，从而导致文件下的所有类型声明直接失效。  如何解决首先定义">
+<meta property="og:type" content="article">
+<meta property="og:title" content="*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法">
+<meta property="og:url" content="http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/index.html">
+<meta property="og:site_name" content="玉印说">
+<meta property="og:description" content="…通常我们在定义 ts 类型声明时，在 .d.ts 文件中使用 declare 关键字就能正常使用。这基本可以满足全局常量或者一些简单的类型定义。但是不排除更为复杂的使用条件，比如在某个模块中使用其他模块声明的类型，如果在 .d.ts 文件中使用了 import 或者 require 等方式引入了其他模块，那么 ts 就会将其视为一个模块，从而导致文件下的所有类型声明直接失效。  如何解决首先定义">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062101.png?versionId=CAEQDhiBgIDw8P610RciIDE1MDc3YTg4YjZjYTQ0Mzc5ZjYyMjBhZjE3MTMwZmVm">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062102.png?versionId=CAEQDhiBgIDEhdW20RciIGEwNDMxZDJlZmFmNTRmOGViYmEyZTA5ODkxMDk2NTkw">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062103.png?versionId=CAEQDhiBgIC7hdW20RciIDU1NjY4YmI5Y2Q1YzQ2NjM5M2JiMDY5YzM4NDEyMzY2">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062104.png?versionId=CAEQDhiBgICphdW20RciIDYwZjQzZmU5N2YwNjQ3ODU4NTBkZjA5N2M0MzY5NDNj">
+<meta property="og:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062105.png?versionId=CAEQDhiBgIDIhdW20RciIGU0ZDNiZGZjZDE1ZDQxMzhiNDE1ZjkyYjViYjEzZDlj">
+<meta property="article:published_time" content="2021-06-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-26T03:32:29.252Z">
+<meta property="article:author" content="玉印">
+<meta property="article:tag" content="#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062101.png?versionId=CAEQDhiBgIDw8P610RciIDE1MDc3YTg4YjZjYTQ0Mzc5ZjYyMjBhZjE3MTMwZmVm">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/byTalk/">公共表达</a></li><!--
+     --><!--
+       --><li><a href="/feeling/">瞎说</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2021/07/02/tar%E5%8C%85%E5%92%8Ctar.gz%E5%8C%85%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2021/06/17/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A3%81%E7%9B%98%E6%BB%A1%E4%BA%86%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&text=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&is_video=false&description=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法&body=Check out this article: http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&name=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&t=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%80%A6"><span class="toc-number">1.</span> <span class="toc-text">…</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="toc-number">2.</span> <span class="toc-text">如何解决</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E5%AE%9A%E4%B9%89-global-ts%EF%BC%8C%E4%BB%A3%E7%A0%81%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">首先定义 global.ts，代码如下：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%88%9B%E5%BB%BA%E5%85%A8%E5%B1%80%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%8C%E5%B0%86%E6%83%B3%E8%A6%81%E4%BD%BF%E7%94%A8%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E%E6%8C%82%E8%BD%BD%E5%88%B0%E5%85%A8%E5%B1%80%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E4%B8%8A%E3%80%82"><span class="toc-number">2.2.</span> <span class="toc-text">通过创建全局命名空间的方式，将想要使用的类型声明挂载到全局命名空间上。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%84%B6%E5%90%8E%E5%9C%A8%E6%83%B3%E8%A6%81%E4%BD%BF%E7%94%A8-GlobalState-%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%EF%BC%8C%E4%BD%BF%E7%94%A8-GlobalType-GlobalState%E3%80%82"><span class="toc-number">2.3.</span> <span class="toc-text">然后在想要使用 GlobalState  类型声明的文件中，使用 GlobalType.GlobalState。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">2.4.</span> <span class="toc-text">注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TypeScript%E7%9A%84-d-ts-%E5%A3%B0%E6%98%8E%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84-export-x3D-%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%BD%9C%E7%94%A8%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">TypeScript的 d.ts 声明文件中的 export &#x3D; 语句的作用什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TypeScript%E7%9A%84-d-ts-%E5%A3%B0%E6%98%8E%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84-export-as-namespace-%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%BD%9C%E7%94%A8%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">TypeScript的 d.ts 声明文件中的 export as namespace 语句的作用什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5"><span class="toc-number">5.</span> <span class="toc-text">项目实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E5%AE%9A%E4%B9%89"><span class="toc-number">5.1.</span> <span class="toc-text">类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E5%85%A8%E5%B1%80namespace"><span class="toc-number">5.2.</span> <span class="toc-text">挂载全局namespace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8"><span class="toc-number">5.3.</span> <span class="toc-text">具体使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ts%E6%AD%A3%E7%A1%AE%E6%8E%A8%E5%AF%BC%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="toc-number">5.4.</span> <span class="toc-text">ts正确推导类型声明</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        *.d.ts导入import其它类型导致全局类型失效问题排查及解决办法
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">张玉印</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-06-20T16:00:00.000Z" class="dt-published" itemprop="datePublished">2021-06-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Posts/">Posts</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/" rel="tag">#</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="…"><a href="#…" class="headerlink" title="…"></a>…</h2><p>通常我们在定义 ts 类型声明时，在 .d.ts 文件中使用 declare 关键字就能正常使用。这基本可以满足全局常量或者一些简单的类型定义。但是不排除更为复杂的使用条件，比如在某个模块中使用其他模块声明的类型，如果在 .d.ts 文件中使用了 import 或者 require 等方式引入了其他模块，那么 ts 就会将其视为一个模块，从而导致文件下的所有类型声明直接失效。</p>
+<p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062101.png?versionId=CAEQDhiBgIDw8P610RciIDE1MDc3YTg4YjZjYTQ0Mzc5ZjYyMjBhZjE3MTMwZmVm" alt="失效"></p>
+<h2 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h2><h3 id="首先定义-global-ts，代码如下："><a href="#首先定义-global-ts，代码如下：" class="headerlink" title="首先定义 global.ts，代码如下："></a>首先定义 global.ts，代码如下：</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> interface <span class="title class_">GlobalState</span> &#123;</span><br><span class="line">  <span class="attr">loading</span>: boolean;</span><br><span class="line">  <span class="attr">pageNum</span>: number;</span><br><span class="line">  <span class="attr">pageSize</span>: number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时在 <code>typings.d.ts</code> 中想要使用 <code>GlobalState</code> 这个类型，就需要引入 <code>global.ts</code> 这个文件，如果直接在 <code>typings.d.ts</code> 文件顶部引入，就会导致其中的全局声明全部失效。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// typings.d.ts</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">GlobalState</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;global.ts&#x27;</span>;</span><br><span class="line"></span><br><span class="line">declare interface <span class="title class_">Window</span> &#123;</span><br><span class="line">  <span class="attr">_store</span>: &#123;</span><br><span class="line">    <span class="attr">_state</span>: any;</span><br><span class="line">    <span class="attr">_dispatch</span>: any;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在使用 <code>window._store</code> 的地方就会抛出错误，<code>_store 在类型 Window 上不存在 </code>。</p>
+<p><b><code>TypeScript</code> 与<code> ECMAScript 2015</code> 一样，任何包含顶级 <code>import</code> 或者 <code>export</code> 的文件都被当成一个模块。相反地，如果一个文件不带有顶级的 <code>import</code> 或者 <code>export</code> 声明，那么它的内容被视为全局可见的（因此对模块也是可见的），这就是为什么有时候没有引用某个 <code>.d.ts</code> 文件，但是在该 <code>.d.ts</code> 文件内部的类型定义在其它文件中仍然能检测得到，这是因为该 <code>.d.ts</code> 文件定义的类型已经变成全局的了</b></p>
+<h3 id="通过创建全局命名空间的方式，将想要使用的类型声明挂载到全局命名空间上。"><a href="#通过创建全局命名空间的方式，将想要使用的类型声明挂载到全局命名空间上。" class="headerlink" title="通过创建全局命名空间的方式，将想要使用的类型声明挂载到全局命名空间上。"></a>通过创建全局命名空间的方式，将想要使用的类型声明挂载到全局命名空间上。</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新建 global.d.ts 文件用来声明全局命名空间</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">GlobalState</span>, <span class="title class_">GlobalDispatch</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;global.ts&#x27;</span>;</span><br><span class="line"></span><br><span class="line">declare namespace <span class="title class_">GlobalType</span> &#123;</span><br><span class="line">  interface G_State <span class="keyword">extends</span> <span class="title class_">GlobalState</span> &#123;&#125;</span><br><span class="line">  interface G_Dispatch <span class="keyword">extends</span> <span class="title class_">GlobalDispatch</span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> = <span class="title class_">GlobalType</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">as</span> namespace <span class="title class_">GlobalType</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="然后在想要使用-GlobalState-类型声明的文件中，使用-GlobalType-GlobalState。"><a href="#然后在想要使用-GlobalState-类型声明的文件中，使用-GlobalType-GlobalState。" class="headerlink" title="然后在想要使用 GlobalState  类型声明的文件中，使用 GlobalType.GlobalState。"></a>然后在想要使用 GlobalState  类型声明的文件中，使用 GlobalType.GlobalState。</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// typings.d.ts</span></span><br><span class="line">declare interface <span class="title class_">Window</span> &#123;</span><br><span class="line">  <span class="attr">_store</span>: &#123;</span><br><span class="line">    <span class="attr">_state</span>: <span class="title class_">GlobalType</span>.<span class="property">G_State</span> ;</span><br><span class="line">    <span class="attr">_dispatch</span>: <span class="title class_">GlobalType</span>.<span class="property">G_Dispatch</span> ;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>需要注意的是，如果全局命名空间发生了重复，重复的命名空间就会发生覆盖，且没有提示或报错，所以声明全局命名空间，一定注意不要重复。</p>
+<h2 id="TypeScript的-d-ts-声明文件中的-export-x3D-语句的作用什么？"><a href="#TypeScript的-d-ts-声明文件中的-export-x3D-语句的作用什么？" class="headerlink" title="TypeScript的 d.ts 声明文件中的 export &#x3D; 语句的作用什么？"></a>TypeScript的 d.ts 声明文件中的 export &#x3D; 语句的作用什么？</h2><p><code>TypeScript</code> 可以将 ts 代码生成 <code>CommonJs 规范</code>和 <code>AMD 规范</code>，由于两者并不兼容，所以就有了 <code>export =</code> 语法将两者进行统一，以至于让 ts 支持。</p>
+<h2 id="TypeScript的-d-ts-声明文件中的-export-as-namespace-语句的作用什么？"><a href="#TypeScript的-d-ts-声明文件中的-export-as-namespace-语句的作用什么？" class="headerlink" title="TypeScript的 d.ts 声明文件中的 export as namespace 语句的作用什么？"></a>TypeScript的 d.ts 声明文件中的 export as namespace 语句的作用什么？</h2><p><code>export as namespace</code> 表示将某个命名空间挂载到全局命名空间上，从而可以通过全局变量的形式使用</p>
+<div style='display: none'>
+
+<h2 id="项目实践"><a href="#项目实践" class="headerlink" title="项目实践"></a>项目实践</h2><h3 id="类型定义"><a href="#类型定义" class="headerlink" title="类型定义"></a>类型定义</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062102.png?versionId=CAEQDhiBgIDEhdW20RciIGEwNDMxZDJlZmFmNTRmOGViYmEyZTA5ODkxMDk2NTkw" alt="类型定义"></p>
+<h3 id="挂载全局namespace"><a href="#挂载全局namespace" class="headerlink" title="挂载全局namespace"></a>挂载全局namespace</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062103.png?versionId=CAEQDhiBgIC7hdW20RciIDU1NjY4YmI5Y2Q1YzQ2NjM5M2JiMDY5YzM4NDEyMzY2" alt="挂载全局namespace"></p>
+<h3 id="具体使用"><a href="#具体使用" class="headerlink" title="具体使用"></a>具体使用</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062104.png?versionId=CAEQDhiBgICphdW20RciIDYwZjQzZmU5N2YwNjQ3ODU4NTBkZjA5N2M0MzY5NDNj" alt="具体使用"></p>
+<h3 id="ts正确推导类型声明"><a href="#ts正确推导类型声明" class="headerlink" title="ts正确推导类型声明"></a>ts正确推导类型声明</h3><p><img src="https://jszyy-blog-img.oss-cn-beijing.aliyuncs.com/20210621/2021062105.png?versionId=CAEQDhiBgIDIhdW20RciIGU0ZDNiZGZjZDE1ZDQxMzhiNDE1ZjkyYjViYjEzZDlj" alt="ts正确推导类型声明"></p>
+</div>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/byTalk/">公共表达</a></li>
+        
+          <li><a href="/feeling/">瞎说</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%80%A6"><span class="toc-number">1.</span> <span class="toc-text">…</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="toc-number">2.</span> <span class="toc-text">如何解决</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E5%AE%9A%E4%B9%89-global-ts%EF%BC%8C%E4%BB%A3%E7%A0%81%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">首先定义 global.ts，代码如下：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%88%9B%E5%BB%BA%E5%85%A8%E5%B1%80%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%8C%E5%B0%86%E6%83%B3%E8%A6%81%E4%BD%BF%E7%94%A8%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E%E6%8C%82%E8%BD%BD%E5%88%B0%E5%85%A8%E5%B1%80%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E4%B8%8A%E3%80%82"><span class="toc-number">2.2.</span> <span class="toc-text">通过创建全局命名空间的方式，将想要使用的类型声明挂载到全局命名空间上。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%84%B6%E5%90%8E%E5%9C%A8%E6%83%B3%E8%A6%81%E4%BD%BF%E7%94%A8-GlobalState-%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%EF%BC%8C%E4%BD%BF%E7%94%A8-GlobalType-GlobalState%E3%80%82"><span class="toc-number">2.3.</span> <span class="toc-text">然后在想要使用 GlobalState  类型声明的文件中，使用 GlobalType.GlobalState。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">2.4.</span> <span class="toc-text">注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TypeScript%E7%9A%84-d-ts-%E5%A3%B0%E6%98%8E%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84-export-x3D-%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%BD%9C%E7%94%A8%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">TypeScript的 d.ts 声明文件中的 export &#x3D; 语句的作用什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TypeScript%E7%9A%84-d-ts-%E5%A3%B0%E6%98%8E%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84-export-as-namespace-%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%BD%9C%E7%94%A8%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">TypeScript的 d.ts 声明文件中的 export as namespace 语句的作用什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5"><span class="toc-number">5.</span> <span class="toc-text">项目实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E5%AE%9A%E4%B9%89"><span class="toc-number">5.1.</span> <span class="toc-text">类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E5%85%A8%E5%B1%80namespace"><span class="toc-number">5.2.</span> <span class="toc-text">挂载全局namespace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8"><span class="toc-number">5.3.</span> <span class="toc-text">具体使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ts%E6%AD%A3%E7%A1%AE%E6%8E%A8%E5%AF%BC%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="toc-number">5.4.</span> <span class="toc-text">ts正确推导类型声明</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&text=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&is_video=false&description=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法&body=Check out this article: http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&title=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&name=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/06/21/*.d.ts%E5%AF%BC%E5%85%A5import%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E5%AF%BC%E8%87%B4%E5%85%A8%E5%B1%80%E7%B1%BB%E5%9E%8B%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/&t=*.d.ts导入import其它类型导致全局类型失效问题排查及解决办法"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2018-2023
+    玉印
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+      --><li><a href="/">首页</a></li><!--
+    --><!--
+      --><li><a href="/archives/">归档</a></li><!--
+    --><!--
+      --><li><a href="/byTalk/">公共表达</a></li><!--
+    --><!--
+      --><li><a href="/feeling/">瞎说</a></li><!--
+    --><!--
+      --><li><a href="/search/">搜索</a></li><!--
+    -->
+      </ul>
+      <ul>
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  本站访客数<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        
+      </ul>
+    </nav>
+  </div>
+  
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?9233b83248060396e1e1d93186743de8";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
